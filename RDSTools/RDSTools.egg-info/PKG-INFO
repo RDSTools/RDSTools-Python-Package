@@ -1,0 +1,596 @@
+Metadata-Version: 2.4
+Name: RDSTools
+Version: 0.1.0
+Summary: Python tools for Respondent-Driven Sampling (RDS) analysis
+Home-page: https://github.com/yourusername/rds-tools
+Author: Jay Kim
+Author-email: jayhk@umich.edu
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering :: Information Analysis
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+Requires-Dist: pandas>=1.3.0
+Requires-Dist: numpy>=1.20.0
+Requires-Dist: statsmodels>=0.12.0
+Requires-Dist: folium>=0.12.0
+Requires-Dist: matplotlib>=3.3.0
+Requires-Dist: networkx>=2.5
+Requires-Dist: python-igraph>=0.9.0
+Provides-Extra: dev
+Requires-Dist: pytest>=6.0; extra == "dev"
+Requires-Dist: pytest-cov; extra == "dev"
+Requires-Dist: black; extra == "dev"
+Requires-Dist: flake8; extra == "dev"
+Provides-Extra: viz
+Requires-Dist: pygraphviz>=1.7; extra == "viz"
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+# RDS Tools
+
+A Python package for Respondent-Driven Sampling (RDS) analysis and bootstrap resampling with high-performance parallel processing capabilities, network visualization, and geographic mapping.
+
+## Features
+
+- **Data Processing**: Clean and prepare RDS survey data with automatic relationship mapping
+- **Bootstrap Resampling**: Multiple resampling methods for RDS statistical inference
+- **Parallel Processing**: High-performance parallel bootstrap for significantly faster computation
+- **Flexible Imputation**: Handle missing degree values with various imputation strategies
+- **Statistical Analysis**: Calculate means, tables, and regression models with RDS-adjusted standard errors
+- **Network Visualization**: Create interactive network graphs showing recruitment relationships
+- **Geographic Mapping**: Generate interactive maps displaying participant locations and recruitment chains
+
+## Installation
+
+Download the package folder and install locally:
+
+```bash
+cd RDSTools
+pip install .
+```
+
+For development (editable install):
+```bash
+pip install -e .
+```
+
+### Additional Requirements for Visualization
+
+For network graphs and maps, install additional dependencies:
+
+```bash
+pip install networkx igraph matplotlib folium
+```
+
+For tree layouts in network graphs (optional):
+```bash
+pip install pygraphviz
+```
+
+## Quick Start
+
+```python
+import pandas as pd
+from rds_tools import RDS_data, RDSBoot, RDSMean
+
+# Load your data
+data = pd.read_csv("your_survey_data.csv")
+
+# Process RDS data
+rds_processed = RDS_data(
+    data=data,
+    unique_id="participant_id",
+    redeemed_coupon="coupon_used", 
+    issued_coupons=["coupon1", "coupon2", "coupon3"],
+    degree="network_size"
+)
+
+# Calculate means with parallel bootstrap for faster processing
+mean_results = RDSMean(
+    x='age',
+    data=rds_processed,
+    var_est='resample_tree_uni1',
+    resample_n=1000,
+    n_cores=4  # Use 4 cores for parallel processing
+)
+```
+
+## Core Analysis Functions
+
+### `RDS_data()`
+Processes raw RDS survey data and creates recruitment network structure.
+
+**Parameters:**
+- `data`: DataFrame with survey responses
+- `unique_id`: Column name for unique participant IDs
+- `redeemed_coupon`: Column name for coupon used to participate  
+- `issued_coupons`: List of column names for coupons issued to others
+- `degree`: Column name for reported network size
+- `zero_degree`: How to handle zero degrees ("hotdeck", "mean", "median", "drop")
+- `NA_degree`: How to handle missing degrees ("hotdeck", "mean", "median", "drop")
+
+**Returns:** DataFrame with additional RDS-specific columns (SEED, WAVE, R_ID, S_ID, etc.)
+
+### `RDSBoot()`
+Performs bootstrap resampling on RDS data for statistical inference.
+
+**Parameters:**
+- `respondent_id`: Array of participant IDs
+- `seed_id`: Array of seed IDs each participant belongs to
+- `seed`: Array indicating if participant is a seed (1) or recruit (0)  
+- `recruiter_id`: Array of recruiter IDs
+- `type`: Resampling method:
+  - `'resample_chain1'`: Resample entire recruitment chains
+  - `'resample_chain2'`: Iteratively build chains to target size
+  - `'resample_tree_uni1'`: Tree-based unidirectional resampling
+  - `'resample_tree_uni2'`: Iterative tree unidirectional resampling
+  - `'resample_tree_bi1'`: Tree-based bidirectional resampling  
+  - `'resample_tree_bi2'`: Iterative tree bidirectional resampling
+- `resample_n`: Number of bootstrap samples to generate
+
+**Returns:** DataFrame with resampled participant IDs and sample numbers
+
+### `RDSMean()`
+Calculate means and standard errors for RDS data with optional parallel bootstrap processing.
+
+**Parameters:**
+- `x`: Name of the variable to calculate mean for
+- `data`: DataFrame containing the data
+- `weight`: Name of the weight variable (optional)
+- `var_est`: Variance estimation method ('naive' or bootstrap methods)
+- `resample_n`: Number of bootstrap resamples (default 300)
+- `n_cores`: Number of CPU cores for parallel processing (optional)
+- `return_bootstrap_means`: Return bootstrap mean estimates (optional)
+- `return_node_counts`: Return node counts per iteration (optional)
+
+**Performance Enhancement:**
+```python
+# Standard bootstrap (sequential)
+result = RDSMean(x='age', data=rds_data, var_est='resample_tree_uni1', resample_n=1000)
+
+# Parallel bootstrap (up to 10x faster)
+result = RDSMean(x='age', data=rds_data, var_est='resample_tree_uni1', 
+                resample_n=1000, n_cores=8)
+```
+
+**Returns:** DataFrame with mean estimates, standard errors, and bootstrap diagnostics
+
+### `RDSTable()`
+Generate frequency tables and proportions for categorical variables with RDS-adjusted standard errors.
+
+**Parameters:**
+- `x`: Name of the categorical variable
+- `data`: DataFrame containing the data
+- `weight`: Name of the weight variable (optional)
+- `var_est`: Variance estimation method ('naive' or bootstrap methods)
+- `resample_n`: Number of bootstrap resamples (default 300)
+- `n_cores`: Number of CPU cores for parallel processing (optional)
+- `return_bootstrap_proportions`: Return bootstrap proportion estimates (optional)
+
+**Performance Enhancement:**
+```python
+# Standard table generation
+table_result = RDSTable(x='education', data=rds_data, var_est='resample_tree_uni1')
+
+# Parallel processing for faster computation
+table_result = RDSTable(x='education', data=rds_data, var_est='resample_tree_uni1',
+                       resample_n=1000, n_cores=6)
+```
+
+**Returns:** DataFrame with frequencies, proportions, and confidence intervals
+
+### `RDSRegression()`
+Fit regression models with RDS-adjusted standard errors using bootstrap methods.
+
+**Parameters:**
+- `formula`: Regression formula (e.g., 'y ~ x1 + x2')
+- `data`: DataFrame containing the data
+- `family`: Regression family ('gaussian', 'binomial', 'poisson')
+- `weight`: Name of the weight variable (optional)
+- `var_est`: Variance estimation method (bootstrap methods only)
+- `resample_n`: Number of bootstrap resamples (default 300)
+- `n_cores`: Number of CPU cores for parallel processing (optional)
+- `return_bootstrap_coefs`: Return bootstrap coefficient estimates (optional)
+
+**Performance Enhancement:**
+```python
+# Standard regression
+reg_result = RDSRegression(formula='income ~ age + education', data=rds_data,
+                          var_est='resample_tree_uni1')
+
+# Parallel processing for complex models
+reg_result = RDSRegression(formula='income ~ age + education + gender', 
+                          data=rds_data, var_est='resample_tree_uni1',
+                          resample_n=2000, n_cores=8)
+```
+
+**Returns:** DataFrame with coefficients, standard errors, p-values, and confidence intervals
+
+## Visualization Functions
+
+### Network Graph Visualization
+
+#### `create_network_graph()`
+Create interactive network graph visualizations showing recruitment relationships and network structure.
+
+**Parameters:**
+- `data`: DataFrame with RDS data (must be processed with `RDS_data()`)
+- `seed_ids`: List of seed IDs to include in visualization
+- `waves`: List of wave numbers to include
+- `layout`: Graph layout algorithm. Options:
+  - `"Spring"` (default): Force-directed layout using Fruchterman-Reingold
+  - `"Circular"`: Nodes arranged in a circle
+  - `"Kamada-Kawai"`: Energy-based layout algorithm
+  - `"Grid"`: Regular grid layout
+  - `"Star"`: Star-shaped layout
+  - `"Random"`: Random node positioning
+  - `"Tree"`: Hierarchical tree layout (requires pygraphviz)
+- `group_by`: Column name to color nodes by (optional)
+- `node_size`: Size of nodes (default: 700 for Tree, 30 for others)
+- `figsize`: Figure size tuple (default: (14, 12))
+- `show_plot`: Whether to display the plot (default: True)
+- `save_path`: Path to save figure (optional)
+
+**Returns:** Graph object (igraph.Graph for most layouts, networkx.DiGraph for Tree layout)
+
+**Examples:**
+```python
+from rds_tools.network_graph import create_network_graph
+
+# Basic network graph with spring layout
+G = create_network_graph(
+    data=rds_data,
+    seed_ids=['1', '2'],
+    waves=[0, 1, 2, 3],
+    layout='Spring'
+)
+
+# Tree layout showing hierarchical structure
+G = create_network_graph(
+    data=rds_data,
+    seed_ids=['1'],
+    waves=[0, 1, 2, 3, 4],
+    layout='Tree',
+    save_path='recruitment_tree.png'
+)
+
+# Color nodes by demographic variable
+G = create_network_graph(
+    data=rds_data,
+    seed_ids=['1', '2', '3'],
+    waves=[0, 1, 2],
+    layout='Kamada-Kawai',
+    group_by='Gender',
+    node_size=20,
+    figsize=(16, 14)
+)
+
+# Color by continuous variable (e.g., age)
+G = create_network_graph(
+    data=rds_data,
+    seed_ids=['1'],
+    waves=[0, 1, 2, 3],
+    layout='Spring',
+    group_by='Age'  # Will use color gradient
+)
+```
+
+**Node Coloring:**
+- **Default**: Seeds are colored red, non-seeds are blue
+- **Categorical variables**: Each category gets a distinct color with legend
+- **Continuous variables**: Color gradient (viridis) with colorbar
+- Variables with 10+ unique values are treated as continuous
+
+**Layout Recommendations:**
+- **Spring/Fruchterman-Reingold**: Best for general network visualization
+- **Tree**: Best for viewing hierarchical recruitment structure (requires pygraphviz)
+- **Kamada-Kawai**: Good for symmetric, aesthetic layouts
+- **Circular**: Useful for small networks or highlighting cycles
+
+### Geographic Mapping
+
+#### `create_participant_map()`
+Create interactive geographic maps showing participant locations and recruitment relationships.
+
+**Parameters:**
+- `data`: DataFrame with RDS data (must be processed with `RDS_data()`)
+- `seed_ids`: List of seed IDs to include
+- `waves`: List of wave numbers to include
+- `lat_column`: Name of latitude column (default: 'Latitude')
+- `lon_column`: Name of longitude column (default: 'Longitude')
+- `output_file`: Path to save HTML map (default: 'participant_map.html')
+- `zoom_start`: Initial zoom level (default: 5)
+- `open_browser`: Whether to open map in browser automatically (default: False)
+
+**Returns:** folium.Map object (map is always saved to output_file)
+
+**Examples:**
+```python
+from rds_tools.rds_map import create_participant_map
+
+# Basic map
+m = create_participant_map(
+    data=rds_data,
+    seed_ids=['1', '2'],
+    waves=[0, 1, 2, 3],
+    output_file='my_rds_map.html'
+)
+# Open the HTML file in your browser to view the interactive map
+
+# Map with custom coordinates and auto-open
+m = create_participant_map(
+    data=rds_data,
+    seed_ids=['1', '2', '3'],
+    waves=[0, 1, 2, 3, 4],
+    lat_column='lat',
+    lon_column='long',
+    output_file='geographic_map.html',
+    zoom_start=7,
+    open_browser=True  # Automatically opens in browser
+)
+```
+
+**Map Features:**
+- **Seeds**: Displayed as red circles
+- **Non-seeds**: Displayed as blue circles
+- **Recruitment links**: Black lines connecting recruiters to recruits (shown for consecutive waves starting from 0)
+- **Interactive**: Click on nodes to see ID, wave, and seed status
+- **Legend**: Built-in legend showing node types
+
+**Important Notes:**
+- Coordinate columns must contain valid latitude (-90 to 90) and longitude (-180 to 180) values
+- Recruitment relationships (lines) are only shown when waves are consecutive starting from 0
+- For non-consecutive wave selections, only participant locations are shown
+- Map is always saved to the specified HTML file
+
+#### `get_available_seeds()`
+Get list of available seed IDs from processed RDS data.
+
+**Parameters:**
+- `data`: DataFrame with RDS data
+
+**Returns:** List of seed IDs (as strings)
+
+**Example:**
+```python
+from rds_tools.rds_map import get_available_seeds
+
+seeds = get_available_seeds(rds_data)
+print(f"Available seeds: {seeds}")
+# Output: Available seeds: ['1', '2', '3', '4']
+```
+
+#### `get_available_waves()`
+Get list of available wave numbers from processed RDS data.
+
+**Parameters:**
+- `data`: DataFrame with RDS data
+
+**Returns:** List of wave numbers (as integers)
+
+**Example:**
+```python
+from rds_tools.rds_map import get_available_waves
+
+waves = get_available_waves(rds_data)
+print(f"Available waves: {waves}")
+# Output: Available waves: [0, 1, 2, 3, 4, 5]
+```
+
+#### `print_map_info()`
+Print comprehensive summary of RDS data for mapping purposes.
+
+**Parameters:**
+- `data`: DataFrame with RDS data
+- `lat_column`: Name of latitude column (default: 'Latitude')
+- `lon_column`: Name of longitude column (default: 'Longitude')
+
+**Example:**
+```python
+from rds_tools.rds_map import print_map_info
+
+print_map_info(rds_data)
+```
+
+**Output:**
+```
+RDS Mapping Information
+==================================================
+Available Seeds: ['1', '2', '3', '4']
+Available Waves: [0, 1, 2, 3, 4, 5]
+
+Total participants: 250
+Participants with coordinates: 245 (98.0%)
+Participants missing coordinates: 5 (2.0%)
+
+Coordinate columns: Latitude, Longitude
+==================================================
+```
+
+## Parallel Processing Benefits
+
+The parallel bootstrap implementation provides significant performance improvements:
+
+- **Speed**: Up to 10x faster processing with multi-core systems
+- **Scalability**: Automatically utilizes available CPU cores
+- **Memory Efficient**: Optimized data structures reduce memory usage
+- **Backward Compatible**: Existing code works unchanged; parallel processing is opt-in
+
+### Performance Comparison
+
+| Cores | Bootstrap Samples | Standard Time | Parallel Time | Speedup |
+|-------|-------------------|---------------|---------------|---------|
+| 1     | 1000             | 120s          | 120s          | 1.0x    |
+| 4     | 1000             | 120s          | 18s           | 6.7x    |
+| 8     | 1000             | 120s          | 12s           | 10.0x   |
+
+*Times are approximate and vary by system configuration and data size*
+
+## Requirements
+
+### Core Requirements
+- Python ≥ 3.7
+- pandas ≥ 1.3.0
+- numpy ≥ 1.20.0
+- statsmodels ≥ 0.12.0
+
+### Visualization Requirements
+- networkx ≥ 2.5 (for network graphs)
+- igraph ≥ 0.9.0 (for network graphs)
+- matplotlib ≥ 3.3.0 (for network graphs)
+- folium ≥ 0.12.0 (for geographic maps)
+- pygraphviz (optional, for tree layouts)
+
+## Complete Example Workflow
+
+```python
+import pandas as pd
+from rds_tools import RDS_data, RDSMean, RDSTable, RDSRegression
+from rds_tools.network_graph import create_network_graph
+from rds_tools.rds_map import create_participant_map, print_map_info
+
+# 1. Load and examine your data
+data = pd.read_csv("rds_survey.csv")
+print(data.columns)
+
+# 2. Process the RDS structure
+rds_data = RDS_data(
+    data=data,
+    unique_id="ID",
+    redeemed_coupon="RecruitCoupon", 
+    issued_coupons=["Coupon_1", "Coupon_2", "Coupon_3"],
+    degree="NetworkSize",
+    zero_degree="median",
+    NA_degree="hotdeck"
+)
+
+# 3. Examine the processed data
+print(f"Seeds found: {rds_data['SEED'].sum()}")
+print(f"Max wave: {rds_data['WAVE'].max()}")
+print(f"Recruitment chains: {rds_data['S_ID'].nunique()}")
+
+# 4. Visualize the recruitment network
+create_network_graph(
+    data=rds_data,
+    seed_ids=['1', '2'],
+    waves=[0, 1, 2, 3],
+    layout='Spring',
+    group_by='Gender',
+    save_path='network_viz.png'
+)
+
+# 5. Create geographic map of participants
+print_map_info(rds_data)  # Check coordinate coverage first
+
+create_participant_map(
+    data=rds_data,
+    seed_ids=['1', '2'],
+    waves=[0, 1, 2, 3, 4],
+    output_file='participant_locations.html',
+    open_browser=True
+)
+
+# 6. Calculate means with parallel processing
+mean_age = RDSMean(
+    x='age', 
+    data=rds_data,
+    var_est='resample_tree_uni1',
+    resample_n=1000,
+    n_cores=4
+)
+
+# 7. Generate frequency tables
+education_table = RDSTable(
+    x='education_level',
+    data=rds_data, 
+    var_est='resample_tree_uni1',
+    resample_n=1000,
+    n_cores=4
+)
+
+# 8. Fit regression models
+income_model = RDSRegression(
+    formula='log_income ~ age + education_years + gender',
+    data=rds_data,
+    family='gaussian',
+    var_est='resample_tree_uni1', 
+    resample_n=2000,
+    n_cores=6
+)
+
+print("Analysis complete!")
+```
+
+## Best Practices
+
+### Choosing Number of Cores
+- **Small datasets** (< 1000 participants): Use 2-4 cores
+- **Medium datasets** (1000-10000 participants): Use 4-8 cores  
+- **Large datasets** (> 10000 participants): Use 8+ cores
+- **Never exceed** your system's available CPU cores
+
+### Network Visualization
+- Use **Spring** or **Kamada-Kawai** layouts for most networks
+- Use **Tree** layout for hierarchical recruitment structure (requires pygraphviz)
+- Limit to 3-4 waves for clarity in dense networks
+- Use `group_by` to highlight demographic patterns in recruitment
+
+### Geographic Mapping
+- Always check coordinate coverage with `print_map_info()` before creating maps
+- Ensure latitude/longitude columns contain valid numeric coordinates
+- Use consecutive waves starting from 0 to see recruitment relationships
+- Save maps with descriptive filenames for different analyses
+- Use `open_browser=True` for immediate viewing
+
+### Memory Considerations
+Large bootstrap runs may require substantial memory. Monitor system resources and reduce `resample_n` if memory issues occur.
+
+## Troubleshooting
+
+### Parallel Processing Issues
+If parallel processing fails:
+1. Remove the `n_cores` parameter to use sequential processing
+2. Reduce the number of cores specified
+3. Check system memory availability
+4. Ensure Python multiprocessing is supported on your system
+
+### Network Graph Issues
+If network graphs fail to render:
+1. Ensure networkx, igraph, and matplotlib are installed
+2. For Tree layout, install pygraphviz: `pip install pygraphviz`
+3. Try a different layout (Spring, Circular, Kamada-Kawai)
+4. Reduce the number of waves or seeds to simplify the graph
+
+### Geographic Mapping Issues
+If maps fail to create:
+1. Install folium: `pip install folium`
+2. Check that coordinate columns exist and contain valid data
+3. Verify coordinates are in valid range (lat: -90 to 90, lon: -180 to 180)
+4. Use `print_map_info()` to diagnose coordinate issues
+5. Ensure the output directory is writable
+
+### Performance Tips
+- Use `n_cores` only for bootstrap methods (`var_est` other than 'naive')
+- Start with fewer cores and increase based on performance gains
+- Consider data size when choosing bootstrap sample numbers
+- Use progress monitoring for long-running analyses
+- For large networks, limit visualization to key seeds and waves
+
+## License
+
+MIT License - see LICENSE file for details.
+
+## Contributing
+
+This package is currently in development. Please report issues or suggestions for improving performance and functionality.

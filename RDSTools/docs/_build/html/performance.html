@@ -1,0 +1,222 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Performance Enhancement &mdash; RDS Tools 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Visualization" href="visualization.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            RDS Tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_processing.html">Data Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html">Estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsmean-descriptive-statistics">RDSMean - Descriptive Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdstable-contingency-tables">RDSTable - Contingency Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsregression-linear-and-logistic-regression">RDSRegression - Linear and Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html">Sampling Variance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsboot-standard-bootstrap">RDSBoot - Standard Bootstrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsbootoptimizedparallel-parallel-bootstrap">RDSBootOptimizedParallel - Parallel Bootstrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#bootstrap-methods">Bootstrap Methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#working-with-results">Working with Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#performance-considerations">Performance Considerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Performance Enhancement</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#performance-comparison">Performance Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RDS Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Performance Enhancement</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/performance.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="performance-enhancement">
+<h1>Performance Enhancement<a class="headerlink" href="#performance-enhancement" title="Link to this heading"></a></h1>
+<p>The package includes parallel processing for bootstrap methods. Unidirectional and bidirectional bootstrap sampling methods are the methods that benefit the most from parallel processing.</p>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use parallel processing for faster bootstrap</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">RDSMean</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;income&#39;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">resample_n</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+    <span class="n">n_cores</span><span class="o">=</span><span class="mi">8</span>  <span class="c1"># Use 8 cores for parallel processing</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Parallel processing is available for all bootstrap-based statistical functions:</p>
+<ul class="simple">
+<li><p>RDSMean() with bootstrap variance estimation</p></li>
+<li><p>RDSTable() with bootstrap variance estimation</p></li>
+<li><p>RDSRegression() with bootstrap variance estimation</p></li>
+</ul>
+</section>
+<section id="performance-comparison">
+<h2>Performance Comparison<a class="headerlink" href="#performance-comparison" title="Link to this heading"></a></h2>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Performance Scaling</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 13.3%" />
+<col style="width: 26.7%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Cores</p></th>
+<th class="head"><p>Bootstrap Samples</p></th>
+<th class="head"><p>Standard Time</p></th>
+<th class="head"><p>Parallel Time</p></th>
+<th class="head"><p>Speedup</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>1000</p></td>
+<td><p>120s</p></td>
+<td><p>120s</p></td>
+<td><p>1.0x</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>1000</p></td>
+<td><p>120s</p></td>
+<td><p>18s</p></td>
+<td><p>6.7x</p></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>1000</p></td>
+<td><p>120s</p></td>
+<td><p>12s</p></td>
+<td><p>10.0x</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
+<p>All estimation functions support the n_cores parameter:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Parallel mean calculation</span>
+<span class="n">mean_result</span> <span class="o">=</span> <span class="n">RDSMean</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;age&#39;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
+<span class="p">)</span>
+
+<span class="c1"># Parallel table calculation</span>
+<span class="n">table_result</span> <span class="o">=</span> <span class="n">RDSTable</span><span class="p">(</span>
+    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;~Sex+Race&quot;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
+<span class="p">)</span>
+
+<span class="c1"># Parallel regression</span>
+<span class="n">regression_result</span> <span class="o">=</span> <span class="n">RDSRegression</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
+    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Income ~ Age + Education&quot;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="visualization.html" class="btn btn-neutral float-left" title="Visualization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jay Kim.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
