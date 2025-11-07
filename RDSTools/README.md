@@ -356,9 +356,8 @@ With 252 observations
 ## Documentation
 
 For comprehensive documentation, examples, and API reference:
-- [Full Documentation](https://your-docs-url.readthedocs.io/)
-- [API Reference](https://your-docs-url.readthedocs.io/en/latest/api.html)
-- [Examples](https://your-docs-url.readthedocs.io/en/latest/examples.html)
+- [Full Documentation](https://rdstools-python-package.readthedocs.io/en/latest/)
+- [Examples](https://rdstools-python-package.readthedocs.io/en/latest/examples.html)
 
 ## License
 
