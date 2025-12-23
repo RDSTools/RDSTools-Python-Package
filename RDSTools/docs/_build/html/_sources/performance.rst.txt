@@ -9,7 +9,7 @@ Usage
 .. code-block:: python
 
     # Use parallel processing for faster bootstrap
-    result = RDSMean(
+    result = RDSmean(
         x='income',
         data=rds_data,
         var_est='resample_tree_uni1',
@@ -19,9 +19,9 @@ Usage
 
 Parallel processing is available for all bootstrap-based statistical functions:
 
-- RDSMean() with bootstrap variance estimation
-- RDSTable() with bootstrap variance estimation
-- RDSRegression() with bootstrap variance estimation
+- RDSmean() with bootstrap variance estimation
+- RDStable() with bootstrap variance estimation
+- RDSlm() with bootstrap variance estimation
 
 Performance Comparison
 ----------------------
@@ -59,7 +59,7 @@ All estimation functions support the n_cores parameter:
 .. code-block:: python
 
     # Parallel mean calculation
-    mean_result = RDSMean(
+    mean_result = RDSmean(
         x='age',
         data=rds_data,
         var_est='resample_tree_uni1',
@@ -68,7 +68,7 @@ All estimation functions support the n_cores parameter:
     )
 
     # Parallel table calculation
-    table_result = RDSTable(
+    table_result = RDStable(
         formula="~Sex+Race",
         data=rds_data,
         var_est='resample_tree_uni1',
@@ -77,9 +77,9 @@ All estimation functions support the n_cores parameter:
     )
 
     # Parallel regression
-    regression_result = RDSRegression(
+    regression_result = RDSlm(
         data=rds_data,
-        formula="Income ~ Age + Education",
+        formula="Age ~ Sex",
         var_est='resample_tree_uni1',
         resample_n=1000,
         n_cores=4

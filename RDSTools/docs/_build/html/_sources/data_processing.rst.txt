@@ -1,14 +1,14 @@
 Data Processing
 ===============
 
-The RDS_data function is used to process data collected through Respondent Driven Sampling (RDS). This function can extract the unique ID, redeemed coupon numbers, and issued coupon numbers from the original dataset. By processing this information, users can obtain the key data typically required for RDS related research.
+The RDSdata function is used to process data collected through Respondent Driven Sampling (RDS). This function can extract the unique ID, redeemed coupon numbers, and issued coupon numbers from the original dataset. By processing this information, users can obtain the key data typically required for RDS related research.
 
 Usage
 -----
 
 .. code-block:: python
 
-    RDS_data(data, unique_id, redeemed_coupon, issued_coupons, degree, zero_degree="hotdeck", NA_degree="hotdeck")
+    RDSdata(data, unique_id, redeemed_coupon, issued_coupons, degree, zero_degree="hotdeck", NA_degree="hotdeck")
 
 Arguments
 ---------
@@ -29,10 +29,10 @@ Arguments
     The column name of the column in the data that represents the degree (network size) of respondents.
 
 **zero_degree**
-    This parameter is used to set the method for imputing zero values in the 'degree' variable. Three methods are available for selection: mean, median, and hotdeck. If this parameter is not set, the default imputation method is hotdeck.
+    This parameter is used to set the method for imputing zero values in the 'degree' variable. Four methods are available for selection: mean, median, hotdeck, and drop. If this parameter is not set, the default imputation method is hotdeck.
 
 **NA_degree**
-    This parameter is used to set the method for imputing missing values in the 'degree' variable. There are three methods to choose from: mean, median, and hotdeck. If this parameter is not set, the default method is hotdeck.
+    This parameter is used to set the method for imputing missing values in the 'degree' variable. There are four methods to choose from: mean, median, hotdeck, and drop. If this parameter is not set, the default method is hotdeck.
 
 Returns
 -------
@@ -59,13 +59,13 @@ Example
 .. code-block:: python
 
     import pandas as pd
-    from RDSTools import RDS_data
+    from RDSTools import RDSdata
 
     # Load your data
     data = pd.read_csv("survey_data.csv")
 
     # Process RDS data
-    rds_data = RDS_data(
+    rds_data = RDSdata(
         data=data,
         unique_id="ID",
         redeemed_coupon="CouponR",
@@ -76,7 +76,7 @@ Example
     )
 
     # For preprocessing use RDStoydata (matching R example)
-    rds_data = RDS_data(
+    rds_data = RDSdata(
         data=RDSToolsToyData,
         unique_id="ID",
         redeemed_coupon="CouponR",

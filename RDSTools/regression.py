@@ -3,7 +3,7 @@ import numpy as np
 import patsy
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
-from bootstrap import RDSBoot
+from bootstrap import RDSboot
 from parallel_bootstrap import RDSBootOptimizedParallel
 from scipy import stats
 
@@ -147,7 +147,7 @@ class RDSRegressionResult:
         return "\n".join(lines)
 
 
-def RDSRegression(data, formula, weight=None, var_est=None, resample_n=None, n_cores=None,
+def RDSlm(data, formula, weight=None, var_est=None, resample_n=None, n_cores=None,
                   return_bootstrap_estimates=False, return_node_counts=False):
     """
     Linear and Logistic regression modeling in an RDS study
@@ -155,7 +155,7 @@ def RDSRegression(data, formula, weight=None, var_est=None, resample_n=None, n_c
     Parameters:
     -----------
     data : pandas.DataFrame
-        The output DataFrame from RDS_data
+        The output DataFrame from RDSdata
     formula : str
         Description of the model with dependent and independent variables. (e.g., "y ~ x1 + x2")
         Note that the functions performs a linear regression when the dependent variable is numeric
@@ -212,7 +212,7 @@ def RDSRegression(data, formula, weight=None, var_est=None, resample_n=None, n_c
     Examples:
     --------
     # Preprocess data with RDSdata function
-    rds_data = RDS_data(data = RDSToolsToyData,
+    rds_data = RDSdata(data = RDSToolsToyData,
                        unique_id = "ID",
                        redeemed_coupon = "CouponR",
                        issued_coupons = ["Coupon1",
@@ -221,7 +221,7 @@ def RDSRegression(data, formula, weight=None, var_est=None, resample_n=None, n_c
                        degree = "Degree")
 
     # Run the model using data preprocessed by RDSData
-    out = RDSRegression(data = rds_data,
+    out = RDSlm(data = rds_data,
                         formula = "Age~Sex",
                         weight = 'DEGREE_IMP',
                         var_est = 'resample_chain1',
@@ -426,7 +426,7 @@ def RDSRegression(data, formula, weight=None, var_est=None, resample_n=None, n_c
             )
         else:
             # Use original bootstrap
-            boot_out = RDSBoot(
+            boot_out = RDSboot(
                 data=data,
                 respondent_id_col='ID',
                 seed_id_col='S_ID',

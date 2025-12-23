@@ -42,3 +42,4 @@ For tree layouts in network graphs (optional)::
 Or install all optional dependencies::
 
     pip install RDSTools[viz]
+

@@ -49,17 +49,19 @@
 <li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#process-rds-data">Process RDS Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#calculate-means">Calculate Means</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-tables">Create Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-regression-models">Run Regression Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#network-visualization">Network Visualization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#geographic-mapping">Geographic Mapping</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="data_processing.html">Data Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="estimation.html">Estimation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsmean-descriptive-statistics">RDSMean - Descriptive Statistics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdstable-contingency-tables">RDSTable - Contingency Tables</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsregression-linear-and-logistic-regression">RDSRegression - Linear and Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsmean-descriptive-statistics">RDSmean - Descriptive Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdstable-contingency-tables">RDStable - Contingency Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdslm-linear-and-logistic-regression">RDSlm - Linear and Logistic Regression</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html">Sampling Variance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsboot-standard-bootstrap">RDSBoot - Standard Bootstrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsboot-standard-bootstrap">RDSboot - Standard Bootstrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsbootoptimizedparallel-parallel-bootstrap">RDSBootOptimizedParallel - Parallel Bootstrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#bootstrap-methods">Bootstrap Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#working-with-results">Working with Results</a></li>
@@ -99,19 +101,19 @@
 <section id="basic-usage">
 <h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h2>
 <p>Import the necessary modules:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDS_data</span><span class="p">,</span> <span class="n">RDSMean</span><span class="p">,</span> <span class="n">RDSTable</span><span class="p">,</span> <span class="n">RDSRegression</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools.network_graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_network_graph</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSdata</span><span class="p">,</span> <span class="n">RDSmean</span><span class="p">,</span> <span class="n">RDStable</span><span class="p">,</span> <span class="n">RDSlm</span><span class="p">,</span> <span class="n">RDSnetgraph</span><span class="p">,</span> <span class="n">RDSmap</span>
 </pre></div>
 </div>
 <p>Load your data:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;your_survey_data.csv&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;your_survey_data.csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="process-rds-data">
 <h2>Process RDS Data<a class="headerlink" href="#process-rds-data" title="Link to this heading"></a></h2>
 <p>Process your raw survey data to create the RDS network structure:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rds_processed</span> <span class="o">=</span> <span class="n">RDS_data</span><span class="p">(</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rds_processed</span> <span class="o">=</span> <span class="n">RDSdata</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
     <span class="n">unique_id</span><span class="o">=</span><span class="s2">&quot;participant_id&quot;</span><span class="p">,</span>
     <span class="n">redeemed_coupon</span><span class="o">=</span><span class="s2">&quot;coupon_used&quot;</span><span class="p">,</span>
@@ -124,7 +126,7 @@
 <section id="calculate-means">
 <h2>Calculate Means<a class="headerlink" href="#calculate-means" title="Link to this heading"></a></h2>
 <p>Calculate means with bootstrap resampling:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mean_results</span> <span class="o">=</span> <span class="n">RDSMean</span><span class="p">(</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mean_results</span> <span class="o">=</span> <span class="n">RDSmean</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;age&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_processed</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
@@ -133,7 +135,7 @@
 </pre></div>
 </div>
 <p>For faster processing, use parallel bootstrap:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mean_results</span> <span class="o">=</span> <span class="n">RDSMean</span><span class="p">(</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mean_results</span> <span class="o">=</span> <span class="n">RDSmean</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;age&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_processed</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
@@ -143,17 +145,69 @@
 </pre></div>
 </div>
 </section>
+<section id="create-tables">
+<h2>Create Tables<a class="headerlink" href="#create-tables" title="Link to this heading"></a></h2>
+<p>Generate frequency tables for categorical variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sex_table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
+    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;~Sex&#39;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">rds_processed</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
+<span class="p">)</span>
+
+<span class="c1"># Two-way table</span>
+<span class="n">cross_table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
+    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">rds_processed</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">margins</span><span class="o">=</span><span class="mi">1</span>  <span class="c1"># row proportions</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="run-regression-models">
+<h2>Run Regression Models<a class="headerlink" href="#run-regression-models" title="Link to this heading"></a></h2>
+<p>Fit linear and logistic regression models:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Linear regression</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">RDSlm</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">rds_processed</span><span class="p">,</span>
+    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;Income ~ Age + C(Sex) + C(Race)&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
+<span class="p">)</span>
+
+<span class="c1"># Logistic regression (binary outcome)</span>
+<span class="n">logit_model</span> <span class="o">=</span> <span class="n">RDSlm</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">rds_processed</span><span class="p">,</span>
+    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;Employed ~ Age + C(Education)&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="network-visualization">
 <h2>Network Visualization<a class="headerlink" href="#network-visualization" title="Link to this heading"></a></h2>
 <p>Create network graphs to visualize recruitment relationships:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rds_tools.network_graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_network_graph</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSnetgraph</span>
 
 <span class="c1"># Basic network graph</span>
-<span class="n">G</span> <span class="o">=</span> <span class="n">create_network_graph</span><span class="p">(</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">RDSnetgraph</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_processed</span><span class="p">,</span>
     <span class="n">seed_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">],</span>
     <span class="n">waves</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
     <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;Spring&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># Color by demographic variable</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">RDSnetgraph</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">rds_processed</span><span class="p">,</span>
+    <span class="n">seed_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">],</span>
+    <span class="n">waves</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;Spring&#39;</span><span class="p">,</span>
+    <span class="n">group_by</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -161,14 +215,19 @@
 <section id="geographic-mapping">
 <h2>Geographic Mapping<a class="headerlink" href="#geographic-mapping" title="Link to this heading"></a></h2>
 <p>Create interactive maps showing participant locations:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rds_tools.rds_map</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_participant_map</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSmap</span><span class="p">,</span> <span class="n">get_available_seeds</span><span class="p">,</span> <span class="n">print_map_info</span>
+
+<span class="c1"># Check available data</span>
+<span class="n">print_map_info</span><span class="p">(</span><span class="n">rds_processed</span><span class="p">)</span>
+<span class="n">seeds</span> <span class="o">=</span> <span class="n">get_available_seeds</span><span class="p">(</span><span class="n">rds_processed</span><span class="p">)</span>
 
 <span class="c1"># Create interactive map</span>
-<span class="n">map_obj</span> <span class="o">=</span> <span class="n">create_participant_map</span><span class="p">(</span>
+<span class="n">map_obj</span> <span class="o">=</span> <span class="n">RDSmap</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_processed</span><span class="p">,</span>
-    <span class="n">seed_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">],</span>
+    <span class="n">seed_ids</span><span class="o">=</span><span class="n">seeds</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span>
     <span class="n">waves</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
-    <span class="n">output_file</span><span class="o">=</span><span class="s1">&#39;participant_map.html&#39;</span>
+    <span class="n">output_file</span><span class="o">=</span><span class="s1">&#39;participant_map.html&#39;</span><span class="p">,</span>
+    <span class="n">open_browser</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 </pre></div>
 </div>

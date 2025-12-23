@@ -189,7 +189,7 @@ def create_igraph_graph(root_nodes: List[TreeNode], df) -> ig.Graph:
 # Main Network Graph Function
 # ============================================================================
 
-def create_network_graph(
+def RDSnetgraph(
         data: pd.DataFrame,
         seed_ids: List[str],
         waves: List[int],
@@ -236,13 +236,13 @@ def create_network_graph(
     Examples
     --------
     # Create a simple spring layout (default - uses igraph)
-    >>> G = create_network_graph(data, seed_ids=['1'], waves=[1, 2])
+    >>> G = RDSnetgraph(data, seed_ids=['1'], waves=[1, 2])
 
     >>> # Create tree layout (uses NetworkX, requires pygraphviz)
-    >>> G = create_network_graph(data, seed_ids=['1'], waves=[1, 2], layout='Tree')
+    >>> G = RDSnetgraph(data, seed_ids=['1'], waves=[1, 2], layout='Tree')
 
     >>> # Create colored by variable with custom node size
-    >>> G = create_network_graph(
+    >>> G = RDSnetgraph(
     ...     data,
     ...     seed_ids=['1', '2'],
     ...     waves=[1, 2, 3],

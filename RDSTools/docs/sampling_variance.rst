@@ -1,10 +1,10 @@
 Sampling Variance
 =================
 
-Variance estimation with bootstrap chain and tree methods. Although resampling is incorporated within the estimation functions, users who wish to perform resampling separately can use RDSBoot or RDSBootOptimizedParallel. After preprocessing with RDS_data, ensure the presence of at least four variables: respondent ID, seed ID, seed indicator, and recruiter ID. Note that the sampling of respondents (seeds and recruits) is conducted with replacement, and the resulting data frame will contain duplicates.
+Variance estimation with bootstrap chain and tree methods. Although resampling is incorporated within the estimation functions, users who wish to perform resampling separately can use RDSboot or RDSBootOptimizedParallel. After preprocessing with RDSdata, ensure the presence of at least four variables: respondent ID, seed ID, seed indicator, and recruiter ID. Note that the sampling of respondents (seeds and recruits) is conducted with replacement, and the resulting data frame will contain duplicates.
 
-RDSBoot - Standard Bootstrap
-============================
+RDSboot - Standard Bootstrap
+=============================
 
 Standard bootstrap resampling for Respondent-Driven Sampling (RDS) data.
 
@@ -13,7 +13,7 @@ Usage
 
 .. code-block:: python
 
-    RDSBoot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, type, resample_n)
+    RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, type, resample_n)
 
 Arguments
 ---------
@@ -53,10 +53,10 @@ Example
 
 .. code-block:: python
 
-    from RDSTools.bootstrap import RDSBoot
+    from RDSTools import RDSboot
 
     # Bootstrap resampling
-    boot_results = RDSBoot(
+    boot_results = RDSboot(
         data=rds_data,
         respondent_id_col='ID',
         seed_id_col='S_ID',
@@ -67,7 +67,7 @@ Example
     )
 
 RDSBootOptimizedParallel - Parallel Bootstrap
-=============================================
+==============================================
 
 Combined optimized + parallel bootstrap resampling for RDS data. Provides significant performance improvements through dictionary-based lookups (1.2-1.6x speedup) and multi-core parallelization (8.0x speedup) for total potential speedup of 9.6x faster.
 
@@ -119,7 +119,7 @@ Example
 
 .. code-block:: python
 
-    from RDSTools.parallel_bootstrap import RDSBootOptimizedParallel
+    from RDSTools import RDSBootOptimizedParallel
 
     # Parallel bootstrap resampling with 4 cores
     boot_results = RDSBootOptimizedParallel(
@@ -149,7 +149,7 @@ Bootstrap Chain Methods
 .. code-block:: python
 
     # Chain bootstrap 1
-    res_chain1 = RDSBoot(
+    res_chain1 = RDSboot(
         data=rds_data,
         respondent_id_col='ID',
         seed_id_col='S_ID',
@@ -165,7 +165,7 @@ Bootstrap Chain Methods
 .. code-block:: python
 
     # Chain bootstrap 2
-    res_chain2 = RDSBoot(
+    res_chain2 = RDSboot(
         data=rds_data,
         respondent_id_col='ID',
         seed_id_col='S_ID',
@@ -184,7 +184,7 @@ Resample Tree Unidirectional Methods
 .. code-block:: python
 
     # Tree unidirectional 1
-    res_uni1 = RDSBoot(
+    res_uni1 = RDSboot(
         data=rds_data,
         respondent_id_col='ID',
         seed_id_col='S_ID',
@@ -200,7 +200,7 @@ Resample Tree Unidirectional Methods
 .. code-block:: python
 
     # Tree unidirectional 2
-    res_uni2 = RDSBoot(
+    res_uni2 = RDSboot(
         data=rds_data,
         respondent_id_col='ID',
         seed_id_col='S_ID',
@@ -219,7 +219,7 @@ Bootstrap Tree Bidirectional Methods
 .. code-block:: python
 
     # Tree bidirectional 1
-    results_bi1 = RDSBoot(
+    results_bi1 = RDSboot(
         data=rds_data,
         respondent_id_col='ID',
         seed_id_col='S_ID',
@@ -235,7 +235,7 @@ Bootstrap Tree Bidirectional Methods
 .. code-block:: python
 
     # Tree bidirectional 2
-    results_bi2 = RDSBoot(
+    results_bi2 = RDSboot(
         data=rds_data,
         respondent_id_col='ID',
         seed_id_col='S_ID',
@@ -266,7 +266,7 @@ The bootstrap results can be merged with the original data to examine resampled 
     print(f"Bootstrap seeds: {merged['SEED'].sum()}")
 
 Performance Considerations
-=========================
+==========================
 
 For large datasets or high numbers of resamples, consider using the parallel version:
 

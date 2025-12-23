@@ -3,7 +3,7 @@ import numpy as np
 import warnings
 
 
-def RDS_data(data, unique_id, redeemed_coupon, issued_coupons, degree, zero_degree="hotdeck", NA_degree="hotdeck"):
+def RDSdata(data, unique_id, redeemed_coupon, issued_coupons, degree, zero_degree="hotdeck", NA_degree="hotdeck"):
     """
     Data processing in an RDS study.
 
@@ -57,7 +57,7 @@ def RDS_data(data, unique_id, redeemed_coupon, issued_coupons, degree, zero_degr
     Examples
     --------
     # for preprocessing use RDStoydata
-    rds_data = RDS_data(data = RDSToolsToyData,
+    rds_data = RDSdata(data = RDSToolsToyData,
                        unique_id = "ID",
                        redeemed_coupon = "CouponR",
                        issued_coupons = ["Coupon1",
@@ -114,7 +114,7 @@ def RDS_data(data, unique_id, redeemed_coupon, issued_coupons, degree, zero_degr
     df_final["R_ID"] = df_final.apply(find_recruiter, axis=1)
     df_final["SEED"] = df_final["R_ID"].isna().astype(int)
 
-    # ---- 3. Calculate WAVE Column ----RDS_data
+    # ---- 3. Calculate WAVE Column ----RDSdata
     df_final["WAVE"] = pd.NA
     df_final.loc[df_final["SEED"] == 1, "WAVE"] = 0
 

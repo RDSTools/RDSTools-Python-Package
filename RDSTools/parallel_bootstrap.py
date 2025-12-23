@@ -511,7 +511,7 @@ def RDSBootOptimizedParallel(data, respondent_id_col, seed_id_col, seed_col, rec
     Examples
     --------
     # Preprocess data with RDSdata function
-    rds_data = RDSData(data = RDSToolsToyData,
+    rds_data = RDSdata(data = RDSToolsToyData,
                       unique_id = "ID",
                       redeemed_coupon = "CouponR",
                        issued_coupon = ["Coupon1",

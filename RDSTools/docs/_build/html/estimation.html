@@ -48,21 +48,21 @@
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processing.html">Data Processing</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Estimation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#rdsmean-descriptive-statistics">RDSMean - Descriptive Statistics</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#rdsmean-descriptive-statistics">RDSmean - Descriptive Statistics</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arguments">Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#returns">Returns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#rdstable-contingency-tables">RDSTable - Contingency Tables</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#rdstable-contingency-tables">RDStable - Contingency Tables</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id3">Returns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id4">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#rdsregression-linear-and-logistic-regression">RDSRegression - Linear and Logistic Regression</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#rdslm-linear-and-logistic-regression">RDSlm - Linear and Logistic Regression</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id5">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id6">Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id7">Returns</a></li>
@@ -70,7 +70,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html">Sampling Variance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsboot-standard-bootstrap">RDSBoot - Standard Bootstrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsboot-standard-bootstrap">RDSboot - Standard Bootstrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsbootoptimizedparallel-parallel-bootstrap">RDSBootOptimizedParallel - Parallel Bootstrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#bootstrap-methods">Bootstrap Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#working-with-results">Working with Results</a></li>
@@ -106,14 +106,14 @@
              
   <section id="estimation">
 <h1>Estimation<a class="headerlink" href="#estimation" title="Link to this heading"></a></h1>
-<p>RDS Tools package has 3 estimation functions: (1) RDSMean, (2) RDSTable, (3) RDSRegression. Users can control the use of weights, selection of variance estimation, as well as the number of resamples if one of the variance estimation resampling approaches is used. Note, before using the estimation functions, please make sure that you preprocess data with RDS_data function.</p>
+<p>RDS Tools package has 3 estimation functions: (1) RDSmean, (2) RDStable, (3) RDSlm. Users can control the use of weights, selection of variance estimation, as well as the number of resamples if one of the variance estimation resampling approaches is used. Note, before using the estimation functions, please make sure that you preprocess data with RDSdata function.</p>
 </section>
 <section id="rdsmean-descriptive-statistics">
-<h1>RDSMean - Descriptive Statistics<a class="headerlink" href="#rdsmean-descriptive-statistics" title="Link to this heading"></a></h1>
-<p>For a continuous variable the basic information from RDSMean object contains point estimates, standard errors and information about the analysis. This function calculates means and standard errors for RDS data with optional weighting and different variance estimation methods.</p>
+<h1>RDSmean - Descriptive Statistics<a class="headerlink" href="#rdsmean-descriptive-statistics" title="Link to this heading"></a></h1>
+<p>For a continuous variable the basic information from RDSmean object contains point estimates, standard errors and information about the analysis. This function calculates means and standard errors for RDS data with optional weighting and different variance estimation methods.</p>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDSMean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">var_est</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resample_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_cores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_bootstrap_means</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_node_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDSmean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">var_est</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resample_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_cores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_bootstrap_means</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_node_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -122,7 +122,7 @@
 <dl class="simple">
 <dt><strong>x</strong></dt><dd><p>str. A variable of interest - name of the column in the data to calculate mean for.</p>
 </dd>
-<dt><strong>data</strong></dt><dd><p>pandas.DataFrame. The output DataFrame from RDS_data function containing preprocessed RDS data.</p>
+<dt><strong>data</strong></dt><dd><p>pandas.DataFrame. The output DataFrame from RDSdata function containing preprocessed RDS data.</p>
 </dd>
 <dt><strong>weight</strong></dt><dd><p>str, optional. Name of the weight variable. User specified weights to calculate weighted mean and standard errors. When set to None the function calculates unweighted mean and standard errors. Default is None.</p>
 </dd>
@@ -156,16 +156,16 @@
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools.mean</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSMean</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSmean</span>
 
 <span class="c1"># Basic mean with naive variance estimation</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">RDSMean</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span> <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;naive&#39;</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">RDSmean</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span> <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;naive&#39;</span><span class="p">)</span>
 
 <span class="c1"># Weighted analysis with inverse weights</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">RDSMean</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">RDSmean</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">)</span>
 
 <span class="c1"># Bootstrap method with resampling</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">RDSMean</span><span class="p">(</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">RDSmean</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
@@ -174,7 +174,7 @@
 <span class="p">)</span>
 
 <span class="c1"># Parallel processing with 4 cores</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">RDSMean</span><span class="p">(</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">RDSmean</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
@@ -183,7 +183,7 @@
 <span class="p">)</span>
 
 <span class="c1"># Return bootstrap means and node counts</span>
-<span class="n">result</span><span class="p">,</span> <span class="n">bootstrap_means</span><span class="p">,</span> <span class="n">node_counts</span> <span class="o">=</span> <span class="n">RDSMean</span><span class="p">(</span>
+<span class="n">result</span><span class="p">,</span> <span class="n">bootstrap_means</span><span class="p">,</span> <span class="n">node_counts</span> <span class="o">=</span> <span class="n">RDSmean</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
@@ -196,11 +196,11 @@
 </section>
 </section>
 <section id="rdstable-contingency-tables">
-<h1>RDSTable - Contingency Tables<a class="headerlink" href="#rdstable-contingency-tables" title="Link to this heading"></a></h1>
+<h1>RDStable - Contingency Tables<a class="headerlink" href="#rdstable-contingency-tables" title="Link to this heading"></a></h1>
 <p>The package allows users to estimate one-way and two-way tables, using either naive or resampling approaches to estimate the standard errors of proportions. Creates contingency tables from RDS data with optional weighting and different variance estimation methods.</p>
 <section id="id1">
 <h2>Usage<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDSTable</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">var_est</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resample_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">margins</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_cores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_bootstrap_tables</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_node_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDStable</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">var_est</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resample_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">margins</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_cores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_bootstrap_tables</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_node_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -245,13 +245,13 @@
 </section>
 <section id="id4">
 <h2>Examples<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSTable</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDStable</span>
 
 <span class="c1"># One-way table</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">RDSTable</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s2">&quot;~Sex&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s2">&quot;~Sex&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">)</span>
 
 <span class="c1"># Two-way table with bootstrap variance estimation</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">RDSTable</span><span class="p">(</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
     <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;~Sex+Race&quot;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_chain1&#39;</span><span class="p">,</span>
@@ -259,7 +259,7 @@
 <span class="p">)</span>
 
 <span class="c1"># Two-way table with row proportions and parallel processing</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">RDSTable</span><span class="p">(</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
     <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;~Sex+Race&quot;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
@@ -269,7 +269,7 @@
 <span class="p">)</span>
 
 <span class="c1"># Return bootstrap tables and node counts</span>
-<span class="n">result</span><span class="p">,</span> <span class="n">bootstrap_tables</span><span class="p">,</span> <span class="n">node_counts</span> <span class="o">=</span> <span class="n">RDSTable</span><span class="p">(</span>
+<span class="n">result</span><span class="p">,</span> <span class="n">bootstrap_tables</span><span class="p">,</span> <span class="n">node_counts</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
     <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;~Sex&quot;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
@@ -281,12 +281,12 @@
 </div>
 </section>
 </section>
-<section id="rdsregression-linear-and-logistic-regression">
-<h1>RDSRegression - Linear and Logistic Regression<a class="headerlink" href="#rdsregression-linear-and-logistic-regression" title="Link to this heading"></a></h1>
-<p>Users can specify linear and logistic regression models using the RDSRegression function. The function performs a linear regression when the dependent variable is numeric and a logistic regression with binomial link function when the dependent variable is either character or factor.</p>
+<section id="rdslm-linear-and-logistic-regression">
+<h1>RDSlm - Linear and Logistic Regression<a class="headerlink" href="#rdslm-linear-and-logistic-regression" title="Link to this heading"></a></h1>
+<p>Users can specify linear and logistic regression models using the RDSlm function. The function performs a linear regression when the dependent variable is numeric and a logistic regression with binomial link function when the dependent variable is either character or factor.</p>
 <section id="id5">
 <h2>Usage<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDSRegression</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">formula</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">var_est</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resample_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_cores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_bootstrap_estimates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_node_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDSlm</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">formula</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">var_est</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resample_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_cores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_bootstrap_estimates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_node_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -329,12 +329,12 @@
 </section>
 <section id="id8">
 <h2>Examples<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools.regression</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSRegression</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSlm</span>
 
 <span class="c1"># Linear regression (continuous dependent variable)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">RDSRegression</span><span class="p">(</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">RDSlm</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Age ~ Sex&quot;</span><span class="p">,</span>
+    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Age ~ C(Sex)&quot;</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_chain1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
@@ -342,27 +342,27 @@
 
 <span class="c1"># Logistic regression (categorical dependent variable)</span>
 <span class="c1"># Make sure to convert to binary (0,1) if doesn&#39;t work.</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">RDSRegression</span><span class="p">(</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">RDSlm</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Sex ~ Age&quot;</span><span class="p">,</span>
+    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Employed ~ Age + C(Sex)&quot;</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_chain1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">100</span>
 <span class="p">)</span>
 
 <span class="c1"># Parallel regression with multiple predictors</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">RDSRegression</span><span class="p">(</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">RDSlm</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Income ~ Age + Education&quot;</span><span class="p">,</span>
+    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Income ~ Age + C(Education) + C(Race)&quot;</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
 <span class="p">)</span>
 
 <span class="c1"># Return bootstrap estimates and node counts</span>
-<span class="n">result</span><span class="p">,</span> <span class="n">bootstrap_estimates</span><span class="p">,</span> <span class="n">node_counts</span> <span class="o">=</span> <span class="n">RDSRegression</span><span class="p">(</span>
+<span class="n">result</span><span class="p">,</span> <span class="n">bootstrap_estimates</span><span class="p">,</span> <span class="n">node_counts</span> <span class="o">=</span> <span class="n">RDSlm</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Age ~ Sex&quot;</span><span class="p">,</span>
+    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Age ~ C(Sex)&quot;</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">return_bootstrap_estimates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>

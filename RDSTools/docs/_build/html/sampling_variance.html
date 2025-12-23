@@ -48,11 +48,11 @@
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processing.html">Data Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="estimation.html">Estimation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsmean-descriptive-statistics">RDSMean - Descriptive Statistics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdstable-contingency-tables">RDSTable - Contingency Tables</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsregression-linear-and-logistic-regression">RDSRegression - Linear and Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsmean-descriptive-statistics">RDSmean - Descriptive Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdstable-contingency-tables">RDStable - Contingency Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdslm-linear-and-logistic-regression">RDSlm - Linear and Logistic Regression</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Sampling Variance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#rdsboot-standard-bootstrap">RDSBoot - Standard Bootstrap</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#rdsboot-standard-bootstrap">RDSboot - Standard Bootstrap</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#arguments">Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#returns">Returns</a></li>
@@ -105,14 +105,14 @@
              
   <section id="sampling-variance">
 <h1>Sampling Variance<a class="headerlink" href="#sampling-variance" title="Link to this heading"></a></h1>
-<p>Variance estimation with bootstrap chain and tree methods. Although resampling is incorporated within the estimation functions, users who wish to perform resampling separately can use RDSBoot or RDSBootOptimizedParallel. After preprocessing with RDS_data, ensure the presence of at least four variables: respondent ID, seed ID, seed indicator, and recruiter ID. Note that the sampling of respondents (seeds and recruits) is conducted with replacement, and the resulting data frame will contain duplicates.</p>
+<p>Variance estimation with bootstrap chain and tree methods. Although resampling is incorporated within the estimation functions, users who wish to perform resampling separately can use RDSboot or RDSBootOptimizedParallel. After preprocessing with RDSdata, ensure the presence of at least four variables: respondent ID, seed ID, seed indicator, and recruiter ID. Note that the sampling of respondents (seeds and recruits) is conducted with replacement, and the resulting data frame will contain duplicates.</p>
 </section>
 <section id="rdsboot-standard-bootstrap">
-<h1>RDSBoot - Standard Bootstrap<a class="headerlink" href="#rdsboot-standard-bootstrap" title="Link to this heading"></a></h1>
+<h1>RDSboot - Standard Bootstrap<a class="headerlink" href="#rdsboot-standard-bootstrap" title="Link to this heading"></a></h1>
 <p>Standard bootstrap resampling for Respondent-Driven Sampling (RDS) data.</p>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDSBoot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">respondent_id_col</span><span class="p">,</span> <span class="n">seed_id_col</span><span class="p">,</span> <span class="n">seed_col</span><span class="p">,</span> <span class="n">recruiter_id_col</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">resample_n</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDSboot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">respondent_id_col</span><span class="p">,</span> <span class="n">seed_id_col</span><span class="p">,</span> <span class="n">seed_col</span><span class="p">,</span> <span class="n">recruiter_id_col</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">resample_n</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -148,10 +148,10 @@
 </section>
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools.bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSBoot</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSboot</span>
 
 <span class="c1"># Bootstrap resampling</span>
-<span class="n">boot_results</span> <span class="o">=</span> <span class="n">RDSBoot</span><span class="p">(</span>
+<span class="n">boot_results</span> <span class="o">=</span> <span class="n">RDSboot</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">respondent_id_col</span><span class="o">=</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span>
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
@@ -207,7 +207,7 @@
 </section>
 <section id="id4">
 <h2>Example<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools.parallel_bootstrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSBootOptimizedParallel</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSBootOptimizedParallel</span>
 
 <span class="c1"># Parallel bootstrap resampling with 4 cores</span>
 <span class="n">boot_results</span> <span class="o">=</span> <span class="n">RDSBootOptimizedParallel</span><span class="p">(</span>
@@ -237,7 +237,7 @@
 </dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Chain bootstrap 1</span>
-<span class="n">res_chain1</span> <span class="o">=</span> <span class="n">RDSBoot</span><span class="p">(</span>
+<span class="n">res_chain1</span> <span class="o">=</span> <span class="n">RDSboot</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">respondent_id_col</span><span class="o">=</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span>
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
@@ -253,7 +253,7 @@
 </dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Chain bootstrap 2</span>
-<span class="n">res_chain2</span> <span class="o">=</span> <span class="n">RDSBoot</span><span class="p">(</span>
+<span class="n">res_chain2</span> <span class="o">=</span> <span class="n">RDSboot</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">respondent_id_col</span><span class="o">=</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span>
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
@@ -274,7 +274,7 @@
 </dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tree unidirectional 1</span>
-<span class="n">res_uni1</span> <span class="o">=</span> <span class="n">RDSBoot</span><span class="p">(</span>
+<span class="n">res_uni1</span> <span class="o">=</span> <span class="n">RDSboot</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">respondent_id_col</span><span class="o">=</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span>
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
@@ -290,7 +290,7 @@
 </dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tree unidirectional 2</span>
-<span class="n">res_uni2</span> <span class="o">=</span> <span class="n">RDSBoot</span><span class="p">(</span>
+<span class="n">res_uni2</span> <span class="o">=</span> <span class="n">RDSboot</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">respondent_id_col</span><span class="o">=</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span>
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
@@ -309,7 +309,7 @@
 </dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tree bidirectional 1</span>
-<span class="n">results_bi1</span> <span class="o">=</span> <span class="n">RDSBoot</span><span class="p">(</span>
+<span class="n">results_bi1</span> <span class="o">=</span> <span class="n">RDSboot</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">respondent_id_col</span><span class="o">=</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span>
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
@@ -325,7 +325,7 @@
 </dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tree bidirectional 2</span>
-<span class="n">results_bi2</span> <span class="o">=</span> <span class="n">RDSBoot</span><span class="p">(</span>
+<span class="n">results_bi2</span> <span class="o">=</span> <span class="n">RDSboot</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">respondent_id_col</span><span class="o">=</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span>
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>

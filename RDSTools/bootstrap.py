@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import warnings
 
-def RDSBoot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, type, resample_n):
+def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, type, resample_n):
     """
     Variance estimation with bootstrap chain and tree methods.
 
@@ -49,7 +49,7 @@ def RDSBoot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
     Examples
     --------
     # Preprocess data with RDSdata function
-    rds_data = RDSData(data = RDSToolsToyData,
+    rds_data = RDSdata(data = RDSToolsToyData,
                       unique_id = "ID",
                       redeemed_coupon = "CouponR",
                        issued_coupon = ["Coupon1",
@@ -57,8 +57,8 @@ def RDSBoot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
                                         "Coupon3"],
                       degree = "Degree")
 
-    # Run RDSBoot with rds_data
-    results = RDSBoot(data = rds_data,
+    # Run RDSboot with rds_data
+    results = RDSboot(data = rds_data,
                      respondent_id_col = 'ID',
                      seed_id_col = 'S_ID',
                      seed_col = 'SEED',
@@ -398,20 +398,20 @@ def RDSBoot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
 # Example usage:
 """
 import pandas as pd
-from rdstools import RDSData
+from RDSTools import RDSdata
 
 # Load data
 data = pd.read_csv("your_data.csv")
 
 # Create RDS data object
-rds_data = RDSData(data=data,
+rds_data = RDSdata(data=data,
                    unique_id="ID",
                    redeemed_coupon="CouponR",
                    issued_coupon=["Coupon1", "Coupon2", "Coupon3"],
                    degree="Degree")
 
 # Run bootstrap with column names
-results = RDSBoot(
+results = RDSboot(
     data=data,
     respondent_id_col='ID', 
     seed_id_col='S_ID',

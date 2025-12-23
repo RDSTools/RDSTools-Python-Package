@@ -54,11 +54,11 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="estimation.html">Estimation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsmean-descriptive-statistics">RDSMean - Descriptive Statistics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdstable-contingency-tables">RDSTable - Contingency Tables</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsregression-linear-and-logistic-regression">RDSRegression - Linear and Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsmean-descriptive-statistics">RDSmean - Descriptive Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdstable-contingency-tables">RDStable - Contingency Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdslm-linear-and-logistic-regression">RDSlm - Linear and Logistic Regression</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html">Sampling Variance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsboot-standard-bootstrap">RDSBoot - Standard Bootstrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsboot-standard-bootstrap">RDSboot - Standard Bootstrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsbootoptimizedparallel-parallel-bootstrap">RDSBootOptimizedParallel - Parallel Bootstrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#bootstrap-methods">Bootstrap Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#working-with-results">Working with Results</a></li>
@@ -94,10 +94,10 @@
              
   <section id="data-processing">
 <h1>Data Processing<a class="headerlink" href="#data-processing" title="Link to this heading"></a></h1>
-<p>The RDS_data function is used to process data collected through Respondent Driven Sampling (RDS). This function can extract the unique ID, redeemed coupon numbers, and issued coupon numbers from the original dataset. By processing this information, users can obtain the key data typically required for RDS related research.</p>
+<p>The RDSdata function is used to process data collected through Respondent Driven Sampling (RDS). This function can extract the unique ID, redeemed coupon numbers, and issued coupon numbers from the original dataset. By processing this information, users can obtain the key data typically required for RDS related research.</p>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDS_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">unique_id</span><span class="p">,</span> <span class="n">redeemed_coupon</span><span class="p">,</span> <span class="n">issued_coupons</span><span class="p">,</span> <span class="n">degree</span><span class="p">,</span> <span class="n">zero_degree</span><span class="o">=</span><span class="s2">&quot;hotdeck&quot;</span><span class="p">,</span> <span class="n">NA_degree</span><span class="o">=</span><span class="s2">&quot;hotdeck&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDSdata</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">unique_id</span><span class="p">,</span> <span class="n">redeemed_coupon</span><span class="p">,</span> <span class="n">issued_coupons</span><span class="p">,</span> <span class="n">degree</span><span class="p">,</span> <span class="n">zero_degree</span><span class="o">=</span><span class="s2">&quot;hotdeck&quot;</span><span class="p">,</span> <span class="n">NA_degree</span><span class="o">=</span><span class="s2">&quot;hotdeck&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -114,9 +114,9 @@
 </dd>
 <dt><strong>degree</strong></dt><dd><p>The column name of the column in the data that represents the degree (network size) of respondents.</p>
 </dd>
-<dt><strong>zero_degree</strong></dt><dd><p>This parameter is used to set the method for imputing zero values in the ‘degree’ variable. Three methods are available for selection: mean, median, and hotdeck. If this parameter is not set, the default imputation method is hotdeck.</p>
+<dt><strong>zero_degree</strong></dt><dd><p>This parameter is used to set the method for imputing zero values in the ‘degree’ variable. Four methods are available for selection: mean, median, hotdeck, and drop. If this parameter is not set, the default imputation method is hotdeck.</p>
 </dd>
-<dt><strong>NA_degree</strong></dt><dd><p>This parameter is used to set the method for imputing missing values in the ‘degree’ variable. There are three methods to choose from: mean, median, and hotdeck. If this parameter is not set, the default method is hotdeck.</p>
+<dt><strong>NA_degree</strong></dt><dd><p>This parameter is used to set the method for imputing missing values in the ‘degree’ variable. There are four methods to choose from: mean, median, hotdeck, and drop. If this parameter is not set, the default method is hotdeck.</p>
 </dd>
 </dl>
 </section>
@@ -144,13 +144,13 @@
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDS_data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSdata</span>
 
 <span class="c1"># Load your data</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;survey_data.csv&quot;</span><span class="p">)</span>
 
 <span class="c1"># Process RDS data</span>
-<span class="n">rds_data</span> <span class="o">=</span> <span class="n">RDS_data</span><span class="p">(</span>
+<span class="n">rds_data</span> <span class="o">=</span> <span class="n">RDSdata</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
     <span class="n">unique_id</span><span class="o">=</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span>
     <span class="n">redeemed_coupon</span><span class="o">=</span><span class="s2">&quot;CouponR&quot;</span><span class="p">,</span>
@@ -161,7 +161,7 @@
 <span class="p">)</span>
 
 <span class="c1"># For preprocessing use RDStoydata (matching R example)</span>
-<span class="n">rds_data</span> <span class="o">=</span> <span class="n">RDS_data</span><span class="p">(</span>
+<span class="n">rds_data</span> <span class="o">=</span> <span class="n">RDSdata</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">RDSToolsToyData</span><span class="p">,</span>
     <span class="n">unique_id</span><span class="o">=</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span>
     <span class="n">redeemed_coupon</span><span class="o">=</span><span class="s2">&quot;CouponR&quot;</span><span class="p">,</span>

@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from bootstrap import RDSBoot
+from bootstrap import RDSboot
 from parallel_bootstrap import RDSBootOptimizedParallel
 
 
@@ -293,7 +293,7 @@ class RDSTableResult:
 
         return "".join(formatted)
 
-def RDSTable(formula, data, weight=None, var_est=None, resample_n=None, margins=3, n_cores=None,
+def RDStable(formula, data, weight=None, var_est=None, resample_n=None, margins=3, n_cores=None,
              return_bootstrap_tables=False, return_node_counts=False):
     """
     1-2 way tables from an RDS study
@@ -373,7 +373,7 @@ def RDSTable(formula, data, weight=None, var_est=None, resample_n=None, margins=
     Examples
     --------
     # Preprocess data with RDSdata function
-    rds_data = RDSData(data = RDSToolsToyData,
+    rds_data = RDSdata(data = RDSToolsToyData,
                       unique_id = "ID",
                       redeemed_coupon = "CouponR",
                        issued_coupon = ["Coupon1",
@@ -381,8 +381,8 @@ def RDSTable(formula, data, weight=None, var_est=None, resample_n=None, margins=
                                         "Coupon3"],
                       degree = "Degree")
 
-    # Calculate RDStable using data preprocessed by RDSData
-    out = RDSTable("~Sex", data = rds_data, weight = 'DEGREE',
+    # Calculate RDStable using data preprocessed by RDSdata
+    out = RDStable("~Sex", data = rds_data, weight = 'DEGREE',
                    var_est = 'resample_chain1',
                    resample_n = 100)
     print(out)
@@ -510,7 +510,7 @@ def compute_bootstrap_one_way(variable, data, weight, var_est, resample_n, n_cor
             n_cores=n_cores
         )
     else:
-        boot_results = RDSBoot(
+        boot_results = RDSboot(
             data=data,
             respondent_id_col='ID',
             seed_id_col='S_ID',
@@ -691,7 +691,7 @@ def compute_bootstrap_two_way(var1, var2, data, weight, var_est, resample_n, mar
             n_cores=n_cores
         )
     else:
-        boot_results = RDSBoot(
+        boot_results = RDSboot(
             data=data,
             respondent_id_col='ID',
             seed_id_col='S_ID',

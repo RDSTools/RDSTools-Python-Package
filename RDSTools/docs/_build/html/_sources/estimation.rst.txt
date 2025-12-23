@@ -1,19 +1,19 @@
 Estimation
 ==========
 
-RDS Tools package has 3 estimation functions: (1) RDSMean, (2) RDSTable, (3) RDSRegression. Users can control the use of weights, selection of variance estimation, as well as the number of resamples if one of the variance estimation resampling approaches is used. Note, before using the estimation functions, please make sure that you preprocess data with RDS_data function.
+RDS Tools package has 3 estimation functions: (1) RDSmean, (2) RDStable, (3) RDSlm. Users can control the use of weights, selection of variance estimation, as well as the number of resamples if one of the variance estimation resampling approaches is used. Note, before using the estimation functions, please make sure that you preprocess data with RDSdata function.
 
-RDSMean - Descriptive Statistics
-================================
+RDSmean - Descriptive Statistics
+=================================
 
-For a continuous variable the basic information from RDSMean object contains point estimates, standard errors and information about the analysis. This function calculates means and standard errors for RDS data with optional weighting and different variance estimation methods.
+For a continuous variable the basic information from RDSmean object contains point estimates, standard errors and information about the analysis. This function calculates means and standard errors for RDS data with optional weighting and different variance estimation methods.
 
 Usage
 -----
 
 .. code-block:: python
 
-    RDSMean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, return_bootstrap_means=False, return_node_counts=False)
+    RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, return_bootstrap_means=False, return_node_counts=False)
 
 Arguments
 ---------
@@ -22,7 +22,7 @@ Arguments
     str. A variable of interest - name of the column in the data to calculate mean for.
 
 **data**
-    pandas.DataFrame. The output DataFrame from RDS_data function containing preprocessed RDS data.
+    pandas.DataFrame. The output DataFrame from RDSdata function containing preprocessed RDS data.
 
 **weight**
     str, optional. Name of the weight variable. User specified weights to calculate weighted mean and standard errors. When set to None the function calculates unweighted mean and standard errors. Default is None.
@@ -63,16 +63,16 @@ Examples
 
 .. code-block:: python
 
-    from RDSTools.mean import RDSMean
+    from RDSTools import RDSmean
 
     # Basic mean with naive variance estimation
-    result = RDSMean(x='Age', data=rds_data, var_est='naive')
+    result = RDSmean(x='Age', data=rds_data, var_est='naive')
 
     # Weighted analysis with inverse weights
-    result = RDSMean(x='Age', data=rds_data, weight='WEIGHT')
+    result = RDSmean(x='Age', data=rds_data, weight='WEIGHT')
 
     # Bootstrap method with resampling
-    result = RDSMean(
+    result = RDSmean(
         x='Age',
         data=rds_data,
         weight='WEIGHT',
@@ -81,7 +81,7 @@ Examples
     )
 
     # Parallel processing with 4 cores
-    result = RDSMean(
+    result = RDSmean(
         x='Age',
         data=rds_data,
         var_est='resample_tree_uni1',
@@ -90,7 +90,7 @@ Examples
     )
 
     # Return bootstrap means and node counts
-    result, bootstrap_means, node_counts = RDSMean(
+    result, bootstrap_means, node_counts = RDSmean(
         x='Age',
         data=rds_data,
         var_est='resample_tree_uni1',
@@ -99,8 +99,8 @@ Examples
         return_node_counts=True
     )
 
-RDSTable - Contingency Tables
-=============================
+RDStable - Contingency Tables
+==============================
 
 The package allows users to estimate one-way and two-way tables, using either naive or resampling approaches to estimate the standard errors of proportions. Creates contingency tables from RDS data with optional weighting and different variance estimation methods.
 
@@ -109,7 +109,7 @@ Usage
 
 .. code-block:: python
 
-    RDSTable(formula, data, weight=None, var_est=None, resample_n=None, margins=3, n_cores=None, return_bootstrap_tables=False, return_node_counts=False)
+    RDStable(formula, data, weight=None, var_est=None, resample_n=None, margins=3, n_cores=None, return_bootstrap_tables=False, return_node_counts=False)
 
 Arguments
 ---------
@@ -162,13 +162,13 @@ Examples
 
 .. code-block:: python
 
-    from RDSTools.table import RDSTable
+    from RDSTools import RDStable
 
     # One-way table
-    result = RDSTable(formula="~Sex", data=rds_data)
+    result = RDStable(formula="~Sex", data=rds_data)
 
     # Two-way table with bootstrap variance estimation
-    result = RDSTable(
+    result = RDStable(
         formula="~Sex+Race",
         data=rds_data,
         var_est='resample_chain1',
@@ -176,7 +176,7 @@ Examples
     )
 
     # Two-way table with row proportions and parallel processing
-    result = RDSTable(
+    result = RDStable(
         formula="~Sex+Race",
         data=rds_data,
         var_est='resample_tree_uni1',
@@ -186,7 +186,7 @@ Examples
     )
 
     # Return bootstrap tables and node counts
-    result, bootstrap_tables, node_counts = RDSTable(
+    result, bootstrap_tables, node_counts = RDStable(
         formula="~Sex",
         data=rds_data,
         var_est='resample_tree_uni1',
@@ -195,17 +195,17 @@ Examples
         return_node_counts=True
     )
 
-RDSRegression - Linear and Logistic Regression
-==============================================
+RDSlm - Linear and Logistic Regression
+=======================================
 
-Users can specify linear and logistic regression models using the RDSRegression function. The function performs a linear regression when the dependent variable is numeric and a logistic regression with binomial link function when the dependent variable is either character or factor.
+Users can specify linear and logistic regression models using the RDSlm function. The function performs a linear regression when the dependent variable is numeric and a logistic regression with binomial link function when the dependent variable is either character or factor.
 
 Usage
 -----
 
 .. code-block:: python
 
-    RDSRegression(data, formula, weight=None, var_est=None, resample_n=None, n_cores=None, return_bootstrap_estimates=False, return_node_counts=False)
+    RDSlm(data, formula, weight=None, var_est=None, resample_n=None, n_cores=None, return_bootstrap_estimates=False, return_node_counts=False)
 
 Arguments
 ---------
@@ -255,12 +255,12 @@ Examples
 
 .. code-block:: python
 
-    from RDSTools.regression import RDSRegression
+    from RDSTools import RDSlm
 
     # Linear regression (continuous dependent variable)
-    result = RDSRegression(
+    result = RDSlm(
         data=rds_data,
-        formula="Age ~ Sex",
+        formula="Age ~ C(Sex)",
         weight='WEIGHT',
         var_est='resample_chain1',
         resample_n=1000
@@ -268,27 +268,27 @@ Examples
 
     # Logistic regression (categorical dependent variable)
     # Make sure to convert to binary (0,1) if doesn't work.
-    result = RDSRegression(
+    result = RDSlm(
         data=rds_data,
-        formula="Sex ~ Age",
+        formula="Employed ~ Age + C(Sex)",
         weight='WEIGHT',
         var_est='resample_chain1',
         resample_n=100
     )
 
     # Parallel regression with multiple predictors
-    result = RDSRegression(
+    result = RDSlm(
         data=rds_data,
-        formula="Income ~ Age + Education",
+        formula="Income ~ Age + C(Education) + C(Race)",
         var_est='resample_tree_uni1',
         resample_n=1000,
         n_cores=4
     )
 
     # Return bootstrap estimates and node counts
-    result, bootstrap_estimates, node_counts = RDSRegression(
+    result, bootstrap_estimates, node_counts = RDSlm(
         data=rds_data,
-        formula="Age ~ Sex",
+        formula="Age ~ C(Sex)",
         var_est='resample_tree_uni1',
         resample_n=1000,
         return_bootstrap_estimates=True,

@@ -5,8 +5,8 @@ These examples work with the included RDSToolsToyData.rda file.
 QUICK START
 ===========
 from RDSTools import (
-    RDS_data,
-    create_participant_map,
+    RDSdata,
+    RDSmap,
     get_available_seeds,
     get_available_waves,
     print_map_info
@@ -19,7 +19,7 @@ data = pyreadr.read_r('RDSToolsToyData.rda')
 data = pd.DataFrame(data['RDSToolsToyData'])
 
 # Process
-processed_data = RDS_data(
+processed_data = RDSdata(
     data=data,
     unique_id="ID",
     redeemed_coupon="CouponR",
@@ -37,15 +37,15 @@ seeds = get_available_seeds(processed_data)
 waves = get_available_waves(processed_data)
 
 # Create and open map
-create_participant_map(processed_data, seeds, waves, open_browser=True)
+RDSmap(processed_data, seeds, waves, open_browser=True)
 
 ===========
 """
 
 import pandas as pd
 from RDSTools import (
-    RDS_data,
-    create_participant_map,
+    RDSdata,
+    RDSmap,
     get_available_seeds,
     get_available_waves,
     print_map_info
@@ -88,7 +88,7 @@ def basic_example():
     print(f"Loaded {len(raw_data)} rows of raw data\n")
 
     # Process into RDS format
-    processed_data = RDS_data(
+    processed_data = RDSdata(
         data=raw_data,
         unique_id="ID",
         redeemed_coupon="CouponR",
@@ -108,7 +108,7 @@ def basic_example():
     print(f"Creating map with {len(seeds)} seeds and {len(waves)} waves...\n")
 
     # Create map with all data
-    m = create_participant_map(
+    m = RDSmap(
         data=processed_data,
         seed_ids=seeds,
         waves=waves,
@@ -130,7 +130,7 @@ def single_seed_example():
 
     # Load and process data
     raw_data = load_toy_data()
-    processed_data = RDS_data(
+    processed_data = RDSdata(
         data=raw_data,
         unique_id="ID",
         redeemed_coupon="CouponR",
@@ -150,7 +150,7 @@ def single_seed_example():
     print(f"Visualizing seed '{selected_seed}' across {len(waves)} waves\n")
 
     # Create map for single seed
-    m = create_participant_map(
+    m = RDSmap(
         data=processed_data,
         seed_ids=[selected_seed],
         waves=waves,
@@ -172,7 +172,7 @@ def first_three_waves_example():
 
     # Load and process data
     raw_data = load_toy_data()
-    processed_data = RDS_data(
+    processed_data = RDSdata(
         data=raw_data,
         unique_id="ID",
         redeemed_coupon="CouponR",
@@ -189,7 +189,7 @@ def first_three_waves_example():
     print(f"Visualizing {len(seeds)} seeds across waves {waves}\n")
 
     # Create map
-    m = create_participant_map(
+    m = RDSmap(
         data=processed_data,
         seed_ids=seeds,
         waves=waves,
@@ -211,7 +211,7 @@ def multiple_seeds_example():
 
     # Load and process data
     raw_data = load_toy_data()
-    processed_data = RDS_data(
+    processed_data = RDSdata(
         data=raw_data,
         unique_id="ID",
         redeemed_coupon="CouponR",
@@ -255,7 +255,7 @@ def custom_coordinates_example():
 
     # Load and process data
     raw_data = load_toy_data()
-    processed_data = RDS_data(
+    processed_data = RDSdata(
         data=raw_data,
         unique_id="ID",
         redeemed_coupon="CouponR",
@@ -275,7 +275,7 @@ def custom_coordinates_example():
     print(f"Using coordinate columns: 'Latitude' and 'Longitude'\n")
 
     # Create map specifying coordinate columns explicitly
-    m = create_participant_map(
+    m = RDSmap(
         data=processed_data,
         seed_ids=seeds,
         waves=waves,
@@ -300,7 +300,7 @@ def explore_data_only():
 
     # Load and process data
     raw_data = load_toy_data()
-    processed_data = RDS_data(
+    processed_data = RDSdata(
         data=raw_data,
         unique_id="ID",
         redeemed_coupon="CouponR",

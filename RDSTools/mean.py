@@ -109,7 +109,7 @@ class RDSResult(pd.DataFrame):
         return RDSResult
 
 
-def RDSMean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, return_bootstrap_means=False,
+def RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, return_bootstrap_means=False,
             return_node_counts=False):
     """
     Descriptive statistics in an RDS study
@@ -122,7 +122,7 @@ def RDSMean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, r
     x : str
         A variable of interest
     data : pandas.DataFrame
-        The output DataFrame from RDS_data
+        The output DataFrame from RDSdata
     weight : str, optional
         Name of the weight variable.
         User specified weights to calculate weighted mean and standard errors.
@@ -294,8 +294,8 @@ def RDSMean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, r
             )
         else:
             # Use original bootstrap
-            from bootstrap import RDSBoot
-            boot_out = RDSBoot(
+            from bootstrap import RDSboot
+            boot_out = RDSboot(
                 data=data,
                 respondent_id_col='ID',
                 seed_id_col='S_ID',
@@ -366,8 +366,8 @@ def RDSMean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, r
             )
         else:
             # Use original bootstrap
-            from bootstrap import RDSBoot
-            boot_out = RDSBoot(
+            from bootstrap import RDSboot
+            boot_out = RDSboot(
                 data=data,
                 respondent_id_col='ID',
                 seed_id_col='S_ID',

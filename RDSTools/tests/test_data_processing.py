@@ -1,5 +1,5 @@
 import pandas as pd
-from RDSTools import RDS_data
+from RDSTools import RDSdata
 
 
 def test_rds_data_works():
@@ -11,7 +11,7 @@ def test_rds_data_works():
     })
 
     # YOU call your function
-    result = RDS_data(data, 'ID', 'coupon', [], 'degree')
+    result = RDSdata(data, 'ID', 'coupon', [], 'degree')
 
     # YOU decide what to check
     assert len(result) == 3

@@ -47,11 +47,11 @@
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processing.html">Data Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="estimation.html">Estimation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsmean-descriptive-statistics">RDSMean - Descriptive Statistics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdstable-contingency-tables">RDSTable - Contingency Tables</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsregression-linear-and-logistic-regression">RDSRegression - Linear and Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsmean-descriptive-statistics">RDSmean - Descriptive Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdstable-contingency-tables">RDStable - Contingency Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdslm-linear-and-logistic-regression">RDSlm - Linear and Logistic Regression</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html">Sampling Variance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsboot-standard-bootstrap">RDSBoot - Standard Bootstrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsboot-standard-bootstrap">RDSboot - Standard Bootstrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsbootoptimizedparallel-parallel-bootstrap">RDSBootOptimizedParallel - Parallel Bootstrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#bootstrap-methods">Bootstrap Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#working-with-results">Working with Results</a></li>
@@ -87,7 +87,7 @@
              
   <section id="rds-tools-documentation">
 <h1>RDS Tools Documentation<a class="headerlink" href="#rds-tools-documentation" title="Link to this heading"></a></h1>
-<p>RDS Tools is a Python package for Respondent-Driven Sampling (RDS) analysis and bootstrap resampling.</p>
+<p>RDS Tools is a Python package for Respondent-Driven Sampling (RDS) analysis and bootstrap resampling with parallel processing capabilities.</p>
 <section id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
@@ -104,6 +104,8 @@
 <li class="toctree-l2"><a class="reference internal" href="quickstart.html#basic-usage">Basic Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quickstart.html#process-rds-data">Process RDS Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quickstart.html#calculate-means">Calculate Means</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#create-tables">Create Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#run-regression-models">Run Regression Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quickstart.html#network-visualization">Network Visualization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quickstart.html#geographic-mapping">Geographic Mapping</a></li>
 </ul>
@@ -116,21 +118,21 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="estimation.html">Estimation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsmean-descriptive-statistics">RDSMean - Descriptive Statistics</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsmean-descriptive-statistics">RDSmean - Descriptive Statistics</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="estimation.html#usage">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="estimation.html#arguments">Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="estimation.html#returns">Returns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="estimation.html#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdstable-contingency-tables">RDSTable - Contingency Tables</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdstable-contingency-tables">RDStable - Contingency Tables</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="estimation.html#id1">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="estimation.html#id2">Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="estimation.html#id3">Returns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="estimation.html#id4">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsregression-linear-and-logistic-regression">RDSRegression - Linear and Logistic Regression</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdslm-linear-and-logistic-regression">RDSlm - Linear and Logistic Regression</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="estimation.html#id5">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="estimation.html#id6">Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="estimation.html#id7">Returns</a></li>
@@ -138,7 +140,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html">Sampling Variance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsboot-standard-bootstrap">RDSBoot - Standard Bootstrap</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsboot-standard-bootstrap">RDSboot - Standard Bootstrap</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="sampling_variance.html#usage">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sampling_variance.html#arguments">Arguments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sampling_variance.html#returns">Returns</a></li>
@@ -163,6 +165,7 @@
 <li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="visualization.html#recruitment-networks">Recruitment Networks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="visualization.html#mapping">Mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualization.html#helper-functions">Helper Functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html">Performance Enhancement</a><ul>
@@ -173,9 +176,14 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="examples.html#complete-workflow-example">Complete Workflow Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#descriptive-statistics-examples">Descriptive Statistics Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#table-examples">Table Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#regression-examples">Regression Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples.html#network-visualization-examples">Network Visualization Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples.html#geographic-mapping-examples">Geographic Mapping Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#bootstrap-examples">Bootstrap Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples.html#performance-comparison">Performance Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#complete-analysis-pipeline">Complete Analysis Pipeline</a></li>
 </ul>
 </li>
 </ul>
@@ -183,7 +191,7 @@
 </section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>rds-tools
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>RDSTools
 pip<span class="w"> </span>install<span class="w"> </span>.
 </pre></div>
 </div>
@@ -195,11 +203,11 @@ pip<span class="w"> </span>install<span class="w"> </span>.
 <section id="quick-start">
 <h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDS_data</span><span class="p">,</span> <span class="n">RDSMean</span><span class="p">,</span> <span class="n">RDSTable</span><span class="p">,</span> <span class="n">RDSRegression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSdata</span><span class="p">,</span> <span class="n">RDSmean</span><span class="p">,</span> <span class="n">RDStable</span><span class="p">,</span> <span class="n">RDSlm</span>
 
 <span class="c1"># Process RDS data</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;survey_data.csv&quot;</span><span class="p">)</span>
-<span class="n">rds_data</span> <span class="o">=</span> <span class="n">RDS_data</span><span class="p">(</span>
+<span class="n">rds_data</span> <span class="o">=</span> <span class="n">RDSdata</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
     <span class="n">unique_id</span><span class="o">=</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span>
     <span class="n">redeemed_coupon</span><span class="o">=</span><span class="s2">&quot;CouponR&quot;</span><span class="p">,</span>
@@ -207,15 +215,76 @@ pip<span class="w"> </span>install<span class="w"> </span>.
     <span class="n">degree</span><span class="o">=</span><span class="s2">&quot;Degree&quot;</span>
 <span class="p">)</span>
 
-<span class="c1"># Calculate means</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">RDSMean</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;age&#39;</span><span class="p">,</span>
+<span class="c1"># Calculate means with bootstrap variance</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">RDSmean</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
+    <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>  <span class="c1"># parallel processing</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+<span class="c1"># Create frequency tables</span>
+<span class="n">table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
+    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;~Sex&#39;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
+    <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
 <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+<span class="c1"># Fit regression models</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">RDSlm</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
+    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;Income ~ Age + C(Sex) + C(Race)&#39;</span><span class="p">,</span>
+    <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><strong>Data Processing</strong></dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">RDSdata()</span></code> - Process RDS survey data and create network structure</p></li>
+<li><p>Automatic wave detection and seed identification</p></li>
+<li><p>Flexible degree imputation methods (mean, median, hotdeck, drop)</p></li>
+</ul>
+</dd>
+<dt><strong>Estimation</strong></dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">RDSmean()</span></code> - Calculate means with RDS-adjusted standard errors</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RDStable()</span></code> - Generate one-way and two-way frequency tables</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RDSlm()</span></code> - Linear and logistic regression models</p></li>
+<li><p>Weighted and unweighted analyses</p></li>
+<li><p>Naive and bootstrap variance estimation</p></li>
+</ul>
+</dd>
+<dt><strong>Bootstrap Variance</strong></dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">RDSboot()</span></code> - Six bootstrap resampling methods</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RDSBootOptimizedParallel()</span></code> - Parallel bootstrap for performance</p></li>
+<li><p>Chain, tree unidirectional, and tree bidirectional methods</p></li>
+</ul>
+</dd>
+<dt><strong>Visualization</strong></dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">RDSnetgraph()</span></code> - Network visualizations with multiple layouts</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RDSmap()</span></code> - Interactive geographic maps</p></li>
+<li><p>Helper functions: <code class="docutils literal notranslate"><span class="pre">get_available_seeds()</span></code>, <code class="docutils literal notranslate"><span class="pre">get_available_waves()</span></code>, <code class="docutils literal notranslate"><span class="pre">print_map_info()</span></code></p></li>
+</ul>
+</dd>
+<dt><strong>Performance</strong></dt><dd><ul class="simple">
+<li><p>Parallel processing support with <code class="docutils literal notranslate"><span class="pre">n_cores</span></code> parameter</p></li>
+<li><p>Up to 10x speedup with 8 cores</p></li>
+<li><p>Optimized algorithms for large datasets</p></li>
+</ul>
+</dd>
+</dl>
 </section>
 </section>
 <section id="indices-and-tables">

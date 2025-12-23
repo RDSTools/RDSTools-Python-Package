@@ -48,11 +48,11 @@
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_processing.html">Data Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="estimation.html">Estimation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsmean-descriptive-statistics">RDSMean - Descriptive Statistics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdstable-contingency-tables">RDSTable - Contingency Tables</a></li>
-<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsregression-linear-and-logistic-regression">RDSRegression - Linear and Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdsmean-descriptive-statistics">RDSmean - Descriptive Statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdstable-contingency-tables">RDStable - Contingency Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="estimation.html#rdslm-linear-and-logistic-regression">RDSlm - Linear and Logistic Regression</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html">Sampling Variance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsboot-standard-bootstrap">RDSBoot - Standard Bootstrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsboot-standard-bootstrap">RDSboot - Standard Bootstrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#rdsbootoptimizedparallel-parallel-bootstrap">RDSBootOptimizedParallel - Parallel Bootstrap</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#bootstrap-methods">Bootstrap Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#working-with-results">Working with Results</a></li>
@@ -97,7 +97,7 @@
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use parallel processing for faster bootstrap</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">RDSMean</span><span class="p">(</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">RDSmean</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;income&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
@@ -108,9 +108,9 @@
 </div>
 <p>Parallel processing is available for all bootstrap-based statistical functions:</p>
 <ul class="simple">
-<li><p>RDSMean() with bootstrap variance estimation</p></li>
-<li><p>RDSTable() with bootstrap variance estimation</p></li>
-<li><p>RDSRegression() with bootstrap variance estimation</p></li>
+<li><p>RDSmean() with bootstrap variance estimation</p></li>
+<li><p>RDStable() with bootstrap variance estimation</p></li>
+<li><p>RDSlm() with bootstrap variance estimation</p></li>
 </ul>
 </section>
 <section id="performance-comparison">
@@ -158,7 +158,7 @@
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
 <p>All estimation functions support the n_cores parameter:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Parallel mean calculation</span>
-<span class="n">mean_result</span> <span class="o">=</span> <span class="n">RDSMean</span><span class="p">(</span>
+<span class="n">mean_result</span> <span class="o">=</span> <span class="n">RDSmean</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;age&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
@@ -167,7 +167,7 @@
 <span class="p">)</span>
 
 <span class="c1"># Parallel table calculation</span>
-<span class="n">table_result</span> <span class="o">=</span> <span class="n">RDSTable</span><span class="p">(</span>
+<span class="n">table_result</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
     <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;~Sex+Race&quot;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
@@ -176,9 +176,9 @@
 <span class="p">)</span>
 
 <span class="c1"># Parallel regression</span>
-<span class="n">regression_result</span> <span class="o">=</span> <span class="n">RDSRegression</span><span class="p">(</span>
+<span class="n">regression_result</span> <span class="o">=</span> <span class="n">RDSlm</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Income ~ Age + Education&quot;</span><span class="p">,</span>
+    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Age ~ Sex&quot;</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>

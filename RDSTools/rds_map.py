@@ -259,7 +259,7 @@ def print_map_info(data: pd.DataFrame, lat_column: str = 'Latitude',
     print("=" * 50 + "\n")
 
 
-def create_participant_map(
+def RDSmap(
     data: pd.DataFrame,
     seed_ids: Union[List[str], List[int]],
     waves: List[int],
@@ -279,7 +279,7 @@ def create_participant_map(
     Parameters
     ----------
     data : pd.DataFrame
-        RDS data processed by RDS_data function. Must contain columns:
+        RDS data processed by RDSdata function. Must contain columns:
         - ID: Unique participant identifier
         - S_ID: Seed ID for each participant
         - WAVE: Recruitment wave number
@@ -315,23 +315,23 @@ def create_participant_map(
     Examples
     --------
     >>> import pandas as pd
-    >>> from rdstools import RDS_data, create_participant_map
+    >>> from RDSTools import RDSdata, RDSmap
     >>>
     >>> # Load and process data
     >>> raw_data = pd.read_csv('survey_data.csv')
-    >>> rds_data = RDS_data(raw_data, unique_id='ID', redeemed_coupon='Coupon',
+    >>> rds_data = RDSdata(raw_data, unique_id='ID', redeemed_coupon='Coupon',
     ...                      issued_coupons=['C1', 'C2', 'C3'], degree='NetworkSize')
     >>>
     >>> # Create and save map (default: participant_map.html)
-    >>> m = create_participant_map(rds_data, seed_ids=['1', '2'], waves=[0, 1, 2, 3])
+    >>> m = RDSmap(rds_data, seed_ids=['1', '2'], waves=[0, 1, 2, 3])
     >>> # Map saved to 'participant_map.html' - open this file in your browser
     >>>
     >>> # Save to specific file
-    >>> m = create_participant_map(rds_data, seed_ids=['1', '2'], waves=[0, 1, 2, 3],
+    >>> m = RDSmap(rds_data, seed_ids=['1', '2'], waves=[0, 1, 2, 3],
     ...                            output_file='my_map.html')
     >>>
     >>> # Create and open in browser automatically
-    >>> m = create_participant_map(rds_data, seed_ids=['1', '2'], waves=[0, 1, 2, 3],
+    >>> m = RDSmap(rds_data, seed_ids=['1', '2'], waves=[0, 1, 2, 3],
     ...                            open_browser=True)
     """
     # Input validation
