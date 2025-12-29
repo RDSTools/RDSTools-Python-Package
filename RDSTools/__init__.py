@@ -17,6 +17,7 @@ from .rds_map import (
     print_map_info
 )
 from .network_graph import RDSnetgraph
+from .load_data import load_toy_data, get_toy_data_path, RDSToolsToyData
 
 __version__ = "0.1.0"
 __all__ = [
@@ -30,5 +31,8 @@ __all__ = [
     "get_available_seeds",
     "get_available_waves",
     "print_map_info",
-    "RDSnetgraph"
+    "RDSnetgraph",
+    "load_toy_data",
+    "get_toy_data_path",
+    "RDSToolsToyData"
 ]

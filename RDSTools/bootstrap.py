@@ -50,7 +50,10 @@ def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
     Examples
     --------
     # Preprocess data with RDSdata function
-    rds_data = RDSdata(data = RDSToolsToyData,
+    from RDSTools import load_toy_data
+
+    data = load_toy_data()
+    rds_data = RDSdata(data = data,
                       unique_id = "ID",
                       redeemed_coupon = "CouponR",
                        issued_coupon = ["Coupon1",

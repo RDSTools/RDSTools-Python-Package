@@ -50,8 +50,8 @@ Returns
     * **S_ID** (str): Indicates the ID of the seed corresponding to the node. The value of the seed is itself
     * **R_ID** (str): Indicates the ID of the node who recruits the node joining the survey. The value of seed is NA
     * **SEED** (int): Values are only 0 and 1, they are used to indicate whether the node is seed or not. If it is seed, the value is 1, if not, it is 0.
-    * **CT_T_CP** (int): Indicates how many coupons have been issued to this node to invite others to join the survey
-    * **CT_T_CP_USED** (int): Indicates how many coupons issued to this node have been used to invite others to join the survey.
+    * **CP_ISSUED** (int): Indicates how many coupons have been issued to this node to invite others to join the survey
+    * **CP_USED** (int): Indicates how many coupons issued to this node have been used to invite others to join the survey.
 
 Example
 -------
@@ -75,7 +75,9 @@ Example
         NA_degree='hotdeck'
     )
 
-    # For preprocessing use RDStoydata (matching R example)
+    # For preprocessing use RDSToolsToyData
+    RDSToolsToyData = pd.read_csv("RDSToolsToyData.csv")
+
     rds_data = RDSdata(
         data=RDSToolsToyData,
         unique_id="ID",

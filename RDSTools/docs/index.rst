@@ -38,13 +38,18 @@ Quick Start
 
 .. code-block:: python
 
-    import pandas as pd
+    from RDSTools import load_toy_data
     from RDSTools import RDSdata, RDSmean, RDStable, RDSlm
 
+    # Load the included example dataset
+    toy_data = load_toy_data()
+
     # Process RDS data
-    data = pd.read_csv("survey_data.csv")
+    # Or load your own data:
+    # import pandas as pd
+    # data = pd.read_csv("survey_data.csv")
     rds_data = RDSdata(
-        data=data,
+        data=toy_data,
         unique_id="ID",
         redeemed_coupon="CouponR",
         issued_coupons=["Coupon1", "Coupon2", "Coupon3"],

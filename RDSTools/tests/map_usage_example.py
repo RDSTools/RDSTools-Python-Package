@@ -1,22 +1,19 @@
 """
 Example usage of the RDS map module using the RDSTools toy dataset.
-These examples work with the included RDSToolsToyData.rda file.
 
 QUICK START
 ===========
 from RDSTools import (
+    load_toy_data,
     RDSdata,
     RDSmap,
     get_available_seeds,
     get_available_waves,
     print_map_info
 )
-import pandas as pd
-import pyreadr
 
-# Load toy data
-data = pyreadr.read_r('RDSToolsToyData.rda')
-data = pd.DataFrame(data['RDSToolsToyData'])
+# Load toy data (now built into RDSTools!)
+data = load_toy_data()
 
 # Process
 processed_data = RDSdata(
@@ -42,36 +39,14 @@ RDSmap(processed_data, seeds, waves, open_browser=True)
 ===========
 """
 
-import pandas as pd
 from RDSTools import (
+    load_toy_data,
     RDSdata,
     RDSmap,
     get_available_seeds,
     get_available_waves,
     print_map_info
 )
-
-# For loading the .rda file (optional - can also use pre-exported CSV)
-try:
-    import pyreadr
-    HAS_PYREADR = True
-except ImportError:
-    HAS_PYREADR = False
-    print("Note: Install pyreadr to load .rda files directly: pip install pyreadr")
-
-
-def load_toy_data():
-    """Load the RDSTools toy dataset."""
-    if HAS_PYREADR:
-        # Load directly from .rda file
-        data = pyreadr.read_r('RDSToolsToyData.rda')
-        data = data['RDSToolsToyData']
-        data = pd.DataFrame(data)
-    else:
-        # Load from pre-exported CSV
-        data = pd.read_csv('RDSToolsToyData.csv')
-
-    return data
 
 
 def basic_example():
@@ -83,7 +58,7 @@ def basic_example():
     print("BASIC EXAMPLE: Discovering and Mapping All Data")
     print("=" * 60)
 
-    # Load toy data
+    # Load toy data (built into RDSTools)
     raw_data = load_toy_data()
     print(f"Loaded {len(raw_data)} rows of raw data\n")
 
@@ -232,7 +207,7 @@ def multiple_seeds_example():
     print(f"Across {len(waves)} waves\n")
 
     # Create map
-    m = create_participant_map(
+    m = RDSmap(
         data=processed_data,
         seed_ids=selected_seeds,
         waves=waves,
@@ -279,8 +254,8 @@ def custom_coordinates_example():
         data=processed_data,
         seed_ids=seeds,
         waves=waves,
-        lat_column='Latitude',  # Default, but shown explicitly
-        lon_column='Longitude',  # Default, but shown explicitly
+        lat='Latitude',  # Default, but shown explicitly
+        long='Longitude',  # Default, but shown explicitly
         output_file='custom_coords_map.html',
         open_browser=True
     )
@@ -318,7 +293,7 @@ def explore_data_only():
     waves = get_available_waves(processed_data)
 
     # Additional analysis
-    print("Detailed Breakdown:")
+    print("\nDetailed Breakdown:")
     print(f"  • Total seeds: {len(seeds)}")
     print(f"  • Seed IDs: {', '.join(seeds)}")
     print(f"  • Total waves: {len(waves)}")

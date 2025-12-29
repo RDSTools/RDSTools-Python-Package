@@ -101,14 +101,19 @@
 <section id="basic-usage">
 <h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h2>
 <p>Import the necessary modules:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSdata</span><span class="p">,</span> <span class="n">RDSmean</span><span class="p">,</span> <span class="n">RDStable</span><span class="p">,</span> <span class="n">RDSlm</span><span class="p">,</span> <span class="n">RDSnetgraph</span><span class="p">,</span> <span class="n">RDSmap</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_toy_data</span><span class="p">,</span> <span class="n">RDSdata</span><span class="p">,</span> <span class="n">RDSmean</span><span class="p">,</span> <span class="n">RDStable</span><span class="p">,</span> <span class="n">RDSlm</span><span class="p">,</span> <span class="n">RDSnetgraph</span><span class="p">,</span> <span class="n">RDSmap</span>
 </pre></div>
 </div>
 <p>Load your data:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;your_survey_data.csv&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># To use toy data (recommended for testing):</span>
 </pre></div>
 </div>
+<p>toy_data = load_toy_data()</p>
+<p># Or to use your own data:
+# import pandas as pd</p>
+<blockquote>
+<div><p># data = pd.read_csv(“your_survey_data.csv”)</p>
+</div></blockquote>
 </section>
 <section id="process-rds-data">
 <h2>Process RDS Data<a class="headerlink" href="#process-rds-data" title="Link to this heading"></a></h2>

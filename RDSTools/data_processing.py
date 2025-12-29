@@ -5,24 +5,25 @@ import warnings
 
 def RDSdata(data, unique_id, redeemed_coupon, issued_coupons, degree, zero_degree="hotdeck", NA_degree="hotdeck"):
     """
-    Data processing in an RDS study.
+    Processing respondent driven sampling data.
 
     Parameters
     ----------
     data : pandas.DataFrame
-        Should contain ID numbers for the nodes in the social network, corresponding redeemed coupon number, and issued coupon number
+        Should contain an ID variable for sample case, corresponding redeemed coupon code, and issued coupon code.
     unique_id : str
-        The column name of the column in the data that represents the ID numbers for the nodes in the social network
+        The column name of the column with respondent IDs.
     redeemed_coupon : str
-        The column name of the column in the data that represents coupon numbers of coupons redeemed by respondents when participating in the survey
+        The column name of the column with coupon codes redeemed by respondents when participating in the study.
     issued_coupons : list of str
-        The column name of the column in the data that represents the coupon numbers of coupons issued to respondents
+        The column name of the column with coupon codes issued to respondents (i.e., coupons given to respondents to recruit their peers). If multiple coupons are issued, list all coupon code variables.
     degree : str
-        The column name of the column in the data that represents the degree of the respondents
+        The column name of the column with degree (i.e., network size) reported by respondents.
     zero_degree : str, optional
-        This parameter is used to set the method for imputing zero values in the 'degree' variable. Three methods are available for selection: mean, median, and hotdeck. If this parameter is not set, the default imputation method is hotdeck
+        Used to set the method for handling zero values in the 'degree' variable. Three available methods are: mean imputation, median imputation, and hotdeck imputation. The default is hotdeck.
     NA_degree : str, optional
-        This parameter is used to set the method for imputing missing values in the 'degree' variable. There are three methods to choose from: mean, median, and hotdeck. If this parameter is not set, the default method is hotdeck.
+        Used to set the method for handling missing values in the 'degree' variable. Three available methods are: mean imputation, median imputation, and hotdeck imputation. The default is hotdeck
+
 
     Returns
     -------
@@ -30,34 +31,37 @@ def RDSdata(data, unique_id, redeemed_coupon, issued_coupons, degree, zero_degre
         A data frame with all original variables except ID and new RDS related information:
 
         ID : str
-            Renamed unique_id variable
+            Renamed unique_id
         R_CP : str
-            Renamed redeemed coupon variable
+            Renamed redeemed coupon ID
         T_CP1 - T_CPn : str
-            Renamed issued coupon variable
+            Renamed issued_coupon
         DEGREE : original type
             Original degree variable
         DEGREE_IMP : float
-            Imputed degree variable
+            Degree variable with missing 0 and/or missing values treated.
         WEIGHT : float
             Weight variable calculated as 1/DEGREE_IMP
         WAVE : int
-            Indicates which round the node was introduced into the survey, and the value of Seed is 0
+            Indicates the wave a node was introduced into the data. The value of Seed is 0
         S_ID : str
-            Indicates the ID of the seed corresponding to the node. The value of the seed is itself
+            Indicates the ID of the seed corresponding to the node. For seeds, the value is same as the value of ID.
         R_ID : str
-            Indicates the ID of the node who recruits the node joining the survey. The value of seed is NA
+            Indicates the ID of the recruiter node. For seeds, the value is NA because there is no recruiter for seeds among respondents.
         SEED : int
             Values are only 0 and 1, they are used to indicate whether the node is seed or not. If it is seed, the value is 1, if not, it is 0.
-        CT_T_CP : int
-            Indicates how many coupons have been issued to this node to invite others to join the survey
-        CT_T_CP_USED : int
-            Indicates how many coupons issued to this node have been used to invite others to join the survey.
+        CP_ISSUED : int
+            The count of issued coupons to the respondent
+        CP_USED  : int
+            The count of used coupons (i.e., coupons redeemed by recruits) among the issued coupons.
 
     Examples
     --------
-    # for preprocessing use RDStoydata
-    rds_data = RDSdata(data = RDSToolsToyData,
+    # Using the built-in toy dataset
+    from RDSTools import load_toy_data
+
+    data = load_toy_data()
+    rds_data = RDSdata(data = data,
                        unique_id = "ID",
                        redeemed_coupon = "CouponR",
                        issued_coupons = ["Coupon1",
@@ -135,13 +139,13 @@ def RDSdata(data, unique_id, redeemed_coupon, issued_coupons, degree, zero_degre
         )
 
     # ---- 5. Calculate Coupon Statistics Columns ----
-    df_final["CT_T_CP"] = df_final[coupon_columns].notna().sum(axis=1)
+    df_final["CP_ISSUED"] = df_final[coupon_columns].notna().sum(axis=1)
     used_coupons = set(df_final["R_CP"].dropna())
 
     def count_used_coupons(row):
         return sum(coupon in used_coupons for coupon in row[coupon_columns] if pd.notna(coupon))
 
-    df_final["CT_T_CP_USED"] = df_final.apply(count_used_coupons, axis=1)
+    df_final["CP_USED"] = df_final.apply(count_used_coupons, axis=1)
 
     # ---- 6. Impute DEGREE Column ----
     if "DEGREE" not in df_final.columns:

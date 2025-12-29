@@ -264,10 +264,11 @@ def RDSnetgraph(
     Examples
     --------
     >>> import pandas as pd
-    >>> from RDSTools import RDSdata, RDSnetgraph, get_available_seeds, get_available_waves
+    >>> from RDSTools import load_toy_data, RDSdata, RDSnetgraph, get_available_seeds, get_available_waves
     >>>
     >>> # Preprocess data with RDSdata function
-    >>> rds_data = RDSdata(data = RDSToolsToyData,
+    >>> data = load_toy_data()
+    >>> rds_data = RDSdata(data = data,
     ...                     unique_id = "ID",
     ...                     redeemed_coupon = "CouponR",
     ...                     issued_coupon = ["Coupon1", "Coupon2", "Coupon3"],

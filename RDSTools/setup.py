@@ -20,8 +20,13 @@ setup(
         "regression",
         "parallel_bootstrap",
         "rds_map",
-        "network_graph"
+        "network_graph",
+        "load_data"
     ],
+    include_package_data=True,
+    package_data={
+        '': ['*.csv'],
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
@@ -46,7 +51,7 @@ setup(
             "black",
             "flake8",
         ],
-            "viz": [
+        "viz": [
             "pygraphviz>=1.7",           # Optional for Tree layout
         ],
     },

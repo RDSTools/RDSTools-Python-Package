@@ -8,12 +8,17 @@ Here's a complete example showing how to analyze RDS data from start to finish::
 
     import pandas as pd
     from RDSTools import (
-        RDSdata, RDSmean, RDStable, RDSlm,
+        load_toy_data, RDSdata, RDSmean, RDStable, RDSlm,
         RDSnetgraph, RDSmap, get_available_seeds, print_map_info
     )
 
     # 1. Load and examine your data
-    data = pd.read_csv("rds_survey.csv")
+    # Option A: Use the included example dataset
+    toy_data = load_toy_data()
+
+    # Option B: Load your own data
+    #
+    # data = pd.read_csv("rds_survey.csv")
     print(data.columns)
     print(f"Total participants: {len(data)}")
 
@@ -362,7 +367,7 @@ Here's a complete pipeline from data loading to final results::
 
     import pandas as pd
     from RDSTools import (
-        RDSdata, RDSmean, RDStable, RDSlm,
+        load_toy_data, RDSdata, RDSmean, RDStable, RDSlm,
         RDSnetgraph, RDSmap, get_available_seeds
     )
 

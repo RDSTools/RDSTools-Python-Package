@@ -8,12 +8,16 @@ Basic Usage
 
 Import the necessary modules::
 
-    from RDSTools import RDSdata, RDSmean, RDStable, RDSlm, RDSnetgraph, RDSmap
+    from RDSTools import load_toy_data, RDSdata, RDSmean, RDStable, RDSlm, RDSnetgraph, RDSmap
 
 Load your data::
 
-    import pandas as pd
-    data = pd.read_csv("your_survey_data.csv")
+    # To use toy data (recommended for testing):
+toy_data = load_toy_data()
+
+# Or to use your own data:
+# import pandas as pd
+    # data = pd.read_csv("your_survey_data.csv")
 
 Process RDS Data
 ----------------
@@ -136,4 +140,3 @@ Create interactive maps showing participant locations::
         output_file='participant_map.html',
         open_browser=True
     )
-

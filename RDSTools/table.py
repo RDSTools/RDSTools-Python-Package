@@ -375,7 +375,10 @@ def RDStable(x, data, weight=None, var_est=None, resample_n=None, margins=3, n_c
     Examples
     --------
     # Preprocess data with RDSdata function
-    rds_data = RDSdata(data = RDSToolsToyData,
+    from RDSTools import load_toy_data
+
+    data = load_toy_data()
+    rds_data = RDSdata(data = data,
                       unique_id = "ID",
                       redeemed_coupon = "CouponR",
                        issued_coupon = ["Coupon1",

@@ -135,8 +135,8 @@
 <li><p><strong>S_ID</strong> (str): Indicates the ID of the seed corresponding to the node. The value of the seed is itself</p></li>
 <li><p><strong>R_ID</strong> (str): Indicates the ID of the node who recruits the node joining the survey. The value of seed is NA</p></li>
 <li><p><strong>SEED</strong> (int): Values are only 0 and 1, they are used to indicate whether the node is seed or not. If it is seed, the value is 1, if not, it is 0.</p></li>
-<li><p><strong>CT_T_CP</strong> (int): Indicates how many coupons have been issued to this node to invite others to join the survey</p></li>
-<li><p><strong>CT_T_CP_USED</strong> (int): Indicates how many coupons issued to this node have been used to invite others to join the survey.</p></li>
+<li><p><strong>CP_ISSUED</strong> (int): Indicates how many coupons have been issued to this node to invite others to join the survey</p></li>
+<li><p><strong>CP_USED</strong> (int): Indicates how many coupons issued to this node have been used to invite others to join the survey.</p></li>
 </ul>
 </dd>
 </dl>
@@ -160,7 +160,9 @@
     <span class="n">NA_degree</span><span class="o">=</span><span class="s1">&#39;hotdeck&#39;</span>
 <span class="p">)</span>
 
-<span class="c1"># For preprocessing use RDStoydata (matching R example)</span>
+<span class="c1"># For preprocessing use RDSToolsToyData</span>
+<span class="n">RDSToolsToyData</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;RDSToolsToyData.csv&quot;</span><span class="p">)</span>
+
 <span class="n">rds_data</span> <span class="o">=</span> <span class="n">RDSdata</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">RDSToolsToyData</span><span class="p">,</span>
     <span class="n">unique_id</span><span class="o">=</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span>

@@ -5,17 +5,18 @@ A Python package for Respondent-Driven Sampling (RDS) analysis and bootstrap res
 ## Table of Contents
 
 1. [Installation](#installation)
-2. [Data Processing](#data-processing)
-3. [Estimation](#estimation)
+2. [Example Dataset](#example-dataset)
+3. [Data Processing](#data-processing)
+4. [Estimation](#estimation)
    - [Means](#means)
    - [Tables](#tables)
    - [Regression](#regression)
-4. [Sampling Variance](#sampling-variance)
-5. [Visualization](#visualization)
+5. [Sampling Variance](#sampling-variance)
+6. [Visualization](#visualization)
    - [Recruitment Networks](#recruitment-networks)
    - [Geographic Mapping](#geographic-mapping)
-6. [Performance Enhancement](#performance-enhancement)
-7. [Requirements](#requirements)
+7. [Performance Enhancement](#performance-enhancement)
+8. [Requirements](#requirements)
 
 ## Installation
 
@@ -27,6 +28,55 @@ pip install .
 For development:
 ```bash
 pip install -e .
+```
+
+## Example Dataset
+
+RDSTools includes a toy dataset for testing and learning. You can load it in three ways:
+
+### Method 1: Using load_toy_data() (Recommended)
+
+```python
+from RDSTools import load_toy_data, RDSdata
+
+# Load the example dataset
+toy_data = load_toy_data()
+print(f"Loaded {len(toy_data)} observations")
+
+# Process it with RDSdata
+rds_data = RDSdata(
+    data=toy_data,
+    unique_id="ID",
+    redeemed_coupon="CouponR",
+    issued_coupons=["Coupon1", "Coupon2", "Coupon3"],
+    degree="Degree"
+)
+```
+
+### Method 2: Using the RDSToolsToyData variable
+
+```python
+from RDSTools import RDSToolsToyData, RDSdata
+
+# The dataset is automatically loaded
+rds_data = RDSdata(
+    data=RDSToolsToyData,
+    unique_id="ID",
+    redeemed_coupon="CouponR",
+    issued_coupons=["Coupon1", "Coupon2", "Coupon3"],
+    degree="Degree"
+)
+```
+
+### Method 3: Getting the file path
+
+```python
+from RDSTools import get_toy_data_path
+import pandas as pd
+
+# Get the path and load manually
+path = get_toy_data_path()
+toy_data = pd.read_csv(path)
 ```
 
 ## Data Processing
@@ -452,21 +502,32 @@ With 252 observations:
 ## Complete Example Workflow
 
 ```python
-import pandas as pd
 from RDSTools import (
-    RDSdata, RDSboot, RDSmean, RDStable, RDSlm,
+    load_toy_data, RDSdata, RDSboot, RDSmean, RDStable, RDSlm,
     RDSmap, RDSnetgraph, get_available_seeds, get_available_waves, print_map_info
 )
 
 # 1. Load and process data
-data = pd.read_csv("survey_data.csv")
+# Option A: Use the included toy dataset
+toy_data = load_toy_data()
 rds_data = RDSdata(
-    data=data,
+    data=toy_data,
     unique_id="ID",
     redeemed_coupon="CouponR",
     issued_coupons=["Coupon1", "Coupon2", "Coupon3"],
     degree="Degree"
 )
+
+# Option B: Load your own data
+# import pandas as pd
+# data = pd.read_csv("survey_data.csv")
+# rds_data = RDSdata(
+#     data=data,
+#     unique_id="ID",
+#     redeemed_coupon="CouponR",
+#     issued_coupons=["Coupon1", "Coupon2", "Coupon3"],
+#     degree="Degree"
+# )
 
 # 2. Calculate weighted means
 age_mean = RDSmean(
@@ -561,6 +622,12 @@ m = RDSmap(
 - **`get_available_seeds()`** - Get list of seed IDs in data
 - **`get_available_waves()`** - Get list of wave numbers in data
 - **`print_map_info()`** - Display mapping information summary
+
+### Data Utilities
+
+- **`load_toy_data()`** - Load the included example dataset
+- **`get_toy_data_path()`** - Get the file path to the example dataset
+- **`RDSToolsToyData`** - Pre-loaded example dataset variable
 
 ### Advanced Functions
 
