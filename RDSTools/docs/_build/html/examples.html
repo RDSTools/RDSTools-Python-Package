@@ -132,7 +132,7 @@
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
 <span class="p">)</span>
@@ -140,20 +140,20 @@
 
 <span class="c1"># 4. Generate frequency tables</span>
 <span class="n">sex_table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;~Sex&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">sex_table</span><span class="p">)</span>
 
 <span class="c1"># Two-way table</span>
 <span class="n">cross_table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">margins</span><span class="o">=</span><span class="mi">1</span>  <span class="c1"># row proportions</span>
 <span class="p">)</span>
@@ -164,7 +164,7 @@
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;Income ~ Age + C(Sex) + C(Race)&#39;</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">6</span>
 <span class="p">)</span>
@@ -187,7 +187,7 @@
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_chain1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;chain1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
 <span class="p">)</span>
 </pre></div>
@@ -196,7 +196,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">result</span><span class="p">,</span> <span class="n">bootstrap_means</span><span class="p">,</span> <span class="n">node_counts</span> <span class="o">=</span> <span class="n">RDSmean</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">return_bootstrap_means</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">return_node_counts</span><span class="o">=</span><span class="kc">True</span>
@@ -214,16 +214,16 @@
 <p>One-way table with different margin options:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simple one-way table</span>
 <span class="n">table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;~Sex&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span>
 <span class="p">)</span>
 
 <span class="c1"># Weighted one-way table with bootstrap</span>
 <span class="n">table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;~Race&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Race&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">500</span>
 <span class="p">)</span>
 </pre></div>
@@ -231,21 +231,21 @@
 <p>Two-way tables with different proportions:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Cell proportions (default)</span>
 <span class="n">table_cell</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">margins</span><span class="o">=</span><span class="mi">3</span>
 <span class="p">)</span>
 
 <span class="c1"># Row proportions</span>
 <span class="n">table_row</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">margins</span><span class="o">=</span><span class="mi">1</span>
 <span class="p">)</span>
 
 <span class="c1"># Column proportions</span>
 <span class="n">table_col</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">margins</span><span class="o">=</span><span class="mi">2</span>
 <span class="p">)</span>
@@ -266,7 +266,7 @@
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;Income ~ Age + C(Sex) + C(Education) + C(Race)&#39;</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
 <span class="p">)</span>
@@ -277,7 +277,7 @@
 <span class="n">model</span> <span class="o">=</span> <span class="n">RDSlm</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;Employed ~ Age + C(Sex) + C(Education)&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_chain1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;chain1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">500</span>
 <span class="p">)</span>
 </pre></div>
@@ -286,7 +286,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="p">,</span> <span class="n">boot_estimates</span><span class="p">,</span> <span class="n">node_counts</span> <span class="o">=</span> <span class="n">RDSlm</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;Income ~ Age + C(Sex)&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">return_bootstrap_estimates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">return_node_counts</span><span class="o">=</span><span class="kc">True</span>
@@ -331,7 +331,7 @@
     <span class="n">seed_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">],</span>
     <span class="n">waves</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
     <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;Kamada-Kawai&#39;</span><span class="p">,</span>
-    <span class="n">group_by</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span><span class="p">,</span>
+    <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span><span class="p">,</span>
     <span class="n">node_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
     <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
 <span class="p">)</span>
@@ -342,7 +342,7 @@
     <span class="n">seed_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">],</span>
     <span class="n">waves</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
     <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;Spring&#39;</span><span class="p">,</span>
-    <span class="n">group_by</span><span class="o">=</span><span class="s1">&#39;Race&#39;</span><span class="p">,</span>
+    <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;Race&#39;</span><span class="p">,</span>
     <span class="n">node_size</span><span class="o">=</span><span class="mi">40</span>
 <span class="p">)</span>
 </pre></div>
@@ -352,7 +352,7 @@
 <h2>Geographic Mapping Examples<a class="headerlink" href="#geographic-mapping-examples" title="Link to this heading"></a></h2>
 <p>Check available mapping data:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Print comprehensive map information</span>
-<span class="n">print_map_info</span><span class="p">(</span><span class="n">rds_data</span><span class="p">,</span> <span class="n">lat_column</span><span class="o">=</span><span class="s1">&#39;Latitude&#39;</span><span class="p">,</span> <span class="n">lon_column</span><span class="o">=</span><span class="s1">&#39;Longitude&#39;</span><span class="p">)</span>
+<span class="n">print_map_info</span><span class="p">(</span><span class="n">rds_data</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="s1">&#39;Latitude&#39;</span><span class="p">,</span> <span class="n">long</span><span class="o">=</span><span class="s1">&#39;Longitude&#39;</span><span class="p">)</span>
 
 <span class="c1"># Get available seeds and waves</span>
 <span class="n">seeds</span> <span class="o">=</span> <span class="n">get_available_seeds</span><span class="p">(</span><span class="n">rds_data</span><span class="p">)</span>
@@ -375,8 +375,8 @@
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">seed_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">],</span>
     <span class="n">waves</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
-    <span class="n">lat_column</span><span class="o">=</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span>
-    <span class="n">lon_column</span><span class="o">=</span><span class="s1">&#39;long&#39;</span><span class="p">,</span>
+    <span class="n">lat</span><span class="o">=</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span>
+    <span class="n">long</span><span class="o">=</span><span class="s1">&#39;long&#39;</span><span class="p">,</span>
     <span class="n">output_file</span><span class="o">=</span><span class="s1">&#39;geographic_map.html&#39;</span><span class="p">,</span>
     <span class="n">zoom_start</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
     <span class="n">open_browser</span><span class="o">=</span><span class="kc">True</span>
@@ -396,7 +396,7 @@
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
     <span class="n">seed_col</span><span class="o">=</span><span class="s1">&#39;SEED&#39;</span><span class="p">,</span>
     <span class="n">recruiter_id_col</span><span class="o">=</span><span class="s1">&#39;R_ID&#39;</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
 <span class="p">)</span>
 
@@ -416,7 +416,7 @@
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
     <span class="n">seed_col</span><span class="o">=</span><span class="s1">&#39;SEED&#39;</span><span class="p">,</span>
     <span class="n">recruiter_id_col</span><span class="o">=</span><span class="s1">&#39;R_ID&#39;</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">8</span>
 <span class="p">)</span>
@@ -484,25 +484,25 @@
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
 <span class="p">)</span>
 
 <span class="c1"># Frequency tables</span>
 <span class="n">sex_table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;~Sex&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
 <span class="p">)</span>
 
 <span class="n">race_sex_table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">margins</span><span class="o">=</span><span class="mi">1</span>
 <span class="p">)</span>
@@ -512,7 +512,7 @@
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;Income ~ Age + C(Sex) + C(Race) + C(Education)&#39;</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
 <span class="p">)</span>
@@ -526,7 +526,7 @@
     <span class="n">seed_ids</span><span class="o">=</span><span class="n">seeds</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span>
     <span class="n">waves</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
     <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;Spring&#39;</span><span class="p">,</span>
-    <span class="n">group_by</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span><span class="p">,</span>
+    <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span><span class="p">,</span>
     <span class="n">save_path</span><span class="o">=</span><span class="s1">&#39;network.png&#39;</span>
 <span class="p">)</span>
 

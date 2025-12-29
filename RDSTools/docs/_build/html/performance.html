@@ -100,7 +100,7 @@
 <span class="n">result</span> <span class="o">=</span> <span class="n">RDSmean</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;income&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">8</span>  <span class="c1"># Use 8 cores for parallel processing</span>
 <span class="p">)</span>
@@ -161,16 +161,16 @@
 <span class="n">mean_result</span> <span class="o">=</span> <span class="n">RDSmean</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;age&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
 <span class="p">)</span>
 
 <span class="c1"># Parallel table calculation</span>
 <span class="n">table_result</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;~Sex+Race&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;~Sex+Race&quot;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
 <span class="p">)</span>
@@ -179,7 +179,7 @@
 <span class="n">regression_result</span> <span class="o">=</span> <span class="n">RDSlm</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Age ~ Sex&quot;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
 <span class="p">)</span>

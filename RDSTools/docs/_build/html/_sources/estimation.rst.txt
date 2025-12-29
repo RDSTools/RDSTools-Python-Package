@@ -28,7 +28,7 @@ Arguments
     str, optional. Name of the weight variable. User specified weights to calculate weighted mean and standard errors. When set to None the function calculates unweighted mean and standard errors. Default is None.
 
 **var_est**
-    str, optional. One of the six bootstrap types or the delta (naive) method. By default the function calculates naive standard errors. Variance estimation options include 'naive' or bootstrap methods like 'resample_chain1', 'resample_chain2', 'resample_tree_uni1', 'resample_tree_uni2', 'resample_tree_bi1', 'resample_tree_bi2'. Default is None (naive).
+    str, optional. One of the six bootstrap types or the delta (naive) method. By default the function calculates naive standard errors. Variance estimation options include 'naive' or bootstrap methods like 'chain1', 'chain2', 'tree_uni1', 'tree_uni2', 'tree_bi1', 'tree_bi2'. Default is None (naive).
 
 **resample_n**
     int, optional. Specifies the number of resample iterations. Note that this argument is None when var_est = 'naive'. Required for bootstrap methods, default 300.
@@ -76,7 +76,7 @@ Examples
         x='Age',
         data=rds_data,
         weight='WEIGHT',
-        var_est='resample_chain1',
+        var_est='chain1',
         resample_n=1000
     )
 
@@ -84,7 +84,7 @@ Examples
     result = RDSmean(
         x='Age',
         data=rds_data,
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000,
         n_cores=4
     )
@@ -93,7 +93,7 @@ Examples
     result, bootstrap_means, node_counts = RDSmean(
         x='Age',
         data=rds_data,
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000,
         return_bootstrap_means=True,
         return_node_counts=True
@@ -109,13 +109,13 @@ Usage
 
 .. code-block:: python
 
-    RDStable(formula, data, weight=None, var_est=None, resample_n=None, margins=3, n_cores=None, return_bootstrap_tables=False, return_node_counts=False)
+    RDStable(x, data, weight=None, var_est=None, resample_n=None, margins=3, n_cores=None, return_bootstrap_tables=False, return_node_counts=False)
 
 Arguments
 ---------
 
-**formula**
-    str. For a 2-way table, 2 categorical variables of interest. The variables should be coded as factors. For a 1-way table, specify one variable. (e.g., "~Sex" for one-way, "~Sex+Race" for two-way).
+**x**
+    str. For a 2-way table, 2 categorical variables of interest. The variables should be coded as factors. For a 1-way table, specify one variable. Single variables can be specified with or without tilde (e.g., "Sex" or "~Sex" for one-way), but two-way tables must use tilde (e.g., "~Sex+Race").
 
 **data**
     pandas.DataFrame. The output from RDSdata function containing preprocessed RDS data.
@@ -124,7 +124,7 @@ Arguments
     str, optional. Name of the weight variable. A user specified weights to calculate weighted proportions and standard errors. When set to None the function calculates unweighted proportions and standard errors. Default is None.
 
 **var_est**
-    str, optional. One of the six bootstrap types or the delta (naive) method. By default the function calculates naive standard errors. Variance estimation options include 'naive' or bootstrap methods like 'resample_chain1', 'resample_chain2', 'resample_tree_uni1', 'resample_tree_uni2', 'resample_tree_bi1', 'resample_tree_bi2'. Default is None (naive).
+    str, optional. One of the six bootstrap types or the delta (naive) method. By default the function calculates naive standard errors. Variance estimation options include 'naive' or bootstrap methods like 'chain1', 'chain2', 'tree_uni1', 'tree_uni2', 'tree_bi1', 'tree_bi2'. Default is None (naive).
 
 **resample_n**
     int, optional. Specifies the number of resample iterations. Note that this argument is None when var_est = 'naive'. Required for bootstrap methods, default 300.
@@ -165,21 +165,21 @@ Examples
     from RDSTools import RDStable
 
     # One-way table
-    result = RDStable(formula="~Sex", data=rds_data)
+    result = RDStable(x="~Sex", data=rds_data)
 
     # Two-way table with bootstrap variance estimation
     result = RDStable(
-        formula="~Sex+Race",
+        x="~Sex+Race",
         data=rds_data,
-        var_est='resample_chain1',
+        var_est='chain1',
         resample_n=100
     )
 
     # Two-way table with row proportions and parallel processing
     result = RDStable(
-        formula="~Sex+Race",
+        x="~Sex+Race",
         data=rds_data,
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000,
         margins=1,  # row proportions
         n_cores=4
@@ -187,9 +187,9 @@ Examples
 
     # Return bootstrap tables and node counts
     result, bootstrap_tables, node_counts = RDStable(
-        formula="~Sex",
+        x="~Sex",
         data=rds_data,
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000,
         return_bootstrap_tables=True,
         return_node_counts=True
@@ -220,7 +220,7 @@ Arguments
     str, optional. Name of the weight variable. A user specified weights to calculate weighted point estimates and standard errors. When set to None the function calculates unweighted point estimates and standard errors. Default is None.
 
 **var_est**
-    str, optional. One of the six bootstrap types or the delta (naive) method. By default the function calculates naive standard errors. Variance estimation options include 'naive' or bootstrap methods like 'resample_chain1', 'resample_chain2', 'resample_tree_uni1', 'resample_tree_uni2', 'resample_tree_bi1', 'resample_tree_bi2'. Default is None (naive).
+    str, optional. One of the six bootstrap types or the delta (naive) method. By default the function calculates naive standard errors. Variance estimation options include 'naive' or bootstrap methods like 'chain1', 'chain2', 'tree_uni1', 'tree_uni2', 'tree_bi1', 'tree_bi2'. Default is None (naive).
 
 **resample_n**
     int, optional. Specifies the number of resample iterations. Note that this argument is None when var_est = 'naive'. Required for bootstrap methods, default 300.
@@ -262,7 +262,7 @@ Examples
         data=rds_data,
         formula="Age ~ C(Sex)",
         weight='WEIGHT',
-        var_est='resample_chain1',
+        var_est='chain1',
         resample_n=1000
     )
 
@@ -272,7 +272,7 @@ Examples
         data=rds_data,
         formula="Employed ~ Age + C(Sex)",
         weight='WEIGHT',
-        var_est='resample_chain1',
+        var_est='chain1',
         resample_n=100
     )
 
@@ -280,7 +280,7 @@ Examples
     result = RDSlm(
         data=rds_data,
         formula="Income ~ Age + C(Education) + C(Race)",
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000,
         n_cores=4
     )
@@ -289,7 +289,7 @@ Examples
     result, bootstrap_estimates, node_counts = RDSlm(
         data=rds_data,
         formula="Age ~ C(Sex)",
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000,
         return_bootstrap_estimates=True,
         return_node_counts=True

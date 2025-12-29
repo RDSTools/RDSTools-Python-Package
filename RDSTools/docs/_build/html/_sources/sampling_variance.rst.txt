@@ -34,7 +34,7 @@ Arguments
     str. Name of the column containing recruiter IDs - A variable indicating recruiter ID
 
 **type**
-    str. One of the six types of bootstrap methods: (1) resample_chain1, (2) resample_chain2, (3) resample_tree_uni1, (4) resample_tree_uni2, (5) resample_tree_bi1, (6) resample_tree_bi2.
+    str. One of the six types of bootstrap methods: (1) chain1, (2) chain2, (3) tree_uni1, (4) tree_uni2, (5) tree_bi1, (6) tree_bi2.
 
 **resample_n**
     int. A specified number of resamples
@@ -62,7 +62,7 @@ Example
         seed_id_col='S_ID',
         seed_col='SEED',
         recruiter_id_col='R_ID',
-        type='resample_tree_uni1',
+        type='tree_uni1',
         resample_n=1000
     )
 
@@ -97,7 +97,7 @@ Arguments
     str. Name of the column containing recruiter IDs - A variable indicating recruiter ID
 
 **type**
-    str. One of the six types of bootstrap methods: (1) resample_chain1, (2) resample_chain2, (3) resample_tree_uni1, (4) resample_tree_uni2, (5) resample_tree_bi1, (6) resample_tree_bi2.
+    str. One of the six types of bootstrap methods: (1) chain1, (2) chain2, (3) tree_uni1, (4) tree_uni2, (5) tree_bi1, (6) tree_bi2.
 
 **resample_n**
     int. A specified number of resamples
@@ -128,7 +128,7 @@ Example
         seed_id_col='S_ID',
         seed_col='SEED',
         recruiter_id_col='R_ID',
-        type='resample_tree_uni1',
+        type='tree_uni1',
         resample_n=1000,
         n_cores=4
     )
@@ -136,14 +136,14 @@ Example
 Bootstrap Methods
 =================
 
-Six bootstrap methods are available: resample_chain1, resample_chain2, resample_tree_uni1, resample_tree_uni2, resample_tree_bi1, and resample_tree_bi2.
+Six bootstrap methods are available: chain1, chain2, tree_uni1, tree_uni2, tree_bi1, and tree_bi2.
 
 In all resampling functions, versions 1 and 2 differ as 1 focuses on the number of seeds in a given resample to be consistent with the original sample, while 2 keeps the overall sample size of a given resample to be at least equal to the original sample.
 
 Bootstrap Chain Methods
 -----------------------
 
-**resample_chain1**
+**chain1**
     (n) seeds are selected using Simple Random Sampling with Replacement (SRSWR), with all nodes in the chains created by resampled seeds retained. The number of selected seeds equals the number of seeds in the original data frame. Since the seeds are selected with replacement, the resulting data frame will contain exactly the same number of seeds as the original, but a different number of recruits.
 
 .. code-block:: python
@@ -155,11 +155,11 @@ Bootstrap Chain Methods
         seed_id_col='S_ID',
         seed_col='SEED',
         recruiter_id_col='R_ID',
-        type='resample_chain1',
+        type='chain1',
         resample_n=1000
     )
 
-**resample_chain2**
+**chain2**
     1 seed is sampled using SRSWR, with all nodes retained in the chain. The process continues until the sample size of a given resample (n_r) is at least equal to the original sample size (n_s). Selects only 1 seed at each iteration. The resulting number of seeds will vary, but the number of recruits will be equal or larger to the original number of recruits.
 
 .. code-block:: python
@@ -171,14 +171,14 @@ Bootstrap Chain Methods
         seed_id_col='S_ID',
         seed_col='SEED',
         recruiter_id_col='R_ID',
-        type='resample_chain2',
+        type='chain2',
         resample_n=1000
     )
 
 Resample Tree Unidirectional Methods
 ------------------------------------
 
-**resample_tree_uni1**
+**tree_uni1**
     (n) seeds are selected using SRSWR. For each selected seed, the function (A) checks its recruit counts, (B) performs SRSWR on the recruits counts from all recruits identified in (A), and (C) for each sampled recruit, repeats steps A and B. Steps A, B, and C are performed until the last wave of the chain. Since all seeds are selected with replacement, the resulting number of seeds will equal the number of seeds from the original data, but the number of recruits will vary.
 
 .. code-block:: python
@@ -190,11 +190,11 @@ Resample Tree Unidirectional Methods
         seed_id_col='S_ID',
         seed_col='SEED',
         recruiter_id_col='R_ID',
-        type='resample_tree_uni1',
+        type='tree_uni1',
         resample_n=1000
     )
 
-**resample_tree_uni2**
+**tree_uni2**
     Instead of selecting (n) seeds, the function selects one seed at a time and then performs steps A, B, and C for each wave of respondents. Samples only 1 seed at a time and then performs sampling with replacement from each wave of the seed's recruits. The resulting data frame will have at least the original sample size, but a varying number of seeds.
 
 .. code-block:: python
@@ -206,14 +206,14 @@ Resample Tree Unidirectional Methods
         seed_id_col='S_ID',
         seed_col='SEED',
         recruiter_id_col='R_ID',
-        type='resample_tree_uni2',
+        type='tree_uni2',
         resample_n=1000
     )
 
 Bootstrap Tree Bidirectional Methods
 ------------------------------------
 
-**resample_tree_bi1**
+**tree_bi1**
     Selects (n) nodes from the recruitment chains using SRSWR. For each selected node, it (A) checks its connected nodes, (B) performs SRSWR on all connected nodes identified in (A), and (C) for each selected node, performs steps A and B, but does not resample already resampled nodes. (D) Steps A, B, and C are repeated until the end of the chain. The function starts from multiple nodes, depending on the number of seeds.
 
 .. code-block:: python
@@ -225,12 +225,12 @@ Bootstrap Tree Bidirectional Methods
         seed_id_col='S_ID',
         seed_col='SEED',
         recruiter_id_col='R_ID',
-        type='resample_tree_bi1',
+        type='tree_bi1',
         resample_n=1000
     )
 
-**resample_tree_bi2**
-    1 node is selected using SRSWR from the recruitment chain and steps A, B, C, and D are performed as in resample_tree_bi1. The function samples one node at a time and then evaluates whether the resulting sample is at least equal to the size of the original data. If not, the function continues resampling until the desired number of respondents is achieved.
+**tree_bi2**
+    1 node is selected using SRSWR from the recruitment chain and steps A, B, C, and D are performed as in tree_bi1. The function samples one node at a time and then evaluates whether the resulting sample is at least equal to the size of the original data. If not, the function continues resampling until the desired number of respondents is achieved.
 
 .. code-block:: python
 
@@ -241,7 +241,7 @@ Bootstrap Tree Bidirectional Methods
         seed_id_col='S_ID',
         seed_col='SEED',
         recruiter_id_col='R_ID',
-        type='resample_tree_bi2',
+        type='tree_bi2',
         resample_n=1000
     )
 
@@ -279,7 +279,7 @@ For large datasets or high numbers of resamples, consider using the parallel ver
         seed_id_col='S_ID',
         seed_col='SEED',
         recruiter_id_col='R_ID',
-        type='resample_tree_uni1',
+        type='tree_uni1',
         resample_n=10000,  # Large number of resamples
         n_cores=8  # Use 8 cores for parallel processing
     )

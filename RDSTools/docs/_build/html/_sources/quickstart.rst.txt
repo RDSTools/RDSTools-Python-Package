@@ -36,7 +36,7 @@ Calculate means with bootstrap resampling::
     mean_results = RDSmean(
         x='age',
         data=rds_processed,
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000
     )
 
@@ -45,7 +45,7 @@ For faster processing, use parallel bootstrap::
     mean_results = RDSmean(
         x='age',
         data=rds_processed,
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000,
         n_cores=4  # Use 4 cores for parallel processing
     )
@@ -56,17 +56,17 @@ Create Tables
 Generate frequency tables for categorical variables::
 
     sex_table = RDStable(
-        formula='~Sex',
+        x='~Sex',
         data=rds_processed,
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000
     )
 
     # Two-way table
     cross_table = RDStable(
-        formula='~Sex+Race',
+        x='~Sex+Race',
         data=rds_processed,
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000,
         margins=1  # row proportions
     )
@@ -80,7 +80,7 @@ Fit linear and logistic regression models::
     model = RDSlm(
         data=rds_processed,
         formula='Income ~ Age + C(Sex) + C(Race)',
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000,
         n_cores=4
     )
@@ -89,7 +89,7 @@ Fit linear and logistic regression models::
     logit_model = RDSlm(
         data=rds_processed,
         formula='Employed ~ Age + C(Education)',
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000
     )
 
@@ -114,7 +114,7 @@ Create network graphs to visualize recruitment relationships::
         seed_ids=['1', '2'],
         waves=[0, 1, 2],
         layout='Spring',
-        group_by='Sex'
+        variable='Sex'
     )
 
 Geographic Mapping

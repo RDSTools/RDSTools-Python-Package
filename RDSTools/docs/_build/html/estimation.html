@@ -126,7 +126,7 @@
 </dd>
 <dt><strong>weight</strong></dt><dd><p>str, optional. Name of the weight variable. User specified weights to calculate weighted mean and standard errors. When set to None the function calculates unweighted mean and standard errors. Default is None.</p>
 </dd>
-<dt><strong>var_est</strong></dt><dd><p>str, optional. One of the six bootstrap types or the delta (naive) method. By default the function calculates naive standard errors. Variance estimation options include ‘naive’ or bootstrap methods like ‘resample_chain1’, ‘resample_chain2’, ‘resample_tree_uni1’, ‘resample_tree_uni2’, ‘resample_tree_bi1’, ‘resample_tree_bi2’. Default is None (naive).</p>
+<dt><strong>var_est</strong></dt><dd><p>str, optional. One of the six bootstrap types or the delta (naive) method. By default the function calculates naive standard errors. Variance estimation options include ‘naive’ or bootstrap methods like ‘chain1’, ‘chain2’, ‘tree_uni1’, ‘tree_uni2’, ‘tree_bi1’, ‘tree_bi2’. Default is None (naive).</p>
 </dd>
 <dt><strong>resample_n</strong></dt><dd><p>int, optional. Specifies the number of resample iterations. Note that this argument is None when var_est = ‘naive’. Required for bootstrap methods, default 300.</p>
 </dd>
@@ -169,7 +169,7 @@
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_chain1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;chain1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
 <span class="p">)</span>
 
@@ -177,7 +177,7 @@
 <span class="n">result</span> <span class="o">=</span> <span class="n">RDSmean</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
 <span class="p">)</span>
@@ -186,7 +186,7 @@
 <span class="n">result</span><span class="p">,</span> <span class="n">bootstrap_means</span><span class="p">,</span> <span class="n">node_counts</span> <span class="o">=</span> <span class="n">RDSmean</span><span class="p">(</span>
     <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">return_bootstrap_means</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">return_node_counts</span><span class="o">=</span><span class="kc">True</span>
@@ -200,20 +200,20 @@
 <p>The package allows users to estimate one-way and two-way tables, using either naive or resampling approaches to estimate the standard errors of proportions. Creates contingency tables from RDS data with optional weighting and different variance estimation methods.</p>
 <section id="id1">
 <h2>Usage<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDStable</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">var_est</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resample_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">margins</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_cores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_bootstrap_tables</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_node_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDStable</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">var_est</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resample_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">margins</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_cores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_bootstrap_tables</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_node_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="id2">
 <h2>Arguments<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 <dl class="simple">
-<dt><strong>formula</strong></dt><dd><p>str. For a 2-way table, 2 categorical variables of interest. The variables should be coded as factors. For a 1-way table, specify one variable. (e.g., “~Sex” for one-way, “~Sex+Race” for two-way).</p>
+<dt><strong>x</strong></dt><dd><p>str. For a 2-way table, 2 categorical variables of interest. The variables should be coded as factors. For a 1-way table, specify one variable. Single variables can be specified with or without tilde (e.g., “Sex” or “~Sex” for one-way), but two-way tables must use tilde (e.g., “~Sex+Race”).</p>
 </dd>
 <dt><strong>data</strong></dt><dd><p>pandas.DataFrame. The output from RDSdata function containing preprocessed RDS data.</p>
 </dd>
 <dt><strong>weight</strong></dt><dd><p>str, optional. Name of the weight variable. A user specified weights to calculate weighted proportions and standard errors. When set to None the function calculates unweighted proportions and standard errors. Default is None.</p>
 </dd>
-<dt><strong>var_est</strong></dt><dd><p>str, optional. One of the six bootstrap types or the delta (naive) method. By default the function calculates naive standard errors. Variance estimation options include ‘naive’ or bootstrap methods like ‘resample_chain1’, ‘resample_chain2’, ‘resample_tree_uni1’, ‘resample_tree_uni2’, ‘resample_tree_bi1’, ‘resample_tree_bi2’. Default is None (naive).</p>
+<dt><strong>var_est</strong></dt><dd><p>str, optional. One of the six bootstrap types or the delta (naive) method. By default the function calculates naive standard errors. Variance estimation options include ‘naive’ or bootstrap methods like ‘chain1’, ‘chain2’, ‘tree_uni1’, ‘tree_uni2’, ‘tree_bi1’, ‘tree_bi2’. Default is None (naive).</p>
 </dd>
 <dt><strong>resample_n</strong></dt><dd><p>int, optional. Specifies the number of resample iterations. Note that this argument is None when var_est = ‘naive’. Required for bootstrap methods, default 300.</p>
 </dd>
@@ -248,21 +248,21 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDStable</span>
 
 <span class="c1"># One-way table</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s2">&quot;~Sex&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;~Sex&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">)</span>
 
 <span class="c1"># Two-way table with bootstrap variance estimation</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;~Sex+Race&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;~Sex+Race&quot;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_chain1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;chain1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">100</span>
 <span class="p">)</span>
 
 <span class="c1"># Two-way table with row proportions and parallel processing</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;~Sex+Race&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;~Sex+Race&quot;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">margins</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># row proportions</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
@@ -270,9 +270,9 @@
 
 <span class="c1"># Return bootstrap tables and node counts</span>
 <span class="n">result</span><span class="p">,</span> <span class="n">bootstrap_tables</span><span class="p">,</span> <span class="n">node_counts</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;~Sex&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;~Sex&quot;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">return_bootstrap_tables</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">return_node_counts</span><span class="o">=</span><span class="kc">True</span>
@@ -299,7 +299,7 @@
 </dd>
 <dt><strong>weight</strong></dt><dd><p>str, optional. Name of the weight variable. A user specified weights to calculate weighted point estimates and standard errors. When set to None the function calculates unweighted point estimates and standard errors. Default is None.</p>
 </dd>
-<dt><strong>var_est</strong></dt><dd><p>str, optional. One of the six bootstrap types or the delta (naive) method. By default the function calculates naive standard errors. Variance estimation options include ‘naive’ or bootstrap methods like ‘resample_chain1’, ‘resample_chain2’, ‘resample_tree_uni1’, ‘resample_tree_uni2’, ‘resample_tree_bi1’, ‘resample_tree_bi2’. Default is None (naive).</p>
+<dt><strong>var_est</strong></dt><dd><p>str, optional. One of the six bootstrap types or the delta (naive) method. By default the function calculates naive standard errors. Variance estimation options include ‘naive’ or bootstrap methods like ‘chain1’, ‘chain2’, ‘tree_uni1’, ‘tree_uni2’, ‘tree_bi1’, ‘tree_bi2’. Default is None (naive).</p>
 </dd>
 <dt><strong>resample_n</strong></dt><dd><p>int, optional. Specifies the number of resample iterations. Note that this argument is None when var_est = ‘naive’. Required for bootstrap methods, default 300.</p>
 </dd>
@@ -336,7 +336,7 @@
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Age ~ C(Sex)&quot;</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_chain1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;chain1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
 <span class="p">)</span>
 
@@ -346,7 +346,7 @@
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Employed ~ Age + C(Sex)&quot;</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_chain1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;chain1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">100</span>
 <span class="p">)</span>
 
@@ -354,7 +354,7 @@
 <span class="n">result</span> <span class="o">=</span> <span class="n">RDSlm</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Income ~ Age + C(Education) + C(Race)&quot;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
 <span class="p">)</span>
@@ -363,7 +363,7 @@
 <span class="n">result</span><span class="p">,</span> <span class="n">bootstrap_estimates</span><span class="p">,</span> <span class="n">node_counts</span> <span class="o">=</span> <span class="n">RDSlm</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Age ~ C(Sex)&quot;</span><span class="p">,</span>
-    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">return_bootstrap_estimates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">return_node_counts</span><span class="o">=</span><span class="kc">True</span>

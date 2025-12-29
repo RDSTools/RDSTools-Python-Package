@@ -129,7 +129,7 @@
 </dd>
 <dt><strong>recruiter_id_col</strong></dt><dd><p>str. Name of the column containing recruiter IDs - A variable indicating recruiter ID</p>
 </dd>
-<dt><strong>type</strong></dt><dd><p>str. One of the six types of bootstrap methods: (1) resample_chain1, (2) resample_chain2, (3) resample_tree_uni1, (4) resample_tree_uni2, (5) resample_tree_bi1, (6) resample_tree_bi2.</p>
+<dt><strong>type</strong></dt><dd><p>str. One of the six types of bootstrap methods: (1) chain1, (2) chain2, (3) tree_uni1, (4) tree_uni2, (5) tree_bi1, (6) tree_bi2.</p>
 </dd>
 <dt><strong>resample_n</strong></dt><dd><p>int. A specified number of resamples</p>
 </dd>
@@ -157,7 +157,7 @@
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
     <span class="n">seed_col</span><span class="o">=</span><span class="s1">&#39;SEED&#39;</span><span class="p">,</span>
     <span class="n">recruiter_id_col</span><span class="o">=</span><span class="s1">&#39;R_ID&#39;</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
 <span class="p">)</span>
 </pre></div>
@@ -186,7 +186,7 @@
 </dd>
 <dt><strong>recruiter_id_col</strong></dt><dd><p>str. Name of the column containing recruiter IDs - A variable indicating recruiter ID</p>
 </dd>
-<dt><strong>type</strong></dt><dd><p>str. One of the six types of bootstrap methods: (1) resample_chain1, (2) resample_chain2, (3) resample_tree_uni1, (4) resample_tree_uni2, (5) resample_tree_bi1, (6) resample_tree_bi2.</p>
+<dt><strong>type</strong></dt><dd><p>str. One of the six types of bootstrap methods: (1) chain1, (2) chain2, (3) tree_uni1, (4) tree_uni2, (5) tree_bi1, (6) tree_bi2.</p>
 </dd>
 <dt><strong>resample_n</strong></dt><dd><p>int. A specified number of resamples</p>
 </dd>
@@ -216,7 +216,7 @@
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
     <span class="n">seed_col</span><span class="o">=</span><span class="s1">&#39;SEED&#39;</span><span class="p">,</span>
     <span class="n">recruiter_id_col</span><span class="o">=</span><span class="s1">&#39;R_ID&#39;</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">4</span>
 <span class="p">)</span>
@@ -226,12 +226,12 @@
 </section>
 <section id="bootstrap-methods">
 <h1>Bootstrap Methods<a class="headerlink" href="#bootstrap-methods" title="Link to this heading"></a></h1>
-<p>Six bootstrap methods are available: resample_chain1, resample_chain2, resample_tree_uni1, resample_tree_uni2, resample_tree_bi1, and resample_tree_bi2.</p>
+<p>Six bootstrap methods are available: chain1, chain2, tree_uni1, tree_uni2, tree_bi1, and tree_bi2.</p>
 <p>In all resampling functions, versions 1 and 2 differ as 1 focuses on the number of seeds in a given resample to be consistent with the original sample, while 2 keeps the overall sample size of a given resample to be at least equal to the original sample.</p>
 <section id="bootstrap-chain-methods">
 <h2>Bootstrap Chain Methods<a class="headerlink" href="#bootstrap-chain-methods" title="Link to this heading"></a></h2>
 <dl class="simple">
-<dt><strong>resample_chain1</strong></dt><dd><ol class="loweralpha simple" start="14">
+<dt><strong>chain1</strong></dt><dd><ol class="loweralpha simple" start="14">
 <li><p>seeds are selected using Simple Random Sampling with Replacement (SRSWR), with all nodes in the chains created by resampled seeds retained. The number of selected seeds equals the number of seeds in the original data frame. Since the seeds are selected with replacement, the resulting data frame will contain exactly the same number of seeds as the original, but a different number of recruits.</p></li>
 </ol>
 </dd>
@@ -243,13 +243,13 @@
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
     <span class="n">seed_col</span><span class="o">=</span><span class="s1">&#39;SEED&#39;</span><span class="p">,</span>
     <span class="n">recruiter_id_col</span><span class="o">=</span><span class="s1">&#39;R_ID&#39;</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;resample_chain1&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;chain1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <dl class="simple">
-<dt><strong>resample_chain2</strong></dt><dd><p>1 seed is sampled using SRSWR, with all nodes retained in the chain. The process continues until the sample size of a given resample (n_r) is at least equal to the original sample size (n_s). Selects only 1 seed at each iteration. The resulting number of seeds will vary, but the number of recruits will be equal or larger to the original number of recruits.</p>
+<dt><strong>chain2</strong></dt><dd><p>1 seed is sampled using SRSWR, with all nodes retained in the chain. The process continues until the sample size of a given resample (n_r) is at least equal to the original sample size (n_s). Selects only 1 seed at each iteration. The resulting number of seeds will vary, but the number of recruits will be equal or larger to the original number of recruits.</p>
 </dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Chain bootstrap 2</span>
@@ -259,7 +259,7 @@
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
     <span class="n">seed_col</span><span class="o">=</span><span class="s1">&#39;SEED&#39;</span><span class="p">,</span>
     <span class="n">recruiter_id_col</span><span class="o">=</span><span class="s1">&#39;R_ID&#39;</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;resample_chain2&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;chain2&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
 <span class="p">)</span>
 </pre></div>
@@ -268,7 +268,7 @@
 <section id="resample-tree-unidirectional-methods">
 <h2>Resample Tree Unidirectional Methods<a class="headerlink" href="#resample-tree-unidirectional-methods" title="Link to this heading"></a></h2>
 <dl class="simple">
-<dt><strong>resample_tree_uni1</strong></dt><dd><ol class="loweralpha simple" start="14">
+<dt><strong>tree_uni1</strong></dt><dd><ol class="loweralpha simple" start="14">
 <li><p>seeds are selected using SRSWR. For each selected seed, the function (A) checks its recruit counts, (B) performs SRSWR on the recruits counts from all recruits identified in (A), and (C) for each sampled recruit, repeats steps A and B. Steps A, B, and C are performed until the last wave of the chain. Since all seeds are selected with replacement, the resulting number of seeds will equal the number of seeds from the original data, but the number of recruits will vary.</p></li>
 </ol>
 </dd>
@@ -280,13 +280,13 @@
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
     <span class="n">seed_col</span><span class="o">=</span><span class="s1">&#39;SEED&#39;</span><span class="p">,</span>
     <span class="n">recruiter_id_col</span><span class="o">=</span><span class="s1">&#39;R_ID&#39;</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <dl class="simple">
-<dt><strong>resample_tree_uni2</strong></dt><dd><p>Instead of selecting (n) seeds, the function selects one seed at a time and then performs steps A, B, and C for each wave of respondents. Samples only 1 seed at a time and then performs sampling with replacement from each wave of the seed’s recruits. The resulting data frame will have at least the original sample size, but a varying number of seeds.</p>
+<dt><strong>tree_uni2</strong></dt><dd><p>Instead of selecting (n) seeds, the function selects one seed at a time and then performs steps A, B, and C for each wave of respondents. Samples only 1 seed at a time and then performs sampling with replacement from each wave of the seed’s recruits. The resulting data frame will have at least the original sample size, but a varying number of seeds.</p>
 </dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tree unidirectional 2</span>
@@ -296,7 +296,7 @@
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
     <span class="n">seed_col</span><span class="o">=</span><span class="s1">&#39;SEED&#39;</span><span class="p">,</span>
     <span class="n">recruiter_id_col</span><span class="o">=</span><span class="s1">&#39;R_ID&#39;</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni2&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;tree_uni2&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
 <span class="p">)</span>
 </pre></div>
@@ -305,7 +305,7 @@
 <section id="bootstrap-tree-bidirectional-methods">
 <h2>Bootstrap Tree Bidirectional Methods<a class="headerlink" href="#bootstrap-tree-bidirectional-methods" title="Link to this heading"></a></h2>
 <dl class="simple">
-<dt><strong>resample_tree_bi1</strong></dt><dd><p>Selects (n) nodes from the recruitment chains using SRSWR. For each selected node, it (A) checks its connected nodes, (B) performs SRSWR on all connected nodes identified in (A), and (C) for each selected node, performs steps A and B, but does not resample already resampled nodes. (D) Steps A, B, and C are repeated until the end of the chain. The function starts from multiple nodes, depending on the number of seeds.</p>
+<dt><strong>tree_bi1</strong></dt><dd><p>Selects (n) nodes from the recruitment chains using SRSWR. For each selected node, it (A) checks its connected nodes, (B) performs SRSWR on all connected nodes identified in (A), and (C) for each selected node, performs steps A and B, but does not resample already resampled nodes. (D) Steps A, B, and C are repeated until the end of the chain. The function starts from multiple nodes, depending on the number of seeds.</p>
 </dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tree bidirectional 1</span>
@@ -315,13 +315,13 @@
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
     <span class="n">seed_col</span><span class="o">=</span><span class="s1">&#39;SEED&#39;</span><span class="p">,</span>
     <span class="n">recruiter_id_col</span><span class="o">=</span><span class="s1">&#39;R_ID&#39;</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;resample_tree_bi1&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;tree_bi1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <dl class="simple">
-<dt><strong>resample_tree_bi2</strong></dt><dd><p>1 node is selected using SRSWR from the recruitment chain and steps A, B, C, and D are performed as in resample_tree_bi1. The function samples one node at a time and then evaluates whether the resulting sample is at least equal to the size of the original data. If not, the function continues resampling until the desired number of respondents is achieved.</p>
+<dt><strong>tree_bi2</strong></dt><dd><p>1 node is selected using SRSWR from the recruitment chain and steps A, B, C, and D are performed as in tree_bi1. The function samples one node at a time and then evaluates whether the resulting sample is at least equal to the size of the original data. If not, the function continues resampling until the desired number of respondents is achieved.</p>
 </dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Tree bidirectional 2</span>
@@ -331,7 +331,7 @@
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
     <span class="n">seed_col</span><span class="o">=</span><span class="s1">&#39;SEED&#39;</span><span class="p">,</span>
     <span class="n">recruiter_id_col</span><span class="o">=</span><span class="s1">&#39;R_ID&#39;</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;resample_tree_bi2&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;tree_bi2&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
 <span class="p">)</span>
 </pre></div>
@@ -366,7 +366,7 @@
     <span class="n">seed_id_col</span><span class="o">=</span><span class="s1">&#39;S_ID&#39;</span><span class="p">,</span>
     <span class="n">seed_col</span><span class="o">=</span><span class="s1">&#39;SEED&#39;</span><span class="p">,</span>
     <span class="n">recruiter_id_col</span><span class="o">=</span><span class="s1">&#39;R_ID&#39;</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;resample_tree_uni1&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>  <span class="c1"># Large number of resamples</span>
     <span class="n">n_cores</span><span class="o">=</span><span class="mi">8</span>  <span class="c1"># Use 8 cores for parallel processing</span>
 <span class="p">)</span>

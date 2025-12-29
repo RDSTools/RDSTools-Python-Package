@@ -56,7 +56,7 @@ Quick Start
         x='Age',
         data=rds_data,
         weight='WEIGHT',
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000,
         n_cores=4  # parallel processing
     )
@@ -64,10 +64,10 @@ Quick Start
 
     # Create frequency tables
     table = RDStable(
-        formula='~Sex',
+        x='~Sex',
         data=rds_data,
         weight='WEIGHT',
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000
     )
     print(table)
@@ -77,7 +77,7 @@ Quick Start
         data=rds_data,
         formula='Income ~ Age + C(Sex) + C(Race)',
         weight='WEIGHT',
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000,
         n_cores=4
     )

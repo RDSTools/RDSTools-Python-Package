@@ -40,9 +40,21 @@ You can color nodes by demographic variables:
         seed_ids=['1', '2'],
         waves=[0, 1, 2],
         layout='Spring',
-        group_by='Sex',
-        node_size=50,
+        variable='Sex',
+        title='Recruitment by Sex',
+        vertex_size_seed=10,
+        vertex_size=6,
         figsize=(14, 12)
+    )
+
+    # Customize colors when not grouping by variable
+    G = RDSnetgraph(
+        data=rds_data,
+        seed_ids=['1', '2'],
+        waves=[0, 1, 2],
+        seed_color='purple',
+        nonseed_color='orange',
+        edge_width=2.0
     )
 
 You can save the network graph to a file:
@@ -69,7 +81,7 @@ When longitude and latitude are available, users can plot distribution of recrui
     from RDSTools import RDSmap, get_available_seeds, get_available_waves, print_map_info
 
     # Check available data
-    print_map_info(rds_data, lat_column='Latitude', lon_column='Longitude')
+    print_map_info(rds_data, lat='Latitude', long='Longitude')
 
     # Get available seeds and waves
     seeds = get_available_seeds(rds_data)
@@ -83,8 +95,8 @@ When longitude and latitude are available, users can plot distribution of recrui
         data=rds_data,
         seed_ids=['1', '2'],
         waves=[0, 1, 2, 3],
-        lat_column='Latitude',
-        lon_column='Longitude',
+        lat='Latitude',
+        long='Longitude',
         output_file='recruitment_map.html'
     )
 
@@ -104,11 +116,28 @@ You can customize the map display:
         data=rds_data,
         seed_ids=['1', '2', '3'],
         waves=[0, 1, 2, 3, 4],
-        lat_column='lat',
-        lon_column='long',
+        lat='Latitude',
+        long='Longitude',
         output_file='custom_map.html',
         zoom_start=10,
         open_browser=True
+    )
+
+    # Customize marker colors and sizes
+    m = RDSmap(
+        data=rds_data,
+        seed_ids=['1', '2'],
+        waves=list(range(0, 4)),
+        lat='Latitude',
+        long='Longitude',
+        seed_color='red',
+        seed_radius=7,
+        recruit_color='blue',
+        recruit_radius=7,
+        line_color='black',
+        line_weight=2,
+        line_dashArray='5,6',  # Dashed lines
+        output_file='styled_map.html'
     )
 
 Helper Functions
@@ -120,5 +149,5 @@ Helper Functions
 **get_available_waves(data)**
     Get list of available wave numbers from RDS data.
 
-**print_map_info(data, lat_column='Latitude', lon_column='Longitude')**
+**print_map_info(data, lat='Latitude', long='Longitude')**
     Print summary information about the RDS data for mapping, including available seeds, waves, and coordinate coverage.

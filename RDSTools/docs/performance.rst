@@ -12,7 +12,7 @@ Usage
     result = RDSmean(
         x='income',
         data=rds_data,
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=2000,
         n_cores=8  # Use 8 cores for parallel processing
     )
@@ -62,16 +62,16 @@ All estimation functions support the n_cores parameter:
     mean_result = RDSmean(
         x='age',
         data=rds_data,
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000,
         n_cores=4
     )
 
     # Parallel table calculation
     table_result = RDStable(
-        formula="~Sex+Race",
+        x="~Sex+Race",
         data=rds_data,
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000,
         n_cores=4
     )
@@ -80,7 +80,7 @@ All estimation functions support the n_cores parameter:
     regression_result = RDSlm(
         data=rds_data,
         formula="Age ~ Sex",
-        var_est='resample_tree_uni1',
+        var_est='tree_uni1',
         resample_n=1000,
         n_cores=4
     )
