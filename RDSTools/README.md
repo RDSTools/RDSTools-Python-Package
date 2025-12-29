@@ -93,7 +93,7 @@ result = RDSmean(
     x='age',
     data=rds_data,
     weight='WEIGHT',
-    var_est='resample_tree_uni1',
+    var_est='chain1',
     resample_n=1000
 )
 
@@ -101,7 +101,7 @@ result = RDSmean(
 result, bootstrap_means = RDSmean(
     x='age',
     data=rds_data,
-    var_est='resample_tree_uni1',
+    var_est='chain1',
     resample_n=1000,
     return_bootstrap_means=True
 )
@@ -110,7 +110,7 @@ result, bootstrap_means = RDSmean(
 result, bootstrap_means, node_counts = RDSmean(
     x='age',
     data=rds_data,
-    var_est='resample_tree_uni1', 
+    var_est='chain1', 
     resample_n=1000,
     return_bootstrap_means=True,
     return_node_counts=True
@@ -124,28 +124,36 @@ Generate frequency tables and proportions for categorical variables with RDS-adj
 ```python
 from RDSTools import RDStable
 
-# One-way table
+# One-way table (with tilde)
 result = RDStable(
-    formula="~Sex",
+    x="~Sex",
     data=rds_data,
-    var_est='resample_tree_uni1',
+    var_est='chain1',
     resample_n=1000
 )
 
-# Two-way table
+# One-way table (without tilde - single variable only)
 result = RDStable(
-    formula="~Sex+Race", 
+    x="Sex",
     data=rds_data,
-    var_est='resample_tree_uni1',
+    var_est='chain1',
+    resample_n=1000
+)
+
+# Two-way table (must use tilde)
+result = RDStable(
+    x="~Sex+Race", 
+    data=rds_data,
+    var_est='chain1',
     resample_n=1000,
     margins=1  # row proportions
 )
 
 # With optional returns
 result, bootstrap_tables = RDStable(
-    formula="~Sex+Race",
+    x="~Sex+Race",
     data=rds_data,
-    var_est='resample_tree_uni1',
+    var_est='chain1',
     resample_n=1000,
     return_bootstrap_tables=True
 )
@@ -153,7 +161,7 @@ result, bootstrap_tables = RDStable(
 
 ### Regression
 
-Fit linear and logistic regression models with RDS-adjusted standard errors.
+Fit linear and logistic regression models with RDS-adjusted standard errors. The formula syntax follows R-style/patsy conventions.
 
 ```python
 from RDSTools import RDSlm
@@ -163,7 +171,16 @@ result = RDSlm(
     data=rds_data,
     formula="Age ~ Sex + Race",
     weight='WEIGHT',
-    var_est='resample_tree_uni1',
+    var_est='chain1',
+    resample_n=1000
+)
+
+# Use C() to explicitly mark categorical variables
+# This is especially important for numeric codes (e.g., 0/1, 1/2/3)
+result = RDSlm(
+    data=rds_data,
+    formula="Income ~ Age + C(Sex) + C(Race)",
+    var_est='chain1',
     resample_n=1000
 )
 
@@ -171,7 +188,7 @@ result = RDSlm(
 result = RDSlm(
     data=rds_data,
     formula="Employed ~ Age + Education",
-    var_est='resample_tree_uni1',
+    var_est='chain1',
     resample_n=1000
 )
 
@@ -179,11 +196,16 @@ result = RDSlm(
 result, bootstrap_estimates = RDSlm(
     data=rds_data,
     formula="Age ~ Sex + Race",
-    var_est='resample_tree_uni1',
+    var_est='chain1',
     resample_n=1000,
     return_bootstrap_estimates=True
 )
 ```
+
+**Note on Categorical Variables:** Use `C()` around variable names to treat them as categorical. This is important when:
+- Variables are numeric codes (e.g., Sex coded as 0/1)
+- You want to ensure proper dummy variable creation
+- Variables might be interpreted as continuous otherwise
 
 ## Sampling Variance
 
@@ -199,35 +221,38 @@ boot_results = RDSboot(
     seed_id_col='S_ID', 
     seed_col='SEED',
     recruiter_id_col='R_ID',
-    type='resample_tree_uni1',
+    type='tree_uni1',
     resample_n=1000
 )
-
 ```
 
-### Bootstrap Chain
+### Bootstrap Methods
+
+All bootstrap methods select seeds with replacement and then sample from recruitment chains. The six available methods are:
+
+#### Bootstrap Chain
 
 In bootstrap chain functions, the first step is to select seeds with replacement with the subsequent selection of seeds' full recruitment chains.
 
-- **resample_chain1**: The number of selected seeds equals the number of seeds in the data frame. Since the seeds are selected with replacement, the resulting data frame will contain exactly the same number of seeds, but a different number of recruits.
+- **chain1**: The number of selected seeds equals the number of seeds in the data frame. Since the seeds are selected with replacement, the resulting data frame will contain exactly the same number of seeds, but a different number of recruits.
 
-- **resample_chain2**: Selects only 1 seed at each iteration. The resulting number of seeds will vary, but the number of recruits will be equal or larger to the original number of recruits.
+- **chain2**: Selects only 1 seed at each iteration. The resulting number of seeds will vary, but the number of recruits will be equal or larger to the original number of recruits.
 
-### Resample Tree Unidirectional
+#### Resample Tree Unidirectional
 
 In the resample tree, the function performs SRSWR from the seeds and their recruitment chains. As before, seeds are selected with replacement. For each selected seed, the function identifies its recruits and then samples with replacement from these recruits. For each sampled recruit, this process repeats until the end of each individual recruitment chain.
 
-- **resample_tree_uni1**: Since all seeds are selected with replacement, the resulting number of seeds will equal the number of seeds from the original data, but the number of recruits will vary.
+- **tree_uni1**: Since all seeds are selected with replacement, the resulting number of seeds will equal the number of seeds from the original data, but the number of recruits will vary.
 
-- **resample_tree_uni2**: Samples only 1 seed at a time and then performs sampling with replacement from each wave of seed's recruits. The resulting data frame will have at least the original number of observations, but a varying number of seeds.
+- **tree_uni2**: Samples only 1 seed at a time and then performs sampling with replacement from each wave of seed's recruits. The resulting data frame will have at least the original number of observations, but a varying number of seeds.
 
-### Bootstrap Tree Bidirectional
+#### Bootstrap Tree Bidirectional
 
 Unlike the unidirectional case, bidirectional resampling starts from a random position in a chain, checks its connected nodes, and then samples with replacement from these nodes. For each sampled node, the process repeats, but does not go backwards; that is, already visited nodes are excluded from subsequent sampling.
 
-- **resample_tree_bi1**: The function starts from n nodes, depending on the number of seeds.
+- **tree_bi1**: The function starts from n nodes, depending on the number of seeds.
 
-- **resample_tree_bi2**: The function samples one node at a time and then evaluates whether the resulting sample is at least equal to the size of the original data. If not, the function continues resampling until the desired number of respondents is achieved.
+- **tree_bi2**: The function samples one node at a time and then evaluates whether the resulting sample is at least equal to the size of the original data. If not, the function continues resampling until the desired number of respondents is achieved.
 
 ### Example: Bootstrap Chain
 
@@ -239,7 +264,7 @@ res_chain1 = RDSboot(
     seed_id_col='S_ID',
     seed_col='SEED', 
     recruiter_id_col='R_ID',
-    type='resample_chain1',
+    type='chain1',
     resample_n=1
 )
 
@@ -259,7 +284,11 @@ The package supports visualization of respondents' networks and the geographic d
 The `RDSnetgraph()` function creates network visualizations showing recruitment relationships with support for different layouts and node coloring by demographic variables.
 
 ```python
-from RDSTools import RDSnetgraph
+from RDSTools import RDSnetgraph, get_available_seeds, get_available_waves
+
+# Get available seeds and waves
+available_seeds = get_available_seeds(rds_data)
+available_waves = get_available_waves(rds_data)
 
 # Basic network graph
 G = RDSnetgraph(
@@ -284,20 +313,44 @@ G = RDSnetgraph(
     seed_ids=['1', '2', '3'],
     waves=[0, 1, 2],
     layout='Kamada-Kawai',
-    group_by='Gender',
-    node_size=20,
+    variable='Sex',
+    title='Recruitment by Sex',
+    vertex_size_seed=10,
+    vertex_size=6,
     figsize=(16, 14)
+)
+
+# Customize seed and non-seed colors (when not grouping by variable)
+G = RDSnetgraph(
+    data=rds_data,
+    seed_ids=available_seeds[:2],
+    waves=list(range(0, 4)),
+    seed_color='purple',
+    nonseed_color='orange',
+    edge_width=2.0
 )
 ```
 
 **Available Layouts:**
-- `Spring` - Force-directed layout (default, uses igraph)
+- `Spring` - Force-directed layout (default, uses igraph Fruchterman-Reingold)
 - `Circular` - Nodes arranged in a circle
 - `Kamada-Kawai` - Force-directed with optimal distances
 - `Grid` - Regular grid arrangement
 - `Star` - Star-shaped layout
 - `Random` - Random positioning
-- `Tree` - Hierarchical tree layout (requires pygraphviz, uses NetworkX)
+- `Tree` - Hierarchical tree layout (uses NetworkX with pygraphviz)
+
+**Key Parameters:**
+- `seed_ids` - List of seed IDs to include in network
+- `waves` - List of wave numbers to include
+- `variable` - Optional demographic variable for node coloring (overrides seed_color/nonseed_color)
+- `title` - Optional plot title
+- `vertex_size_seed` - Size of seed vertices (default: 45)
+- `vertex_size` - Size of non-seed vertices (default: 30)
+- `seed_color` - Color for seed nodes when not grouping (default: "#E41A1C" red)
+- `nonseed_color` - Color for non-seed nodes when not grouping (default: "#377EB8" blue)
+- `edge_width` - Thickness of edges (default: 1.5)
+- `layout` - Graph layout algorithm (default: "Spring")
 
 ### Geographic Mapping
 
@@ -318,34 +371,69 @@ print(f"Available waves: {waves}")
 # Basic map
 m = RDSmap(
     data=rds_data,
+    lat='Latitude',
+    long='Longitude',
     seed_ids=['1', '2'],
     waves=[0, 1, 2, 3],
     output_file='my_rds_map.html'
 )
 
-# Map with custom coordinates and auto-open browser
+# Map with custom styling
 m = RDSmap(
     data=rds_data,
+    lat='Latitude',
+    long='Longitude',
     seed_ids=['1', '2', '3'],
     waves=[0, 1, 2, 3, 4],
-    lat_column='lat',
-    lon_column='long',
+    seed_color='red',
+    seed_radius=7,
+    recruit_color='blue',
+    recruit_radius=7,
+    line_color='black',
+    line_weight=2,
+    zoom_start=5,
     output_file='geographic_map.html',
-    zoom_start=7,
     open_browser=True
+)
+
+# Using helper functions for seed and wave selection
+m = RDSmap(
+    data=rds_data,
+    lat='Latitude',
+    long='Longitude',
+    seed_ids=seeds[:3],
+    waves=waves[:4],
+    line_dashArray='5,6',  # Dashed lines
+    output_file='custom_map.html'
 )
 ```
 
+**Key Parameters:**
+- `lat` - Column name for latitude coordinates
+- `long` - Column name for longitude coordinates
+- `seed_ids` - List of seed IDs to display
+- `waves` - List of wave numbers to display
+- `seed_color` - Color of seed markers (default: "red")
+- `seed_radius` - Size of seed markers (default: 7)
+- `recruit_color` - Color of recruit markers (default: "blue")
+- `recruit_radius` - Size of recruit markers (default: 7)
+- `line_color` - Color of recruitment lines (default: "black")
+- `line_weight` - Thickness of recruitment lines (default: 2)
+- `line_dashArray` - Optional dash pattern for lines (e.g., '5,6')
+- `zoom_start` - Initial map zoom level (default: 5)
+- `output_file` - Name of HTML file to save (default: 'participant_map.html')
+- `open_browser` - Whether to open map in browser automatically (default: False)
+
 ## Performance Enhancement
 
-The package includes parallel processing for bootstrap methods. Unidirectional and bidirectional bootstrap sampling methods are the methods that benefit the most from parallel processing.
+The package includes parallel processing for bootstrap methods. Unidirectional and bidirectional bootstrap sampling methods benefit the most from parallel processing.
 
 ```python
 # Use parallel processing for faster bootstrap
 result = RDSmean(
     x='income',
     data=rds_data,
-    var_est='resample_tree_uni1',
+    var_est='tree_uni1',
     resample_n=2000,
     n_cores=8  # Use 8 cores for parallel processing
 )
@@ -367,7 +455,7 @@ With 252 observations:
 import pandas as pd
 from RDSTools import (
     RDSdata, RDSboot, RDSmean, RDStable, RDSlm,
-    RDSmap, RDSnetgraph, get_available_seeds, print_map_info
+    RDSmap, RDSnetgraph, get_available_seeds, get_available_waves, print_map_info
 )
 
 # 1. Load and process data
@@ -385,7 +473,7 @@ age_mean = RDSmean(
     x='Age',
     data=rds_data,
     weight='WEIGHT',
-    var_est='resample_tree_uni1',
+    var_est='tree_uni1',
     resample_n=1000,
     n_cores=4
 )
@@ -393,10 +481,10 @@ print(age_mean)
 
 # 3. Create frequency tables
 sex_table = RDStable(
-    formula='~Sex',
+    x='~Sex',
     data=rds_data,
     weight='WEIGHT',
-    var_est='resample_tree_uni1',
+    var_est='tree_uni1',
     resample_n=1000
 )
 print(sex_table)
@@ -406,7 +494,7 @@ model = RDSlm(
     data=rds_data,
     formula='Income ~ Age + C(Sex) + C(Race)',
     weight='WEIGHT',
-    var_est='resample_tree_uni1',
+    var_est='tree_uni1',
     resample_n=1000,
     n_cores=4
 )
@@ -414,21 +502,27 @@ print(model)
 
 # 5. Visualize recruitment network
 seeds = get_available_seeds(rds_data)
+waves = get_available_waves(rds_data)
+
 G = RDSnetgraph(
     data=rds_data,
     seed_ids=seeds[:2],
-    waves=[0, 1, 2, 3],
+    waves=waves[:4],
     layout='Spring',
-    group_by='Sex',
+    variable='Sex',
+    title='Recruitment Network by Sex',
     save_path='network.png'
 )
 
 # 6. Create geographic map
-print_map_info(rds_data)
+print_map_info(rds_data, lat_column='Latitude', lon_column='Longitude')
+
 m = RDSmap(
     data=rds_data,
+    lat='Latitude',
+    long='Longitude',
     seed_ids=seeds[:2],
-    waves=[0, 1, 2, 3],
+    waves=waves[:4],
     output_file='recruitment_map.html',
     open_browser=True
 )
@@ -472,6 +566,17 @@ m = RDSmap(
 
 - **`RDSBootOptimizedParallel()`** - Parallelized bootstrap (used internally)
 
+### Bootstrap Methods
+
+Available variance estimation methods for `var_est` parameter:
+
+- `chain1` - Bootstrap chain maintaining seed count
+- `chain2` - Bootstrap chain with varying seed count
+- `tree_uni1` - Unidirectional tree resampling maintaining seed count
+- `tree_uni2` - Unidirectional tree resampling with varying seed count
+- `tree_bi1` - Bidirectional tree resampling from n starting nodes
+- `tree_bi2` - Bidirectional tree resampling with sample size matching
+
 ## Documentation
 
 For comprehensive documentation and examples:
@@ -504,5 +609,5 @@ If you encounter any problems or have suggestions for improvements, please open 
 - Initial release with core RDS analysis functions
 - Bootstrap variance estimation with 6 resampling methods
 - Parallel processing support
-- Network visualization capabilities
-- Geographic mapping features
+- Network visualization capabilities with customizable aesthetics
+- Geographic mapping features with interactive controls

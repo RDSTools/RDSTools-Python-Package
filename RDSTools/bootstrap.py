@@ -4,7 +4,8 @@ import warnings
 
 def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, type, resample_n):
     """
-    Variance estimation with bootstrap chain and tree methods.
+    Resampling respondent driven sampling sample data by bootstrapping edges in recruitment trees
+    or bootstrapping recruitment chains as a whole.
 
     Corrected bootstrap resampling for Respondent-Driven Sampling (RDS) data.
     Key fixes:
@@ -25,9 +26,9 @@ def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
     recruiter_id_col : str
         Name of the column containing recruiter IDs - A variable indicating recruiter ID
     type : str
-        One of the six types of bootstrap methods: (1) resample_chain1, (2) resample_chain2, (3) resample_tree_uni1, (4) resample_tree_uni2, (5) resample_tree_bi1, (6) resample_tree_bi2.
+        One of the six types of bootstrap methods: (1) chain1, (2) chain2, (3) tree_uni1, (4) tree_uni2, (5) tree_bi1, (6) tree_bi2.
     resample_n : int
-        A specified number of resamples
+        A specified number of resample iterations
 
     Returns:
     --------
@@ -38,13 +39,13 @@ def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
 
     Notes
     -----
-    In all resampling functions, versions 1 and 2 differ as 1 focuses on the number of seeds in a given resample to be consistent with the original sample, while 2 keeps the overall sample size of a given resample to be at least equal to the original sample.
+    In all bootstrap methods, versions 1 and 2 differ as version 1 sets the number of seeds in a given resample to be consistent with the number of seeds in the original sample ( s ), while version 2 sets the sample size of a given resample ( n_r ) to be at least equal to or greater than the original sample ( n_s ).
 
-    In the resample_chain1 function, ( n ) seeds are selected using Simple Random Sampling with Replacement (SRSWR), with all nodes in the chains created by resampled seeds retained . In the resample_chain2 function, 1 seed is sampled using SRSWR, with all nodes retained in the chain. The process continues until the sample size of a given resample ( n_r ) is at least equal to the original sample size ( n_s )
+    chain1 selects ( s ) seeds using SRSWR from all seeds in the original sample and then, all nodes in the chains created by each of the resampled seeds are retained. With chain2, 1 seed is sampled using SRSWR from all seeds in the original sample, and all nodes from the chain created by this seed are retained. It then compares ( n_r ) against ( n_s ), and, if ( n_r < n_s ), continues the resampling process by drawing 1 seed and its chains one by one until ( n_r ≥ n_s ).
 
-    In the resample_tree_uni1 function, ( n ) seeds are selected using SRSWR. For each selected seed, the function (A) checks its recruit counts, (B) performs SRSWR on the recruits counts from all recruits identified in (A), and (C) for each sampled recruit, repeats steps A and B. Steps A, B, and C are performed until the last wave of the chain. In resample_tree_uni2, instead of selecting ( n ) seeds, the function selects one seed at a time and then performs steps A, B, and C for each wave of respondents.
+    In the tree_uni1 method, ( s ) seeds are selected using Simple Random Sampling with Replacement (SRSWR) from all seeds. For each selected seed, this method (A) checks its recruit counts, (B) selects SRSWR of the recruits counts from all recruits identified in (A), and (C) for each sampled recruit, this method repeats Steps A and B. (D) Steps A, B, and C continue until reaching the last wave of each chain. In tree_uni2, instead of selecting ( s ) seeds, it selects one seed, performs Steps B and C for the selected seed. It compares the size of the resample ( n_r ) and the original sample ( n_s ), and, if ( n_r < n_s ), it continues the resampling process by drawing 1 seed, performs Steps B and C and checks ( n_r ) against ( n_s ). If ( n_r < n_s ), the process continues until the sample size of a given resample ( n_r ) is at least equal to the original sample size ( n_s ), i.e., ( n_r ≥ n_s ).
 
-    resample_tree_bi1 selects ( n ) nodes from the recruitment chains using SRSWR. For each selected node, it (A) checks its connected nodes, (B) performs SRSWR on all connected nodes identified in (A), and (C) for each selected node, performs steps A and B, but does not resample already resampled nodes. (D) Steps A, B, and C are repeated until the end of the chain. In resample_tree_bi2, 1 node is selected using SRSWR from the recruitment chain and steps A, B, C, and D are performed as in resample_tree_bi1.
+    resample_tree_bi1 selects ( s ) nodes from the recruitment chains using SRSWR. For each selected node, it (A) checks its connected nodes, (B) performs SRSWR on all connected nodes identified in (A), and (C) for each selected node, performs steps A and B, but does not resample already resampled nodes. (D) Steps A, B, and C are repeated until the end of the chain. In resample_tree_bi2, 1 node is selected using SRSWR from the recruitment chain. It compares ( n_r ) against ( n_s ), and, if ( n_r < n_s ), continues the resampling process by drawing 1 node and performing steps A, B, C, and D as in resample_tree_bi1 until ( n_r ≥ n_s ).
 
     Examples
     --------
@@ -63,7 +64,7 @@ def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
                      seed_id_col = 'S_ID',
                      seed_col = 'SEED',
                      recruiter_id_col = 'R_ID',
-                     type = 'resample_chain1',
+                     type = 'chain1',
                      resample_n = 100)
     """
 
@@ -83,7 +84,7 @@ def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
 
     results_bootstrap_RDS = []
 
-    if type == 'resample_chain1':
+    if type == 'chain1':
         def resample_chain1(data_boot):
             df = data_boot[data_boot['seed'] == 1].copy()
             if len(df) == 0:
@@ -102,7 +103,7 @@ def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
         for i in range(resample_n):
             results_bootstrap_RDS.append(resample_chain1(data_boot))
 
-    elif type == 'resample_chain2':
+    elif type == 'chain2':
         def resample_chain2(data_boot):
             seeds_df = data_boot[data_boot['seed'] == 1]
             if len(seeds_df) == 0:
@@ -125,7 +126,7 @@ def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
         for i in range(resample_n):
             results_bootstrap_RDS.append(resample_chain2(data_boot))
 
-    elif type == 'resample_tree_uni1':
+    elif type == 'tree_uni1':
         def tree_resample_one(data_boot):
             all_seeds = data_boot[data_boot['seed'] == 1]
             if len(all_seeds) == 0:
@@ -196,7 +197,7 @@ def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
         for i in range(resample_n):
             results_bootstrap_RDS.append(tree_resample_one(data_boot))
 
-    elif type == 'resample_tree_uni2':
+    elif type == 'tree_uni2':
         def tree_resample_two(data_boot):
             results = pd.DataFrame()
 
@@ -259,14 +260,16 @@ def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
         for i in range(resample_n):
             results_bootstrap_RDS.append(tree_resample_two(data_boot))
 
-    elif type == 'resample_tree_bi1':
+    elif type == 'tree_bi1':
         def resample_bidirectional_one(data_boot):
             # FIXED: No unnecessary string conversions, keep original data types
             valid_ids = data_boot['respondent_id'].dropna().values
             if len(valid_ids) == 0:
                 raise ValueError("No valid respondent IDs found")
 
-            starting_ids = np.random.choice(valid_ids, size=min(10, len(valid_ids)), replace=True)
+            seeds_df = data_boot[data_boot['seed'] == 1]
+            n_seeds = len(seeds_df)
+            starting_ids = np.random.choice(valid_ids, size=n_seeds, replace=True)
             chains = {}
 
             for start_id in starting_ids:
@@ -318,7 +321,7 @@ def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
         for i in range(resample_n):
             results_bootstrap_RDS.append(resample_bidirectional_one(data_boot))
 
-    elif type == 'resample_tree_bi2':
+    elif type == 'tree_bi2':
         def resample_bidirectional_two(data_boot):
             chains_df = pd.DataFrame(columns=['chain_id', 'respondent_id'])
             max_iterations = 1000  # Prevent infinite loops
@@ -385,14 +388,14 @@ def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
     for df in results_bootstrap_RDS:
         if not df.empty:
             final_results.append(pd.DataFrame({
-                'RESPONDENT_ID': df['respondent_id'],
+                'ID': df['respondent_id'],
                 'RESAMPLE.N': df['RESAMPLE.N']
             }))
 
     if final_results:
         return pd.concat(final_results, ignore_index=True)
     else:
-        return pd.DataFrame(columns=['RESPONDENT_ID', 'RESAMPLE.N'])
+        return pd.DataFrame(columns=['ID', 'RESAMPLE.N'])
 
 
 # Example usage:
@@ -417,7 +420,7 @@ results = RDSboot(
     seed_id_col='S_ID',
     seed_col='SEED', 
     recruiter_id_col='R_ID',
-    type='resample_tree_uni1', 
+    type='tree_uni1', 
     resample_n=100
 )
 """

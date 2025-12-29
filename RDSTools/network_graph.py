@@ -3,7 +3,7 @@ Network graph visualization for RDS data
 """
 import pandas as pd
 import matplotlib
-matplotlib.use('TkAgg')  # For saving to files, or use 'TkAgg' if you have Tkinter
+matplotlib.use('TkAgg')  # For saving to files
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import networkx as nx
@@ -191,39 +191,61 @@ def create_igraph_graph(root_nodes: List[TreeNode], df) -> ig.Graph:
 
 def RDSnetgraph(
         data: pd.DataFrame,
-        seed_ids: List[str],
-        waves: List[int],
+        seed_ids: list,
+        waves: list,
+        variable: Optional[str] = None,
+        title: Optional[str] = None,
+        vertex_size_seed: int = 45,
+        vertex_size: int = 30,
+        seed_color: str = "#E41A1C",
+        nonseed_color: str = "#377EB8",
+        edge_width: float = 1.5,
         layout: Literal["Spring", "Circular", "Kamada-Kawai", "Grid", "Star", "Random", "Tree"] = "Spring",
-        group_by: Optional[str] = None,
-        node_size: Optional[int] = None,
         figsize: tuple = (14, 12),
         show_plot: bool = True,
         save_path: Optional[str] = None
 ) -> Union[ig.Graph, nx.Graph]:
     """
-    Create a network graph visualization for RDS data.
+    Visualization of recruitment chains/networks in respondent driven sampling sample data
 
     Parameters
     ----------
     data : pd.DataFrame
-        RDS data with required columns: S_ID, WAVE, ID, R_ID
-    seed_ids : List[str]
-        List of seed IDs to include in the graph
-    waves : List[int]
-        List of wave numbers to include
-    layout : str, default="Spring"
-        Graph layout algorithm. Options: "Spring", "Circular", "Kamada-Kawai",
-        "Grid", "Star", "Random", "Tree"
-        Note: "Tree" requires pygraphviz and uses NetworkX.
-        All other layouts use igraph.
-    group_by : str, optional
-        Column name to use for node coloring/grouping
-    node_size : int, optional
-        Size of nodes. If None, uses default based on layout
-        (700 for Tree with NetworkX, 30 for others with igraph)
-    figsize : tuple, default=(14, 12)
-        Figure size for matplotlib
-    show_plot : bool, default=True
+        The output from RDSdata
+    seed_ids : list
+        List of seed IDs to include in the network graph
+    waves : list
+        List of wave numbers to include in the network graph
+    variable : str, optional
+        A factor or character variable of interest for coloring nodes.
+        For space considerations, use short names for categories.
+        Maximum 4 categories supported.
+    title : str, optional
+        A user-specified title for the network. By default, provides an empty title.
+    vertex_size_seed : int, default 45
+        Size of the vertices representing seeds in the plot
+    vertex_size : int, default 30
+        Size of regular (non-seed) vertices in the plot
+    seed_color : str, default "#E41A1C" (red)
+        Color of seed vertices when variable is not specified.
+        Overridden when variable is provided for grouping.
+    nonseed_color : str, default "#377EB8" (blue)
+        Color of non-seed vertices when variable is not specified.
+        Overridden when variable is provided for grouping.
+    edge_width : float, default 1.5
+        Thickness of edges (connections) in the plot
+    layout : str, default "Spring"
+        Graph layout algorithm. Options:
+        - "Spring" (default, Fruchterman-Reingold spring/force-directed layout, igraph)
+        - "Circular" (circular layout, igraph)
+        - "Kamada-Kawai" (force-directed layout, igraph)
+        - "Grid" (grid layout, igraph)
+        - "Star" (star layout, igraph)
+        - "Random" (random layout, igraph)
+        - "Tree" (hierarchical tree layout, NetworkX with pygraphviz)
+    figsize : tuple, default (14, 12)
+        Figure size for matplotlib (width, height)
+    show_plot : bool, default True
         Whether to display the plot
     save_path : str, optional
         Path to save the figure. If None, figure is not saved
@@ -231,77 +253,116 @@ def RDSnetgraph(
     Returns
     -------
     Union[ig.Graph, nx.Graph]
-        The created graph object (igraph for non-Tree layouts, networkx for Tree)
+        The graph object (igraph for non-Tree layouts, NetworkX for Tree)
+
+    Raises
+    ------
+    ValueError
+        If variable has more than 4 categories
+        If required columns are missing from data
 
     Examples
     --------
-    # Create a simple spring layout (default - uses igraph)
-    >>> G = RDSnetgraph(data, seed_ids=['1'], waves=[1, 2])
-
-    >>> # Create tree layout (uses NetworkX, requires pygraphviz)
-    >>> G = RDSnetgraph(data, seed_ids=['1'], waves=[1, 2], layout='Tree')
-
-    >>> # Create colored by variable with custom node size
-    >>> G = RDSnetgraph(
-    ...     data,
-    ...     seed_ids=['1', '2'],
-    ...     waves=[1, 2, 3],
-    ...     layout='Spring',
-    ...     group_by='Gender',
-    ...     node_size=15
-    ... )
+    >>> import pandas as pd
+    >>> from RDSTools import RDSdata, RDSnetgraph, get_available_seeds, get_available_waves
+    >>>
+    >>> # Preprocess data with RDSdata function
+    >>> rds_data = RDSdata(data = RDSToolsToyData,
+    ...                     unique_id = "ID",
+    ...                     redeemed_coupon = "CouponR",
+    ...                     issued_coupon = ["Coupon1", "Coupon2", "Coupon3"],
+    ...                     degree = "Degree")
+    >>>
+    >>> # Check available seeds and waves
+    >>> available_seeds = get_available_seeds(rds_data)
+    >>> available_waves = get_available_waves(rds_data)
+    >>>
+    >>> # Method 1: Simple network without grouping
+    >>> out = RDSnetgraph(rds_data,
+    ...                   seed_ids=['1', '2'],
+    ...                   waves=[0, 1, 2])
+    >>>
+    >>> # Method 2: Construct a netgraph by group (matching R example)
+    >>> out = RDSnetgraph(rds_data,
+    ...                   seed_ids=['1', '2', '3'],
+    ...                   waves=list(range(0, 4)),
+    ...                   variable='Sex',
+    ...                   title='Recruitment Chain by Sex',
+    ...                   vertex_size_seed=8,
+    ...                   vertex_size=5,
+    ...                   edge_width=2)
+    >>>
+    >>> # Method 3: Tree layout with NetworkX
+    >>> out = RDSnetgraph(rds_data,
+    ...                   seed_ids=available_seeds[:2],
+    ...                   waves=available_waves[:3],
+    ...                   variable='Race',
+    ...                   layout='Tree',
+    ...                   save_path='network_tree.png')
     """
+    # Validate required columns
+    required_cols = ['R_ID', 'ID', 'SEED', 'S_ID', 'WAVE']
+    missing_cols = [col for col in required_cols if col not in data.columns]
+    if missing_cols:
+        raise ValueError(f"Missing required columns: {missing_cols}")
 
-    # Set default node size based on layout
-    if node_size is None:
-        node_size = 700 if layout == "Tree" else 30
+    # Convert seed_ids to strings for consistency
+    seed_ids = [str(sid) for sid in seed_ids]
 
-    # Filter data
-    df = data[data['S_ID'].isin(seed_ids) & data['WAVE'].isin(waves)]
+    # Filter data by seed_ids and waves
+    filtered_data = data[data['S_ID'].isin(seed_ids) & data['WAVE'].isin(waves)].copy()
 
-    if df.empty:
-        raise ValueError("No data found for the selected seed IDs and waves")
+    if filtered_data.empty:
+        raise ValueError(f"No data found for the specified seed_ids and waves")
+
+    # Validate variable if provided
+    if variable:
+        if variable not in filtered_data.columns:
+            raise ValueError(f"Variable '{variable}' not found in data columns")
+
+        # Check number of unique categories
+        unique_values = filtered_data[variable].dropna().unique()
+        if len(unique_values) > 4:
+            raise ValueError(f"RDSnetgraph does not accept factor variables with more than 4 categories. "
+                           f"Variable '{variable}' has {len(unique_values)} categories.")
 
     # Build tree structure
-    edges = df.to_dict('records')
+    edges = filtered_data.to_dict('records')
     root_nodes = build_tree(edges)
 
     # Create appropriate graph based on layout
     if layout == "Tree":
         # Tree layout uses NetworkX with pygraphviz
-        G = _create_networkx_tree(
-            root_nodes, df, seed_ids, waves, group_by,
-            node_size, figsize, show_plot, save_path
+        return _create_networkx_tree(
+            root_nodes, filtered_data, seed_ids, waves, variable,
+            vertex_size, vertex_size_seed, seed_color, nonseed_color, edge_width, title,
+            figsize, show_plot, save_path
         )
     else:
         # All other layouts use igraph
-        G = _create_igraph_network(
-            root_nodes, df, seed_ids, waves, layout,
-            group_by, node_size, figsize, show_plot, save_path
+        return _create_igraph_network(
+            root_nodes, filtered_data, seed_ids, waves, layout, variable,
+            vertex_size, vertex_size_seed, seed_color, nonseed_color, edge_width, title,
+            figsize, show_plot, save_path
         )
 
-    return G
 
-
-# ============================================================================
-# Internal Helper Functions for Graph Creation and Visualization
-# ============================================================================
-
-def _create_networkx_tree(root_nodes, df, seed_ids, waves, group_by,
-                          node_size, figsize, show_plot, save_path):
+def _create_networkx_tree(root_nodes, df, seed_ids, waves, variable,
+                          vertex_size, vertex_size_seed, seed_color, nonseed_color, edge_width, title,
+                          figsize, show_plot, save_path):
     """Create NetworkX tree layout graph (requires pygraphviz)"""
     G = create_networkx_graph(root_nodes, df)
 
     if len(G.nodes()) == 0:
         raise ValueError("No nodes found for the selected criteria")
 
-    # Create title
-    seed_str = ", ".join(seed_ids)
-    wave_str = ", ".join([str(w) for w in waves])
-    title = f"Network Graph for Seeds: {seed_str} and Waves: {wave_str}"
-
-    if group_by:
-        title += f" (Grouped by: {group_by})"
+    # Create title if not provided
+    if not title:
+        seed_str = ", ".join(seed_ids)
+        wave_str = ", ".join([str(w) for w in waves])
+        title = f"Network Graph for Seeds: {seed_str} and Waves: {wave_str}"
+        if variable:
+            title += f" (Grouped by: {variable})"
 
     # Create figure
     fig, ax = plt.subplots(figsize=figsize)
@@ -316,13 +377,18 @@ def _create_networkx_tree(root_nodes, df, seed_ids, waves, group_by,
             roots = [max(G.nodes(), key=lambda n: G.out_degree(n))]
 
     # Create hierarchical layout using pygraphviz
-    pos = nx.drawing.nx_agraph.graphviz_layout(G, prog='dot', root=roots[0] if roots else None)
+    try:
+        pos = nx.drawing.nx_agraph.graphviz_layout(G, prog='dot', root=roots[0] if roots else None)
+    except:
+        # Fallback to spring layout if pygraphviz not available
+        print("Warning: pygraphviz not available, using spring layout instead")
+        pos = nx.spring_layout(G)
 
     # Handle coloring
-    if group_by and group_by in df.columns:
-        _apply_networkx_grouping(G, df, group_by, pos, ax, node_size)
+    if variable and variable in df.columns:
+        _apply_networkx_grouping(G, df, variable, pos, ax, vertex_size, vertex_size_seed, edge_width)
     else:
-        _draw_networkx_default(G, pos, ax, node_size)
+        _draw_networkx_default(G, pos, ax, vertex_size, vertex_size_seed, seed_color, nonseed_color, edge_width)
 
     plt.title(title, fontsize=14)
     plt.axis('off')
@@ -330,6 +396,7 @@ def _create_networkx_tree(root_nodes, df, seed_ids, waves, group_by,
 
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        print(f"Network graph saved to: {save_path}")
 
     if show_plot:
         plt.show()
@@ -339,15 +406,16 @@ def _create_networkx_tree(root_nodes, df, seed_ids, waves, group_by,
     return G
 
 
-def _create_igraph_network(root_nodes, df, seed_ids, waves, layout_type,
-                           group_by, node_size, figsize, show_plot, save_path):
+def _create_igraph_network(root_nodes, df, seed_ids, waves, layout_type, variable,
+                           vertex_size, vertex_size_seed, seed_color, nonseed_color, edge_width, title,
+                           figsize, show_plot, save_path):
     """Create igraph network with specified layout"""
     G = create_igraph_graph(root_nodes, df)
 
     if G.vcount() == 0:
         raise ValueError("No nodes found for the selected criteria")
 
-    # Apply layout - using only igraph-supported layouts
+    # Apply layout - using igraph layouts with user-friendly names
     layout_map = {
         "Spring": G.layout_fruchterman_reingold,
         "Circular": G.layout_circle,
@@ -357,49 +425,97 @@ def _create_igraph_network(root_nodes, df, seed_ids, waves, layout_type,
         "Random": G.layout_random
     }
 
-    layout = layout_map.get(layout_type, G.layout_fruchterman_reingold)()
+    layout_func = layout_map.get(layout_type, G.layout_fruchterman_reingold)
+    graph_layout = layout_func()
 
-    # Create title
-    seed_str = ", ".join(seed_ids)
-    wave_str = ", ".join([str(w) for w in waves])
-    title = f"Network Graph for Seeds: {seed_str} and Waves: {wave_str}"
+    # Create title if not provided
+    if not title:
+        seed_str = ", ".join(seed_ids)
+        wave_str = ", ".join([str(w) for w in waves])
+        title = f"Network Graph for Seeds: {seed_str} and Waves: {wave_str}"
+        if variable:
+            title += f" (Grouped by: {variable})"
 
-    if group_by:
-        title += f" (Grouped by: {group_by})"
+    # Set up colors
+    if variable and variable in df.columns:
+        unique_factors = sorted([f for f in df[variable].dropna().unique() if pd.notna(f)])
 
-    # Configure visual style
+        # Use Set1 color palette (similar to R's brewer.pal)
+        set1_colors = ['#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00',
+                       '#FFFF33', '#A65628', '#F781BF']
+
+        color_mapping = {factor: set1_colors[i] for i, factor in enumerate(unique_factors)}
+
+        # Assign colors to vertices
+        vertex_colors = []
+        for v in G.vs:
+            node_data = df[df['ID'] == v["name"]]
+            if not node_data.empty:
+                factor_val = node_data[variable].iloc[0]
+                if pd.notna(factor_val) and factor_val in color_mapping:
+                    vertex_colors.append(color_mapping[factor_val])
+                else:
+                    vertex_colors.append('#CCCCCC')
+            else:
+                vertex_colors.append('#CCCCCC')
+    else:
+        # Default coloring: use seed_color and nonseed_color parameters
+        vertex_colors = [seed_color if v['is_seed'] else nonseed_color for v in G.vs]
+
+    # Set vertex sizes based on seed status
+    vertex_sizes = [vertex_size_seed if v['is_seed'] else vertex_size for v in G.vs]
+
+    # Create visual style
     visual_style = {
-        "layout": layout,
-        "bbox": (800, 800),
-        "margin": 40,
+        "layout": graph_layout,
+        "vertex_size": vertex_sizes,
+        "vertex_color": vertex_colors,
         "vertex_label": G.vs["name"],
         "vertex_label_size": 12,
-        "edge_arrow_size": 1.5,
-        "edge_arrow_width": 1.5,
-        "edge_width": 1.5,
-        "edge_curved": 0.2,
+        "edge_color": "black",
+        "edge_width": edge_width,
+        "bbox": (figsize[0] * 80, figsize[1] * 80),
+        "margin": 40
     }
-
-    # Set node sizes
-    vertex_sizes = [node_size * 1.5 if v['is_seed'] else node_size for v in G.vs]
-    visual_style["vertex_size"] = vertex_sizes
 
     # Create figure
     fig, ax = plt.subplots(figsize=figsize)
 
-    # Handle coloring
-    if group_by and group_by in df.columns:
-        _apply_igraph_grouping(G, df, group_by, visual_style, ax)
-    else:
-        _draw_igraph_default(G, visual_style, ax)
+    # Plot the graph
+    ig.plot(G, target=ax, **visual_style)
 
-    plt.title(title, fontsize=14)
+    # Add title
+    if title:
+        plt.title(title, fontsize=14)
+
     plt.axis('off')
+
+    # Add legend if variable is used
+    if variable and variable in df.columns:
+        from matplotlib.lines import Line2D
+        legend_elements = []
+
+        for factor in unique_factors:
+            legend_elements.append(
+                Line2D([0], [0], marker='o', color='w',
+                       markerfacecolor=color_mapping[factor],
+                       markeredgecolor='black',
+                       markersize=10,
+                       label=str(factor))
+            )
+
+        if legend_elements:
+            ax.legend(handles=legend_elements, loc='lower left', frameon=False,
+                     fontsize=12)
+
     plt.tight_layout()
 
+    # Save if requested
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
+        print(f"Network graph saved to: {save_path}")
 
+    # Show or close
     if show_plot:
         plt.show()
     else:
@@ -408,159 +524,62 @@ def _create_igraph_network(root_nodes, df, seed_ids, waves, layout_type,
     return G
 
 
-def _apply_networkx_grouping(G, df, group_var, pos, ax, node_size):
+def _apply_networkx_grouping(G, df, variable, pos, ax, vertex_size, vertex_size_seed, edge_width):
     """Apply color grouping for NetworkX graph"""
     node_to_group = {}
 
     for node_id in G.nodes():
         node_data = df[df['ID'] == node_id]
-        if not node_data.empty and group_var in node_data.columns:
-            group_value = node_data[group_var].iloc[0]
+        if not node_data.empty and variable in node_data.columns:
+            group_value = node_data[variable].iloc[0]
             if not pd.isna(group_value):
                 node_to_group[node_id] = group_value
 
     if not node_to_group:
-        _draw_networkx_default(G, pos, ax, node_size)
+        _draw_networkx_default(G, pos, ax, vertex_size, vertex_size_seed, edge_width)
         return
 
-    # Check if continuous variable
-    is_continuous = (pd.api.types.is_numeric_dtype(df[group_var]) and
-                     len(df[group_var].unique()) >= 10)
+    # Use Set1 color palette
+    unique_groups = sorted(list(set(node_to_group.values())))
+    set1_colors = ['#E41A1C', '#377EB8', '#4DAF4A', '#984EA3']
+    color_map = {group: set1_colors[i % 4] for i, group in enumerate(unique_groups)}
 
-    if is_continuous:
-        values = list(node_to_group.values())
-        vmin, vmax = min(values), max(values)
-        cmap = cm.get_cmap('viridis')
+    # Set node sizes and colors
+    node_sizes = [vertex_size_seed if G.nodes[node].get('is_seed', False) else vertex_size
+                  for node in G.nodes()]
+    node_colors = [color_map.get(node_to_group.get(node), '#CCCCCC')
+                   for node in G.nodes()]
 
-        node_colors = []
-        for node in G.nodes():
-            if node in node_to_group:
-                norm_value = (node_to_group[node] - vmin) / (vmax - vmin) if vmax > vmin else 0.5
-                node_colors.append(cmap(norm_value))
-            else:
-                node_colors.append((0.8, 0.8, 0.8, 1.0))
+    nx.draw(G, pos, node_color=node_colors, node_size=node_sizes,
+            with_labels=True, arrows=True, ax=ax, edge_color='black',
+            width=edge_width)
 
-        nx.draw(G, pos, node_color=node_colors, node_size=node_size,
-                with_labels=True, arrows=True, ax=ax)
-
-        sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
-        sm.set_array([])
-        plt.colorbar(sm, ax=ax, label=group_var)
-    else:
-        unique_groups = list(set(node_to_group.values()))
-        cmap = cm.get_cmap('tab10', max(8, len(unique_groups)))
-        color_map = {group: cmap(i % 10) for i, group in enumerate(unique_groups)}
-
-        node_colors = [color_map.get(node_to_group.get(node), (0.8, 0.8, 0.8, 1.0))
-                       for node in G.nodes()]
-
-        nx.draw(G, pos, node_color=node_colors, node_size=node_size,
-                with_labels=True, arrows=True, ax=ax)
-
-        from matplotlib.lines import Line2D
-        legend_elements = [
-            Line2D([0], [0], marker='o', color='w',
-                   markerfacecolor=color_map[group], markersize=10,
-                   label=str(group)) for group in unique_groups
-        ]
-        plt.legend(handles=legend_elements, title=group_var, loc='best')
+    from matplotlib.lines import Line2D
+    legend_elements = [
+        Line2D([0], [0], marker='o', color='w',
+               markerfacecolor=color_map[group], markersize=10,
+               markeredgecolor='black',
+               label=str(group)) for group in unique_groups
+    ]
+    ax.legend(handles=legend_elements, loc='lower left', frameon=False, fontsize=12)
 
 
-def _draw_networkx_default(G, pos, ax, node_size):
+def _draw_networkx_default(G, pos, ax, vertex_size, vertex_size_seed, seed_color, nonseed_color, edge_width):
     """Draw NetworkX graph with default seed coloring"""
-    node_colors = ['#ff6347' if G.nodes[node].get('is_seed', False)
-                   else '#4682b4' for node in G.nodes()]
+    node_sizes = [vertex_size_seed if G.nodes[node].get('is_seed', False) else vertex_size
+                  for node in G.nodes()]
+    node_colors = [seed_color if G.nodes[node].get('is_seed', False)
+                   else nonseed_color for node in G.nodes()]
 
-    nx.draw(G, pos, node_color=node_colors, node_size=node_size,
-            with_labels=True, arrows=True, ax=ax)
-
-    from matplotlib.lines import Line2D
-    legend_elements = [
-        Line2D([0], [0], marker='o', color='w', markerfacecolor="#ff6347",
-               markersize=10, label="Seed"),
-        Line2D([0], [0], marker='o', color='w', markerfacecolor="#4682b4",
-               markersize=8, label="Non-seed")
-    ]
-    ax.legend(handles=legend_elements, loc='best')
-
-
-def _apply_igraph_grouping(G, df, group_var, visual_style, ax):
-    """Apply color grouping for igraph graph"""
-    node_to_group = {}
-
-    for v in G.vs:
-        node_data = df[df['ID'] == v["name"]]
-        if not node_data.empty and group_var in node_data.columns:
-            group_value = node_data[group_var].iloc[0]
-            if not pd.isna(group_value):
-                node_to_group[v["name"]] = group_value
-
-    if not node_to_group:
-        _draw_igraph_default(G, visual_style, ax)
-        return
-
-    # Check if continuous
-    is_continuous = (pd.api.types.is_numeric_dtype(df[group_var]) and
-                     len(df[group_var].unique()) >= 10)
-
-    if is_continuous:
-        values = list(node_to_group.values())
-        vmin, vmax = min(values), max(values)
-        cmap = cm.get_cmap('viridis')
-
-        vertex_colors = []
-        for v in G.vs:
-            if v["name"] in node_to_group:
-                norm_value = (node_to_group[v["name"]] - vmin) / (vmax - vmin) if vmax > vmin else 0.5
-                rgb_color = cmap(norm_value)
-                hex_color = f"#{int(rgb_color[0] * 255):02x}{int(rgb_color[1] * 255):02x}{int(rgb_color[2] * 255):02x}"
-                vertex_colors.append(hex_color)
-            else:
-                vertex_colors.append("#d3d3d3")
-
-        visual_style["vertex_color"] = vertex_colors
-        ig.plot(G, **visual_style, target=ax)
-
-        norm = plt.Normalize(vmin=vmin, vmax=vmax)
-        sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
-        sm.set_array([])
-        plt.colorbar(sm, ax=ax, label=group_var)
-    else:
-        unique_groups = list(set(node_to_group.values()))
-        cmap = cm.get_cmap('tab10', max(8, len(unique_groups)))
-
-        color_map = {}
-        for i, group in enumerate(unique_groups):
-            rgb = cmap(i % 10)
-            color_map[group] = f"#{int(rgb[0] * 255):02x}{int(rgb[1] * 255):02x}{int(rgb[2] * 255):02x}"
-
-        vertex_colors = [color_map.get(node_to_group.get(v["name"]), "#d3d3d3")
-                         for v in G.vs]
-
-        visual_style["vertex_color"] = vertex_colors
-        ig.plot(G, **visual_style, target=ax)
-
-        from matplotlib.lines import Line2D
-        legend_elements = [
-            Line2D([0], [0], marker='o', color='w',
-                   markerfacecolor=color_map[group], markersize=10,
-                   label=str(group)) for group in unique_groups
-        ]
-        plt.legend(handles=legend_elements, title=group_var, loc='best')
-
-
-def _draw_igraph_default(G, visual_style, ax):
-    """Draw igraph with default seed coloring"""
-    vertex_colors = ['#ff6347' if v['is_seed'] else '#4682b4' for v in G.vs]
-    visual_style["vertex_color"] = vertex_colors
-
-    ig.plot(G, **visual_style, target=ax)
+    nx.draw(G, pos, node_color=node_colors, node_size=node_sizes,
+            with_labels=True, arrows=True, ax=ax, edge_color='black',
+            width=edge_width)
 
     from matplotlib.lines import Line2D
     legend_elements = [
-        Line2D([0], [0], marker='o', color='w', markerfacecolor="#ff6347",
-               markersize=10, label="Seed"),
-        Line2D([0], [0], marker='o', color='w', markerfacecolor="#4682b4",
-               markersize=8, label="Non-seed")
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=seed_color,
+               markersize=10, markeredgecolor='black', label="Seed"),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=nonseed_color,
+               markersize=8, markeredgecolor='black', label="Non-seed")
     ]
-    plt.legend(handles=legend_elements, loc='best')
+    ax.legend(handles=legend_elements, loc='lower left', frameon=False, fontsize=12)

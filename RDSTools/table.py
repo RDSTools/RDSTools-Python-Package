@@ -293,30 +293,32 @@ class RDSTableResult:
 
         return "".join(formatted)
 
-def RDStable(formula, data, weight=None, var_est=None, resample_n=None, margins=3, n_cores=None,
+
+def RDStable(x, data, weight=None, var_est=None, resample_n=None, margins=3, n_cores=None,
              return_bootstrap_tables=False, return_node_counts=False):
     """
-    1-2 way tables from an RDS study
+    Estimating one and two-way tables with respondent driven sampling sample data
 
     Create contingency tables from RDS data with optional weighting
     and different variance estimation methods.
 
     Parameters:
     -----------
-    formula : str
-        For a 2-way table, 2 categorical variables of interest. The variables should be coded as factors. For a 1-way table, specify one variable.
-        (e.g., "~Sex" for one-way, "~Sex+Race" for two-way)
+    x : str
+        For a 1-way table, specify one variable (with or without tilde prefix).
+        For a 2-way table, use tilde format with 2 categorical variables of interest. The variables should be coded as factors.
+        (e.g., "~Sex" or "Sex" for one-way, "~Sex+Race" for two-way)
     data : pandas.DataFrame
         The output from RDSdata
     weight : str, optional
         Name of the weight variable.
-        A user specified weights to calculate weighted proportions and standard errors.
-        When set to None the function calculates unweighted proportions and standard errors
+        User specified weight variable for a weighted analysis.
+        When set to NULL, the function performs an unweighted analysis.
     var_est : str, optional
-        One of the six bootstrap types or the delta (naive) method.
-        By default the function calculates naive standard errors.
-        Variance estimation options include 'naive' or bootstrap methods like 'resample_chain1', 'resample_chain2', 'resample_tree_uni1', 'resample_tree_uni2',
-        'resample_tree_bi1', 'resample_tree_bi2'
+        Variance estimation method: the naive (delta) method or one of six bootstrap types.
+        Options include 'chain1', 'chain2', 'tree_uni1', 'tree_uni2',
+        'tree_bi1', 'tree_bi2'.
+        When the option is not specified, the naive method is the default.
     resample_n : int, optional
         Specifies the number of resample iterations.
         Note that this argument is None when var_est = 'naive'.
@@ -382,8 +384,21 @@ def RDStable(formula, data, weight=None, var_est=None, resample_n=None, margins=
                       degree = "Degree")
 
     # Calculate RDStable using data preprocessed by RDSdata
+    # Single variable can use either format - with or without tilde
     out = RDStable("~Sex", data = rds_data, weight = 'DEGREE',
-                   var_est = 'resample_chain1',
+                   var_est = 'chain1',
+                   resample_n = 100)
+    print(out)
+
+    # Alternative format without tilde (single variable only)
+    out = RDStable("Sex", data = rds_data, weight = 'DEGREE',
+                   var_est = 'chain1',
+                   resample_n = 100)
+    print(out)
+
+    # Two-way tables must use tilde format
+    out = RDStable("~Sex+Race", data = rds_data, weight = 'DEGREE',
+                   var_est = 'chain1',
                    resample_n = 100)
     print(out)
     """
@@ -392,8 +407,17 @@ def RDStable(formula, data, weight=None, var_est=None, resample_n=None, margins=
         if not isinstance(n_cores, int) or n_cores < 1:
             raise ValueError("n_cores must be a positive integer")
 
-    # Parse formula
-    variables = formula.strip().split("~")[1].split("+")
+    # Parse x - accept single variable without tilde, but require tilde for two-way tables
+    x_str = x.strip()
+    if "~" in x_str:
+        # Traditional formula format: "~Sex" or "~Sex+Race"
+        variables = x_str.split("~")[1].split("+")
+    elif "+" not in x_str:
+        # Single variable without tilde: "Sex"
+        variables = [x_str]
+    else:
+        # Two variables without tilde is not allowed
+        raise ValueError("Two-way tables must use formula format with tilde (e.g., '~Sex+Race')")
     variables = [var.strip() for var in variables]
 
     if len(variables) > 2:
@@ -403,8 +427,8 @@ def RDStable(formula, data, weight=None, var_est=None, resample_n=None, margins=
         var_est = "naive"
 
     resample_methods = [
-        "resample_chain1", "resample_chain2", "resample_tree_uni1",
-        "resample_tree_uni2", "resample_tree_bi1", "resample_tree_bi2"
+        "chain1", "chain2", "tree_uni1",
+        "tree_uni2", "tree_bi1", "tree_bi2"
     ]
 
     if resample_n is not None and var_est not in resample_methods:
@@ -416,7 +440,7 @@ def RDStable(formula, data, weight=None, var_est=None, resample_n=None, margins=
     # One-way table
     if len(variables) == 1:
         if var_est == "naive":
-            result = compute_naive_one_way(variables[0], data, weight, formula)
+            result = compute_naive_one_way(variables[0], data, weight, x)
             if return_bootstrap_tables:
                 if return_node_counts:
                     return result, [], []
@@ -426,12 +450,12 @@ def RDStable(formula, data, weight=None, var_est=None, resample_n=None, margins=
             return result
         else:
             return compute_bootstrap_one_way(variables[0], data, weight, var_est, resample_n, n_cores,
-                                             formula, return_bootstrap_tables, return_node_counts)
+                                             x, return_bootstrap_tables, return_node_counts)
 
     # Two-way table
     else:
         if var_est == "naive":
-            result = compute_naive_two_way(variables[0], variables[1], data, weight, margins, formula)
+            result = compute_naive_two_way(variables[0], variables[1], data, weight, margins, x)
             if return_bootstrap_tables:
                 if return_node_counts:
                     return result, [], []
@@ -441,11 +465,11 @@ def RDStable(formula, data, weight=None, var_est=None, resample_n=None, margins=
             return result
         else:
             return compute_bootstrap_two_way(variables[0], variables[1], data, weight, var_est, resample_n, margins,
-                                             n_cores, formula, return_bootstrap_tables, return_node_counts)
+                                             n_cores, x, return_bootstrap_tables, return_node_counts)
 
 
 # Helper functions for one-way tables
-def compute_naive_one_way(variable, data, weight, formula):
+def compute_naive_one_way(variable, data, weight, x):
     """Compute proportions and SEs for one-way table using naive method.
     Counts and proportions are always from unweighted data.
     Weights only affect SE calculation."""
@@ -479,14 +503,14 @@ def compute_naive_one_way(variable, data, weight, formula):
 
     return RDSTableResult(
         results=results_df,
-        formula=formula,
+        formula=x,
         n_original=n,
         is_weighted=(weight is not None),
         var_est_method='naive',
     )
 
 
-def compute_bootstrap_one_way(variable, data, weight, var_est, resample_n, n_cores, formula,
+def compute_bootstrap_one_way(variable, data, weight, var_est, resample_n, n_cores, x,
                               return_bootstrap_tables=False, return_node_counts=False):
     """Compute proportions and SEs for one-way table using bootstrap methods.
     Counts and proportions are always from unweighted data.
@@ -520,9 +544,7 @@ def compute_bootstrap_one_way(variable, data, weight, var_est, resample_n, n_cor
             resample_n=resample_n
         )
 
-    data_copy = data.copy()
-    data_copy = data_copy.rename(columns={'ID': 'RESPONDENT_ID'})
-    merged = pd.merge(data_copy, boot_results, on='RESPONDENT_ID')
+    merged = pd.merge(data, boot_results, on='ID')
 
     # STEP 3: Compute bootstrap estimates
     bootstrap_props = []
@@ -560,7 +582,7 @@ def compute_bootstrap_one_way(variable, data, weight, var_est, resample_n, n_cor
 
     result = RDSTableResult(
         results=results_df,
-        formula=formula,
+        formula=x,
         n_original=n_original,
         is_weighted=(weight is not None),
         var_est_method=var_est,
@@ -579,7 +601,7 @@ def compute_bootstrap_one_way(variable, data, weight, var_est, resample_n, n_cor
 
 
 # Helper functions for two-way tables
-def compute_naive_two_way(var1, var2, data, weight, margins, formula):
+def compute_naive_two_way(var1, var2, data, weight, margins, x):
     """Compute proportions and SEs for two-way table using naive method.
     Counts and proportions are always from unweighted data.
     Weights only affect SE calculation."""
@@ -651,7 +673,7 @@ def compute_naive_two_way(var1, var2, data, weight, margins, formula):
     return RDSTableResult(
         prop_table=prop_table,
         se_table=se_table,
-        formula=formula,
+        formula=x,
         n_original=n,
         is_weighted=(weight is not None),
         var_est_method='naive',
@@ -660,7 +682,7 @@ def compute_naive_two_way(var1, var2, data, weight, margins, formula):
     )
 
 
-def compute_bootstrap_two_way(var1, var2, data, weight, var_est, resample_n, margins, n_cores, formula,
+def compute_bootstrap_two_way(var1, var2, data, weight, var_est, resample_n, margins, n_cores, x,
                               return_bootstrap_tables=False, return_node_counts=False):
     """Compute proportions and SEs for two-way table using bootstrap methods.
     Counts and proportions are always from unweighted data.
@@ -701,9 +723,7 @@ def compute_bootstrap_two_way(var1, var2, data, weight, var_est, resample_n, mar
             resample_n=resample_n
         )
 
-    data_copy = data.copy()
-    data_copy = data_copy.rename(columns={'ID': 'RESPONDENT_ID'})
-    merged = pd.merge(data_copy, boot_results, on='RESPONDENT_ID')
+    merged = pd.merge(data, boot_results, on='ID')
 
     # STEP 3: Compute bootstrap estimates using UNWEIGHTED data
     bootstrap_tables = []
@@ -748,7 +768,7 @@ def compute_bootstrap_two_way(var1, var2, data, weight, var_est, resample_n, mar
     result = RDSTableResult(
         prop_table=prop_table,
         se_table=se_table,
-        formula=formula,
+        formula=x,
         n_original=n_original,
         is_weighted=(weight is not None),
         var_est_method=var_est,

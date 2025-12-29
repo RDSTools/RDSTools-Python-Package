@@ -112,10 +112,7 @@ class RDSResult(pd.DataFrame):
 def RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, return_bootstrap_means=False,
             return_node_counts=False):
     """
-    Descriptive statistics in an RDS study
-
-    Calculate means and standard errors for RDS data with optional weighting
-    and different variance estimation methods.
+    Estimating mean with respondent driven sampling sample data
 
     Parameters:
     -----------
@@ -125,13 +122,13 @@ def RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, r
         The output DataFrame from RDSdata
     weight : str, optional
         Name of the weight variable.
-        User specified weights to calculate weighted mean and standard errors.
-        When set to None the function calculates unweighted mean and standard errors
+        User specified weight variable for a weighted analysis.
+        When set to NULL, the function performs an unweighted analysis.
     var_est : str, optional
         One of the six bootstrap types or the delta (naive) method.
         By default the function calculates naive standard errors.
-        Variance estimation options include 'naive' or bootstrap methods like 'resample_chain1', 'resample_chain2', 'resample_tree_uni1', 'resample_tree_uni2',
-        'resample_tree_bi1', 'resample_tree_bi2'
+        Variance estimation options include 'naive' or bootstrap methods like 'chain1', 'chain2', 'tree_uni1', 'tree_uni2',
+        'tree_bi1', 'tree_bi2'
     resample_n : int, optional
         Specifies the number of resample iterations.
         Note that this argument is None when var_est = 'naive'.
@@ -189,9 +186,9 @@ def RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, r
             raise ValueError("n_cores must be a positive integer")
 
     # Valid bootstrap methods
-    resample_methods = ['resample_chain1', 'resample_chain2',
-                        'resample_tree_uni1', 'resample_tree_uni2',
-                        'resample_tree_bi1', 'resample_tree_bi2']
+    resample_methods = ['chain1', 'chain2',
+                        'tree_uni1', 'tree_uni2',
+                        'tree_bi1', 'tree_bi2']
 
     # Default resample_n if bootstrap method is specified but resample_n is not
     if resample_n is None and var_est in resample_methods:
@@ -305,12 +302,7 @@ def RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, r
                 resample_n=resample_n
             )
 
-        # Create a copy of data with ID renamed to RESPONDENT_ID for merging
-        merge_data = data.copy()
-        merge_data = merge_data.rename(columns={'ID': 'RESPONDENT_ID'})
-
-        # Merge bootstrapped data with original data
-        merged_data = pd.merge(merge_data, boot_out, on='RESPONDENT_ID')
+        merged_data = pd.merge(data, boot_out, on='ID')
         n_analysis = len(merged_data)
 
         if n_analysis == 0:
@@ -377,12 +369,7 @@ def RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, r
                 resample_n=resample_n
             )
 
-        # Create a copy of data with ID renamed to RESPONDENT_ID for merging
-        merge_data = data.copy()
-        merge_data = merge_data.rename(columns={'ID': 'RESPONDENT_ID'})
-
-        # Merge bootstrapped data with original data
-        merged_data = pd.merge(merge_data, boot_out, on='RESPONDENT_ID')
+        merged_data = pd.merge(data, boot_out, on='ID')
         n_analysis = len(merged_data)
 
         if n_analysis == 0:

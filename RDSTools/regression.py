@@ -150,7 +150,8 @@ class RDSRegressionResult:
 def RDSlm(data, formula, weight=None, var_est=None, resample_n=None, n_cores=None,
                   return_bootstrap_estimates=False, return_node_counts=False):
     """
-    Linear and Logistic regression modeling in an RDS study
+    Estimating linear and logistic regression models with respondent driven sampling sample data.
+    Equivalent to lm in R stats package with capabilities to handle RDS data in model estimation.
 
     Parameters:
     -----------
@@ -158,18 +159,17 @@ def RDSlm(data, formula, weight=None, var_est=None, resample_n=None, n_cores=Non
         The output DataFrame from RDSdata
     formula : str
         Description of the model with dependent and independent variables. (e.g., "y ~ x1 + x2")
-        Note that the functions performs a linear regression when the dependent variable is numeric
-        and a logistic regression with binomial link function when the dependent variable is either character or factor
+        Note that the function performs linear regression when the dependent variable is numeric
+        and logistic regression with binomial link function when the dependent variable is either character or factor
     weight : str, optional
         Name of the weight variable.
-        User specified weights to calculate weighted point estimates and standard errors.
-        When set to NULL the function calculates unweighted point estimates and standard errors.
+        User specified weight variable for a weighted analysis.
+        When set to NULL, the function performs an unweighted analysis.
     var_est : str, optional
-        One of the six bootstrap types or the delta (naive) method.
-        Variance estimation method options include 'naive' or bootstrap methods like 'resample_chain1',
-        'resample_chain2', 'resample_tree_uni1', 'resample_tree_uni2',
-        'resample_tree_bi1', 'resample_tree_bi2'.
-        By default the function calcuates naive standard errors.
+        Variance estimation method: the naive (delta) method or one of six bootstrap types.
+        Options include 'chain1', 'chain2', 'tree_uni1', 'tree_uni2',
+        'tree_bi1', 'tree_bi2'.
+        When the option is not specified, the naive method is the default.
     resample_n : int, optional
         Specifies the number of resample iterations. (required for bootstrap methods, default 300)
         Note that this argument is NULL when var.est = 'naive'.
@@ -223,8 +223,8 @@ def RDSlm(data, formula, weight=None, var_est=None, resample_n=None, n_cores=Non
     # Run the model using data preprocessed by RDSData
     out = RDSlm(data = rds_data,
                         formula = "Age~Sex",
-                        weight = 'DEGREE_IMP',
-                        var_est = 'resample_chain1',
+                        weight = 'WEIGHT',
+                        var_est = 'chain1',
                         resample_n = 100)
     print(out)
     """
@@ -234,9 +234,9 @@ def RDSlm(data, formula, weight=None, var_est=None, resample_n=None, n_cores=Non
             raise ValueError("n_cores must be a positive integer")
 
     # Valid bootstrap methods
-    resample_methods = ['resample_chain1', 'resample_chain2',
-                        'resample_tree_uni1', 'resample_tree_uni2',
-                        'resample_tree_bi1', 'resample_tree_bi2']
+    resample_methods = ['chain1', 'chain2',
+                        'tree_uni1', 'tree_uni2',
+                        'tree_bi1', 'tree_bi2']
 
     # Check if bootstrap is specified but not a valid method
     if resample_n is not None and var_est not in resample_methods:
@@ -436,12 +436,7 @@ def RDSlm(data, formula, weight=None, var_est=None, resample_n=None, n_cores=Non
                 resample_n=resample_n
             )
 
-        # Create a copy of data with ID renamed to RESPONDENT_ID for merging
-        merge_data = data.copy()
-        merge_data = merge_data.rename(columns={'ID': 'RESPONDENT_ID'})
-
-        # Merge bootstrapped data with original data
-        merged_data = pd.merge(merge_data, boot_out, on='RESPONDENT_ID')
+        merged_data = pd.merge(data, boot_out, on='ID')
 
         # Calculate bootstrap estimates and collect model fit statistics
         bootstrap_estimates = []
