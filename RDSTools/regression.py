@@ -166,13 +166,14 @@ def RDSlm(data, formula, weight=None, var_est=None, resample_n=None, n_cores=Non
         User specified weight variable for a weighted analysis.
         When set to NULL, the function performs an unweighted analysis.
     var_est : str, optional
-        Variance estimation method: the naive (delta) method or one of six bootstrap types.
-        Options include 'chain1', 'chain2', 'tree_uni1', 'tree_uni2',
-        'tree_bi1', 'tree_bi2'.
-        When the option is not specified, the naive method is the default.
+        One of the six bootstrap types or the delta (naive) method.
+        By default, the function calculates naive standard errors.
+        Variance estimation options include 'naive' or bootstrap methods like 'chain1', 'chain2', 'tree_uni1', 'tree_uni2',
+        'tree_bi1', 'tree_bi2'
     resample_n : int, optional
-        Specifies the number of resample iterations. (required for bootstrap methods, default 300)
-        Note that this argument is NULL when var.est = 'naive'.
+        Specifies the number of resample iterations.
+        Note that this argument is None when var_est = 'naive'.
+        Required for bootstrap methods, default 300
     n_cores : int, optional
         Number of CPU cores to use for parallel bootstrap processing.
         If specified, uses optimized parallel bootstrap. If None, uses

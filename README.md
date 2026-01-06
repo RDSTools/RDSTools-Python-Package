@@ -174,15 +174,7 @@ Generate frequency tables and proportions for categorical variables with RDS-adj
 ```python
 from RDSTools import RDStable
 
-# One-way table (with tilde)
-result = RDStable(
-    x="~Sex",
-    data=rds_data,
-    var_est='chain1',
-    resample_n=1000
-)
-
-# One-way table (without tilde - single variable only)
+# One-way table
 result = RDStable(
     x="Sex",
     data=rds_data,
@@ -190,9 +182,10 @@ result = RDStable(
     resample_n=1000
 )
 
-# Two-way table (must use tilde)
+# Two-way table
 result = RDStable(
-    x="~Sex+Race", 
+    x="Sex",
+    y="Race", 
     data=rds_data,
     var_est='chain1',
     resample_n=1000,
@@ -201,7 +194,8 @@ result = RDStable(
 
 # With optional returns
 result, bootstrap_tables = RDStable(
-    x="~Sex+Race",
+    x="Sex",
+    y="Race",
     data=rds_data,
     var_est='chain1',
     resample_n=1000,
@@ -542,7 +536,7 @@ print(age_mean)
 
 # 3. Create frequency tables
 sex_table = RDStable(
-    x='~Sex',
+    x='Sex',
     data=rds_data,
     weight='WEIGHT',
     var_est='tree_uni1',

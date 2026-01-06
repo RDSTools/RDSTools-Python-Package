@@ -50,7 +50,7 @@ Here's a complete example showing how to analyze RDS data from start to finish::
 
     # 4. Generate frequency tables
     sex_table = RDStable(
-        x='~Sex',
+        x='Sex',
         data=rds_data,
         weight='WEIGHT',
         var_est='tree_uni1',
@@ -60,7 +60,8 @@ Here's a complete example showing how to analyze RDS data from start to finish::
 
     # Two-way table
     cross_table = RDStable(
-        x='~Sex+Race',
+        x='Sex',
+        y='Race',
         data=rds_data,
         weight='WEIGHT',
         var_est='tree_uni1',
@@ -124,13 +125,13 @@ One-way table with different margin options::
 
     # Simple one-way table
     table = RDStable(
-        x='~Sex',
+        x='Sex',
         data=rds_data
     )
 
     # Weighted one-way table with bootstrap
     table = RDStable(
-        x='~Race',
+        x='Race',
         data=rds_data,
         weight='WEIGHT',
         var_est='tree_uni1',
@@ -141,21 +142,24 @@ Two-way tables with different proportions::
 
     # Cell proportions (default)
     table_cell = RDStable(
-        x='~Sex+Race',
+        x='Sex',
+        y='Race',
         data=rds_data,
         margins=3
     )
 
     # Row proportions
     table_row = RDStable(
-        x='~Sex+Race',
+        x='Sex',
+        y='Race',
         data=rds_data,
         margins=1
     )
 
     # Column proportions
     table_col = RDStable(
-        x='~Sex+Race',
+        x='Sex',
+        y='Race',
         data=rds_data,
         margins=2
     )
@@ -395,7 +399,7 @@ Here's a complete pipeline from data loading to final results::
 
     # Frequency tables
     sex_table = RDStable(
-        x='~Sex',
+        x='Sex',
         data=rds_data,
         weight='WEIGHT',
         var_est='tree_uni1',
@@ -403,7 +407,8 @@ Here's a complete pipeline from data loading to final results::
     )
 
     race_sex_table = RDStable(
-        x='~Sex+Race',
+        x='Sex',
+        y='Race',
         data=rds_data,
         weight='WEIGHT',
         var_est='tree_uni1',

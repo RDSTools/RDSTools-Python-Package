@@ -145,7 +145,7 @@
 
 <span class="c1"># 4. Generate frequency tables</span>
 <span class="n">sex_table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
@@ -155,7 +155,8 @@
 
 <span class="c1"># Two-way table</span>
 <span class="n">cross_table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Race&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
@@ -219,13 +220,13 @@
 <p>One-way table with different margin options:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simple one-way table</span>
 <span class="n">table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span>
 <span class="p">)</span>
 
 <span class="c1"># Weighted one-way table with bootstrap</span>
 <span class="n">table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Race&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Race&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
@@ -236,21 +237,24 @@
 <p>Two-way tables with different proportions:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Cell proportions (default)</span>
 <span class="n">table_cell</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Race&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">margins</span><span class="o">=</span><span class="mi">3</span>
 <span class="p">)</span>
 
 <span class="c1"># Row proportions</span>
 <span class="n">table_row</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Race&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">margins</span><span class="o">=</span><span class="mi">1</span>
 <span class="p">)</span>
 
 <span class="c1"># Column proportions</span>
 <span class="n">table_col</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Race&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">margins</span><span class="o">=</span><span class="mi">2</span>
 <span class="p">)</span>
@@ -496,7 +500,7 @@
 
 <span class="c1"># Frequency tables</span>
 <span class="n">sex_table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
@@ -504,7 +508,8 @@
 <span class="p">)</span>
 
 <span class="n">race_sex_table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Race&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;WEIGHT&#39;</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>

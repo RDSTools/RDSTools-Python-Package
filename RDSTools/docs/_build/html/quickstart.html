@@ -106,14 +106,13 @@
 </div>
 <p>Load your data:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># To use toy data (recommended for testing):</span>
+<span class="n">toy_data</span> <span class="o">=</span> <span class="n">load_toy_data</span><span class="p">()</span>
+
+<span class="c1"># Or to use your own data:</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;your_survey_data.csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>toy_data = load_toy_data()</p>
-<p># Or to use your own data:
-# import pandas as pd</p>
-<blockquote>
-<div><p># data = pd.read_csv(“your_survey_data.csv”)</p>
-</div></blockquote>
 </section>
 <section id="process-rds-data">
 <h2>Process RDS Data<a class="headerlink" href="#process-rds-data" title="Link to this heading"></a></h2>
@@ -154,7 +153,7 @@
 <h2>Create Tables<a class="headerlink" href="#create-tables" title="Link to this heading"></a></h2>
 <p>Generate frequency tables for categorical variables:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sex_table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_processed</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span>
@@ -162,7 +161,8 @@
 
 <span class="c1"># Two-way table</span>
 <span class="n">cross_table</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;~Sex+Race&#39;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Race&#39;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_processed</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>

@@ -69,7 +69,8 @@ All estimation functions support the n_cores parameter:
 
     # Parallel table calculation
     table_result = RDStable(
-        x="~Sex+Race",
+        x="Sex",
+        y="Race",
         data=rds_data,
         var_est='tree_uni1',
         resample_n=1000,
@@ -84,3 +85,4 @@ All estimation functions support the n_cores parameter:
         resample_n=1000,
         n_cores=4
     )
+

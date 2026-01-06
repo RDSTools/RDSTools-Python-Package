@@ -294,31 +294,34 @@ class RDSTableResult:
         return "".join(formatted)
 
 
-def RDStable(x, data, weight=None, var_est=None, resample_n=None, margins=3, n_cores=None,
+def RDStable(x, y=None, data=None, weight=None, var_est=None, resample_n=None, margins=3, n_cores=None,
              return_bootstrap_tables=False, return_node_counts=False):
     """
     Estimating one and two-way tables with respondent driven sampling sample data
 
-    Create contingency tables from RDS data with optional weighting
-    and different variance estimation methods.
+    One-way tables are constructed by specifying a categorical variable for x argument only.
+
+    Two-way tables are constructed by specifying two categorical variables for x and y arguments.
 
     Parameters:
     -----------
     x : str
-        For a 1-way table, specify one variable (with or without tilde prefix).
-        For a 2-way table, use tilde format with 2 categorical variables of interest. The variables should be coded as factors.
-        (e.g., "~Sex" or "Sex" for one-way, "~Sex+Race" for two-way)
+        Column name; For a 1-way table, specify one categorical variable.
+        By default the function returns a 1-way table.
+    y : str, optional
+        Column name; Optional, for 2-way tables specify the second categorical
+        variable of interest. Default is None.
     data : pandas.DataFrame
-        The output from RDSdata
+        The output DataFrame from RDSdata
     weight : str, optional
         Name of the weight variable.
         User specified weight variable for a weighted analysis.
         When set to NULL, the function performs an unweighted analysis.
     var_est : str, optional
-        Variance estimation method: the naive (delta) method or one of six bootstrap types.
-        Options include 'chain1', 'chain2', 'tree_uni1', 'tree_uni2',
-        'tree_bi1', 'tree_bi2'.
-        When the option is not specified, the naive method is the default.
+        One of the six bootstrap types or the delta (naive) method.
+        By default the function calculates naive standard errors.
+        Variance estimation options include 'naive' or bootstrap methods like 'chain1', 'chain2', 'tree_uni1', 'tree_uni2',
+        'tree_bi1', 'tree_bi2'
     resample_n : int, optional
         Specifies the number of resample iterations.
         Note that this argument is None when var_est = 'naive'.
@@ -387,22 +390,16 @@ def RDStable(x, data, weight=None, var_est=None, resample_n=None, margins=3, n_c
                       degree = "Degree")
 
     # Calculate RDStable using data preprocessed by RDSdata
-    # Single variable can use either format - with or without tilde
-    out = RDStable("~Sex", data = rds_data, weight = 'DEGREE',
-                   var_est = 'chain1',
-                   resample_n = 100)
+    # One-way table
+    out = RDStable(x="Sex", data=rds_data, weight='DEGREE',
+                   var_est='chain1',
+                   resample_n=100)
     print(out)
 
-    # Alternative format without tilde (single variable only)
-    out = RDStable("Sex", data = rds_data, weight = 'DEGREE',
-                   var_est = 'chain1',
-                   resample_n = 100)
-    print(out)
-
-    # Two-way tables must use tilde format
-    out = RDStable("~Sex+Race", data = rds_data, weight = 'DEGREE',
-                   var_est = 'chain1',
-                   resample_n = 100)
+    # Two-way table
+    out = RDStable(x="Sex", y="Race", data=rds_data, weight='DEGREE',
+                   var_est='chain1',
+                   resample_n=100)
     print(out)
     """
 
@@ -410,18 +407,13 @@ def RDStable(x, data, weight=None, var_est=None, resample_n=None, margins=3, n_c
         if not isinstance(n_cores, int) or n_cores < 1:
             raise ValueError("n_cores must be a positive integer")
 
-    # Parse x - accept single variable without tilde, but require tilde for two-way tables
-    x_str = x.strip()
-    if "~" in x_str:
-        # Traditional formula format: "~Sex" or "~Sex+Race"
-        variables = x_str.split("~")[1].split("+")
-    elif "+" not in x_str:
-        # Single variable without tilde: "Sex"
-        variables = [x_str]
+    # Create formula string for display purposes
+    if y is None:
+        formula_str = x
+        variables = [x]
     else:
-        # Two variables without tilde is not allowed
-        raise ValueError("Two-way tables must use formula format with tilde (e.g., '~Sex+Race')")
-    variables = [var.strip() for var in variables]
+        formula_str = f"{x}+{y}"
+        variables = [x, y]
 
     if len(variables) > 2:
         raise ValueError('The function supports only 1 and 2-way tables')
@@ -443,7 +435,7 @@ def RDStable(x, data, weight=None, var_est=None, resample_n=None, margins=3, n_c
     # One-way table
     if len(variables) == 1:
         if var_est == "naive":
-            result = compute_naive_one_way(variables[0], data, weight, x)
+            result = compute_naive_one_way(variables[0], data, weight, formula_str)
             if return_bootstrap_tables:
                 if return_node_counts:
                     return result, [], []
@@ -453,12 +445,12 @@ def RDStable(x, data, weight=None, var_est=None, resample_n=None, margins=3, n_c
             return result
         else:
             return compute_bootstrap_one_way(variables[0], data, weight, var_est, resample_n, n_cores,
-                                             x, return_bootstrap_tables, return_node_counts)
+                                             formula_str, return_bootstrap_tables, return_node_counts)
 
     # Two-way table
     else:
         if var_est == "naive":
-            result = compute_naive_two_way(variables[0], variables[1], data, weight, margins, x)
+            result = compute_naive_two_way(variables[0], variables[1], data, weight, margins, formula_str)
             if return_bootstrap_tables:
                 if return_node_counts:
                     return result, [], []
@@ -468,7 +460,7 @@ def RDStable(x, data, weight=None, var_est=None, resample_n=None, margins=3, n_c
             return result
         else:
             return compute_bootstrap_two_way(variables[0], variables[1], data, weight, var_est, resample_n, margins,
-                                             n_cores, x, return_bootstrap_tables, return_node_counts)
+                                             n_cores, formula_str, return_bootstrap_tables, return_node_counts)
 
 
 # Helper functions for one-way tables

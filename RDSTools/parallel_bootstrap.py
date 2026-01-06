@@ -491,7 +491,7 @@ def RDSBootOptimizedParallel(data, respondent_id_col, seed_id_col, seed_col, rec
     type : str
         One of the six types of bootstrap methods: (1) chain1, (2) chain2, (3) tree_uni1, (4) tree_uni2, (5) tree_bi1, (6) tree_bi2.
     resample_n : int
-        A specified number of resamples
+        Specifies the number of resample iterations.
     n_cores : int, optional
         Number of cores to use for parallel processing. If None, uses all available cores. Default is 2.
 

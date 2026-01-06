@@ -69,7 +69,7 @@ Quick Start
 
     # Create frequency tables
     table = RDStable(
-        x='~Sex',
+        x='Sex',
         data=rds_data,
         weight='WEIGHT',
         var_est='tree_uni1',

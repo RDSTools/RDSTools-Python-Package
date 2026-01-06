@@ -168,7 +168,8 @@
 
 <span class="c1"># Parallel table calculation</span>
 <span class="n">table_result</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;~Sex+Race&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Sex&quot;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Race&quot;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>

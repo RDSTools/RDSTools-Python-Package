@@ -13,11 +13,11 @@ Import the necessary modules::
 Load your data::
 
     # To use toy data (recommended for testing):
-toy_data = load_toy_data()
+    toy_data = load_toy_data()
 
-# Or to use your own data:
-# import pandas as pd
-    # data = pd.read_csv("your_survey_data.csv")
+    # Or to use your own data:
+    import pandas as pd
+    data = pd.read_csv("your_survey_data.csv")
 
 Process RDS Data
 ----------------
@@ -60,7 +60,7 @@ Create Tables
 Generate frequency tables for categorical variables::
 
     sex_table = RDStable(
-        x='~Sex',
+        x='Sex',
         data=rds_processed,
         var_est='tree_uni1',
         resample_n=1000
@@ -68,7 +68,8 @@ Generate frequency tables for categorical variables::
 
     # Two-way table
     cross_table = RDStable(
-        x='~Sex+Race',
+        x='Sex',
+        y='Race',
         data=rds_processed,
         var_est='tree_uni1',
         resample_n=1000,
@@ -140,3 +141,4 @@ Create interactive maps showing participant locations::
         output_file='participant_map.html',
         open_browser=True
     )
+

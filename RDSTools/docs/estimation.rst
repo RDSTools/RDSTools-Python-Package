@@ -109,13 +109,16 @@ Usage
 
 .. code-block:: python
 
-    RDStable(x, data, weight=None, var_est=None, resample_n=None, margins=3, n_cores=None, return_bootstrap_tables=False, return_node_counts=False)
+    RDStable(x, y=None, data=None, weight=None, var_est=None, resample_n=None, margins=3, n_cores=None, return_bootstrap_tables=False, return_node_counts=False)
 
 Arguments
 ---------
 
 **x**
-    str. For a 2-way table, 2 categorical variables of interest. The variables should be coded as factors. For a 1-way table, specify one variable. Single variables can be specified with or without tilde (e.g., "Sex" or "~Sex" for one-way), but two-way tables must use tilde (e.g., "~Sex+Race").
+    str. Column name; For a 1-way table, specify one categorical variable. By default the function returns a 1-way table.
+
+**y**
+    str, optional. Column name; Optional, for 2-way tables specify the second categorical variable of interest. Default is None.
 
 **data**
     pandas.DataFrame. The output from RDSdata function containing preprocessed RDS data.
@@ -165,11 +168,12 @@ Examples
     from RDSTools import RDStable
 
     # One-way table
-    result = RDStable(x="~Sex", data=rds_data)
+    result = RDStable(x="Sex", data=rds_data)
 
     # Two-way table with bootstrap variance estimation
     result = RDStable(
-        x="~Sex+Race",
+        x="Sex",
+        y="Race",
         data=rds_data,
         var_est='chain1',
         resample_n=100
@@ -177,7 +181,8 @@ Examples
 
     # Two-way table with row proportions and parallel processing
     result = RDStable(
-        x="~Sex+Race",
+        x="Sex",
+        y="Race",
         data=rds_data,
         var_est='tree_uni1',
         resample_n=1000,
@@ -187,7 +192,7 @@ Examples
 
     # Return bootstrap tables and node counts
     result, bootstrap_tables, node_counts = RDStable(
-        x="~Sex",
+        x="Sex",
         data=rds_data,
         var_est='tree_uni1',
         resample_n=1000,
@@ -294,3 +299,4 @@ Examples
         return_bootstrap_estimates=True,
         return_node_counts=True
     )
+

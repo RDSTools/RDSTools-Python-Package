@@ -200,14 +200,16 @@
 <p>The package allows users to estimate one-way and two-way tables, using either naive or resampling approaches to estimate the standard errors of proportions. Creates contingency tables from RDS data with optional weighting and different variance estimation methods.</p>
 <section id="id1">
 <h2>Usage<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDStable</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">var_est</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resample_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">margins</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_cores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_bootstrap_tables</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_node_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDStable</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">var_est</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resample_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">margins</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_cores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_bootstrap_tables</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_node_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="id2">
 <h2>Arguments<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
 <dl class="simple">
-<dt><strong>x</strong></dt><dd><p>str. For a 2-way table, 2 categorical variables of interest. The variables should be coded as factors. For a 1-way table, specify one variable. Single variables can be specified with or without tilde (e.g., “Sex” or “~Sex” for one-way), but two-way tables must use tilde (e.g., “~Sex+Race”).</p>
+<dt><strong>x</strong></dt><dd><p>str. Column name; For a 1-way table, specify one categorical variable. By default the function returns a 1-way table.</p>
+</dd>
+<dt><strong>y</strong></dt><dd><p>str, optional. Column name; Optional, for 2-way tables specify the second categorical variable of interest. Default is None.</p>
 </dd>
 <dt><strong>data</strong></dt><dd><p>pandas.DataFrame. The output from RDSdata function containing preprocessed RDS data.</p>
 </dd>
@@ -248,11 +250,12 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDStable</span>
 
 <span class="c1"># One-way table</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;~Sex&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Sex&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">)</span>
 
 <span class="c1"># Two-way table with bootstrap variance estimation</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;~Sex+Race&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Sex&quot;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Race&quot;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;chain1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">100</span>
@@ -260,7 +263,8 @@
 
 <span class="c1"># Two-way table with row proportions and parallel processing</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;~Sex+Race&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Sex&quot;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Race&quot;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
@@ -270,7 +274,7 @@
 
 <span class="c1"># Return bootstrap tables and node counts</span>
 <span class="n">result</span><span class="p">,</span> <span class="n">bootstrap_tables</span><span class="p">,</span> <span class="n">node_counts</span> <span class="o">=</span> <span class="n">RDStable</span><span class="p">(</span>
-    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;~Sex&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Sex&quot;</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">var_est</span><span class="o">=</span><span class="s1">&#39;tree_uni1&#39;</span><span class="p">,</span>
     <span class="n">resample_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>

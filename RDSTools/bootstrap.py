@@ -28,7 +28,7 @@ def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
     type : str
         One of the six types of bootstrap methods: (1) chain1, (2) chain2, (3) tree_uni1, (4) tree_uni2, (5) tree_bi1, (6) tree_bi2.
     resample_n : int
-        A specified number of resample iterations
+        Specifies the number of resample iterations.
 
     Returns:
     --------
