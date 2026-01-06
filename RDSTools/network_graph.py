@@ -9,6 +9,7 @@ import matplotlib.cm as cm
 import networkx as nx
 import igraph as ig
 from typing import List, Optional, Union, Literal, Dict, Any
+import warnings
 
 
 # ============================================================================
@@ -186,6 +187,114 @@ def create_igraph_graph(root_nodes: List[TreeNode], df) -> ig.Graph:
 
 
 # ============================================================================
+# Color Palette Management
+# ============================================================================
+
+def get_default_color_palette():
+    """
+    Get the default color palette for categorical variables.
+
+    Returns an extended 20-color palette combining multiple ColorBrewer palettes.
+    Colors are ordered as follows:
+
+    Positions 1-8: Set1 palette (strong, distinct colors)
+    - 1. Red (#E41A1C)
+    - 2. Blue (#377EB8)
+    - 3. Green (#4DAF4A)
+    - 4. Purple (#984EA3)
+    - 5. Orange (#FF7F00)
+    - 6. Yellow (#FFFF33)
+    - 7. Brown (#A65628)
+    - 8. Pink (#F781BF)
+
+    Positions 9-16: Dark2 palette (muted, professional colors)
+    - 9. Teal (#1B9E77)
+    - 10. Dark Orange (#D95F02)
+    - 11. Olive (#7570B3)
+    - 12. Magenta (#E7298A)
+    - 13. Lime (#66A61E)
+    - 14. Gold (#E6AB02)
+    - 15. Cyan (#A6761D)
+    - 16. Gray (#666666)
+
+    Positions 17-20: Pastel1 palette (soft, light colors)
+    - 17. Light Red (#FBB4AE)
+    - 18. Light Blue (#B3CDE3)
+    - 19. Light Green (#CCEBC5)
+    - 20. Light Purple (#DECBE4)
+
+    Returns
+    -------
+    list of str
+        List of 20 hex color codes
+    """
+    # Set1 - strong distinct colors (8 colors)
+    set1 = ['#E41A1C', '#377EB8', '#4DAF4A', '#984EA3',
+            '#FF7F00', '#FFFF33', '#A65628', '#F781BF']
+
+    # Dark2 - muted professional colors (8 colors)
+    dark2 = ['#1B9E77', '#D95F02', '#7570B3', '#E7298A',
+             '#66A61E', '#E6AB02', '#A6761D', '#666666']
+
+    # Pastel1 - soft light colors (4 colors, subset)
+    pastel1 = ['#FBB4AE', '#B3CDE3', '#CCEBC5', '#DECBE4']
+
+    return set1 + dark2 + pastel1
+
+
+def validate_and_get_colors(unique_categories, custom_colors=None):
+    """
+    Validate custom colors or generate default colors for categories.
+
+    Parameters
+    ----------
+    unique_categories : list
+        Sorted list of unique category values
+    custom_colors : list of str, optional
+        User-provided list of colors (hex codes or named colors)
+
+    Returns
+    -------
+    dict
+        Mapping of categories to colors
+
+    Raises
+    ------
+    ValueError
+        If custom_colors is provided but has wrong length
+    """
+    n_categories = len(unique_categories)
+
+    if custom_colors is not None:
+        if len(custom_colors) != n_categories:
+            raise ValueError(
+                f"Number of custom colors ({len(custom_colors)}) must match "
+                f"number of categories ({n_categories}). "
+                f"Categories: {unique_categories}"
+            )
+        color_palette = custom_colors
+    else:
+        color_palette = get_default_color_palette()
+
+        # Warn if we have more categories than colors in palette
+        if n_categories > len(color_palette):
+            warnings.warn(
+                f"Variable has {n_categories} categories but default palette only has "
+                f"{len(color_palette)} colors. Categories beyond position {len(color_palette)} "
+                f"will recycle colors, which may cause visual confusion. "
+                f"Consider providing custom colors via the 'category_colors' parameter.",
+                UserWarning
+            )
+            # Extend palette by cycling
+            color_palette = color_palette * ((n_categories // len(color_palette)) + 1)
+
+    # Create mapping
+    color_mapping = {category: color_palette[i] for i, category in enumerate(unique_categories)}
+
+    return color_mapping
+
+
+# ============================================================================
 # Main Network Graph Function
 # ============================================================================
 
@@ -194,6 +303,7 @@ def RDSnetgraph(
         seed_ids: list,
         waves: list,
         variable: Optional[str] = None,
+        category_colors: Optional[List[str]] = None,
         title: Optional[str] = None,
         vertex_size_seed: int = 45,
         vertex_size: int = 30,
@@ -219,7 +329,13 @@ def RDSnetgraph(
     variable : str, optional
         A factor or character variable of interest for coloring nodes.
         For space considerations, use short names for categories.
-        Maximum 4 categories supported.
+        If not specified, nodes are colored by seed status (seed vs non-seed).
+    category_colors : list of str, optional
+        Custom colors for each category in the variable. Must be provided in the same
+        order as sorted category values (alphabetical/numerical order). Can be hex codes
+        (e.g., '#FF0000') or named colors (e.g., 'red'). Length must exactly match the
+        number of unique categories in the variable. If not specified, uses the default
+        20-color palette (see Notes for color order). Only used when 'variable' is specified.
     title : str, optional
         A user-specified title for the network. By default, provides an empty title.
     vertex_size_seed : int, default 45
@@ -258,8 +374,30 @@ def RDSnetgraph(
     Raises
     ------
     ValueError
-        If variable has more than 4 categories
         If required columns are missing from data
+        If custom_colors length doesn't match number of categories
+    UserWarning
+        If variable has more than 20 categories and no custom colors provided
+
+    Notes
+    -----
+    Default Color Palette Order (20 colors):
+        When 'variable' is specified and 'category_colors' is not provided, categories
+        are colored using a 20-color palette in the following order (categories are
+        sorted alphabetically/numerically first):
+
+        Positions 1-8 (Set1 - strong, distinct):
+            1. Red, 2. Blue, 3. Green, 4. Purple, 5. Orange, 6. Yellow, 7. Brown, 8. Pink
+
+        Positions 9-16 (Dark2 - muted, professional):
+            9. Teal, 10. Dark Orange, 11. Olive, 12. Magenta,
+            13. Lime, 14. Gold, 15. Cyan, 16. Gray
+
+        Positions 17-20 (Pastel1 - soft, light):
+            17. Light Red, 18. Light Blue, 19. Light Green, 20. Light Purple
+
+        For more than 20 categories, colors will cycle (with a warning). Consider
+        providing custom colors via 'category_colors' for better visual distinction.
 
     Examples
     --------
@@ -283,7 +421,7 @@ def RDSnetgraph(
     ...                   seed_ids=['1', '2'],
     ...                   waves=[0, 1, 2])
     >>>
-    >>> # Method 2: Construct a netgraph by group (matching R example)
+    >>> # Method 2: Network grouped by variable with default colors
     >>> out = RDSnetgraph(rds_data,
     ...                   seed_ids=['1', '2', '3'],
     ...                   waves=list(range(0, 4)),
@@ -293,7 +431,15 @@ def RDSnetgraph(
     ...                   vertex_size=5,
     ...                   edge_width=2)
     >>>
-    >>> # Method 3: Tree layout with NetworkX
+    >>> # Method 3: Network with custom colors for categories
+    >>> # Assuming 'Race' has 3 categories (sorted: 'Asian', 'Black', 'White')
+    >>> out = RDSnetgraph(rds_data,
+    ...                   seed_ids=['1', '2'],
+    ...                   waves=[0, 1, 2],
+    ...                   variable='Race',
+    ...                   category_colors=['#FF6B6B', '#4ECDC4', '#45B7D1'])
+    >>>
+    >>> # Method 4: Tree layout with NetworkX
     >>> out = RDSnetgraph(rds_data,
     ...                   seed_ids=available_seeds[:2],
     ...                   waves=available_waves[:3],
@@ -316,16 +462,27 @@ def RDSnetgraph(
     if filtered_data.empty:
         raise ValueError(f"No data found for the specified seed_ids and waves")
 
-    # Validate variable if provided
+    # Validate variable and colors if provided
+    color_mapping = None
     if variable:
         if variable not in filtered_data.columns:
             raise ValueError(f"Variable '{variable}' not found in data columns")
 
-        # Check number of unique categories
-        unique_values = filtered_data[variable].dropna().unique()
-        if len(unique_values) > 4:
-            raise ValueError(f"RDSnetgraph does not accept factor variables with more than 4 categories. "
-                           f"Variable '{variable}' has {len(unique_values)} categories.")
+        # Get unique categories (sorted for consistency)
+        unique_categories = sorted([cat for cat in filtered_data[variable].dropna().unique()
+                                   if pd.notna(cat)])
+
+        # Warn if many categories
+        if len(unique_categories) > 10:
+            warnings.warn(
+                f"Variable '{variable}' has {len(unique_categories)} categories. "
+                f"Visualizations with many categories may be difficult to interpret. "
+                f"Consider grouping categories or using a different variable.",
+                UserWarning
+            )
+
+        # Validate and get color mapping
+        color_mapping = validate_and_get_colors(unique_categories, category_colors)
 
     # Build tree structure
     edges = filtered_data.to_dict('records')
@@ -335,20 +492,20 @@ def RDSnetgraph(
     if layout == "Tree":
         # Tree layout uses NetworkX with pygraphviz
         return _create_networkx_tree(
-            root_nodes, filtered_data, seed_ids, waves, variable,
+            root_nodes, filtered_data, seed_ids, waves, variable, color_mapping,
             vertex_size, vertex_size_seed, seed_color, nonseed_color, edge_width, title,
             figsize, show_plot, save_path
         )
     else:
         # All other layouts use igraph
         return _create_igraph_network(
-            root_nodes, filtered_data, seed_ids, waves, layout, variable,
+            root_nodes, filtered_data, seed_ids, waves, layout, variable, color_mapping,
             vertex_size, vertex_size_seed, seed_color, nonseed_color, edge_width, title,
             figsize, show_plot, save_path
         )
 
 
-def _create_networkx_tree(root_nodes, df, seed_ids, waves, variable,
+def _create_networkx_tree(root_nodes, df, seed_ids, waves, variable, color_mapping,
                           vertex_size, vertex_size_seed, seed_color, nonseed_color, edge_width, title,
                           figsize, show_plot, save_path):
     """Create NetworkX tree layout graph (requires pygraphviz)"""
@@ -386,10 +543,12 @@ def _create_networkx_tree(root_nodes, df, seed_ids, waves, variable,
         pos = nx.spring_layout(G)
 
     # Handle coloring
-    if variable and variable in df.columns:
-        _apply_networkx_grouping(G, df, variable, pos, ax, vertex_size, vertex_size_seed, edge_width)
+    if variable and color_mapping:
+        _apply_networkx_grouping(G, df, variable, color_mapping, pos, ax,
+                                vertex_size, vertex_size_seed, edge_width)
     else:
-        _draw_networkx_default(G, pos, ax, vertex_size, vertex_size_seed, seed_color, nonseed_color, edge_width)
+        _draw_networkx_default(G, pos, ax, vertex_size, vertex_size_seed,
+                              seed_color, nonseed_color, edge_width)
 
     plt.title(title, fontsize=14)
     plt.axis('off')
@@ -407,7 +566,7 @@ def _create_networkx_tree(root_nodes, df, seed_ids, waves, variable,
     return G
 
 
-def _create_igraph_network(root_nodes, df, seed_ids, waves, layout_type, variable,
+def _create_igraph_network(root_nodes, df, seed_ids, waves, layout_type, variable, color_mapping,
                            vertex_size, vertex_size_seed, seed_color, nonseed_color, edge_width, title,
                            figsize, show_plot, save_path):
     """Create igraph network with specified layout"""
@@ -438,16 +597,8 @@ def _create_igraph_network(root_nodes, df, seed_ids, waves, layout_type, variabl
             title += f" (Grouped by: {variable})"
 
     # Set up colors
-    if variable and variable in df.columns:
-        unique_factors = sorted([f for f in df[variable].dropna().unique() if pd.notna(f)])
-
-        # Use Set1 color palette (similar to R's brewer.pal)
-        set1_colors = ['#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#FF7F00',
-                       '#FFFF33', '#A65628', '#F781BF']
-
-        color_mapping = {factor: set1_colors[i] for i, factor in enumerate(unique_factors)}
-
-        # Assign colors to vertices
+    if variable and color_mapping:
+        # Assign colors to vertices based on mapping
         vertex_colors = []
         for v in G.vs:
             node_data = df[df['ID'] == v["name"]]
@@ -456,7 +607,7 @@ def _create_igraph_network(root_nodes, df, seed_ids, waves, layout_type, variabl
                 if pd.notna(factor_val) and factor_val in color_mapping:
                     vertex_colors.append(color_mapping[factor_val])
                 else:
-                    vertex_colors.append('#CCCCCC')
+                    vertex_colors.append('#CCCCCC')  # Gray for missing values
             else:
                 vertex_colors.append('#CCCCCC')
     else:
@@ -492,17 +643,17 @@ def _create_igraph_network(root_nodes, df, seed_ids, waves, layout_type, variabl
     plt.axis('off')
 
     # Add legend if variable is used
-    if variable and variable in df.columns:
+    if variable and color_mapping:
         from matplotlib.lines import Line2D
         legend_elements = []
 
-        for factor in unique_factors:
+        for category in sorted(color_mapping.keys()):
             legend_elements.append(
                 Line2D([0], [0], marker='o', color='w',
-                       markerfacecolor=color_mapping[factor],
+                       markerfacecolor=color_mapping[category],
                        markeredgecolor='black',
                        markersize=10,
-                       label=str(factor))
+                       label=str(category))
             )
 
         if legend_elements:
@@ -525,7 +676,8 @@ def _create_igraph_network(root_nodes, df, seed_ids, waves, layout_type, variabl
     return G
 
 
-def _apply_networkx_grouping(G, df, variable, pos, ax, vertex_size, vertex_size_seed, edge_width):
+def _apply_networkx_grouping(G, df, variable, color_mapping, pos, ax,
+                             vertex_size, vertex_size_seed, edge_width):
     """Apply color grouping for NetworkX graph"""
     node_to_group = {}
 
@@ -537,18 +689,14 @@ def _apply_networkx_grouping(G, df, variable, pos, ax, vertex_size, vertex_size_
                 node_to_group[node_id] = group_value
 
     if not node_to_group:
-        _draw_networkx_default(G, pos, ax, vertex_size, vertex_size_seed, edge_width)
+        _draw_networkx_default(G, pos, ax, vertex_size, vertex_size_seed,
+                              '#E41A1C', '#377EB8', edge_width)
         return
-
-    # Use Set1 color palette
-    unique_groups = sorted(list(set(node_to_group.values())))
-    set1_colors = ['#E41A1C', '#377EB8', '#4DAF4A', '#984EA3']
-    color_map = {group: set1_colors[i % 4] for i, group in enumerate(unique_groups)}
 
     # Set node sizes and colors
     node_sizes = [vertex_size_seed if G.nodes[node].get('is_seed', False) else vertex_size
                   for node in G.nodes()]
-    node_colors = [color_map.get(node_to_group.get(node), '#CCCCCC')
+    node_colors = [color_mapping.get(node_to_group.get(node), '#CCCCCC')
                    for node in G.nodes()]
 
     nx.draw(G, pos, node_color=node_colors, node_size=node_sizes,
@@ -558,9 +706,9 @@ def _apply_networkx_grouping(G, df, variable, pos, ax, vertex_size, vertex_size_
     from matplotlib.lines import Line2D
     legend_elements = [
         Line2D([0], [0], marker='o', color='w',
-               markerfacecolor=color_map[group], markersize=10,
+               markerfacecolor=color_mapping[group], markersize=10,
                markeredgecolor='black',
-               label=str(group)) for group in unique_groups
+               label=str(group)) for group in sorted(color_mapping.keys())
     ]
     ax.legend(handles=legend_elements, loc='lower left', frameon=False, fontsize=12)
 

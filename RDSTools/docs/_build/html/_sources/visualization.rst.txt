@@ -47,6 +47,20 @@ You can color nodes by demographic variables:
         figsize=(14, 12)
     )
 
+
+    # Use custom colors for categories
+    # Colors must match the number of categories in sorted alphabetical/numerical order
+    custom_colors = ['#FF6B6B', '#4ECDC4', '#45B7D1']  # For 3 categories
+
+    G = RDSnetgraph(
+        data=rds_data,
+        seed_ids=['1', '2'],
+        waves=[0, 1, 2],
+        variable='Race',  # Assuming Race has 3 categories
+        category_colors=custom_colors,
+        title='Recruitment by Race (Custom Colors)'
+    )
+
     # Customize colors when not grouping by variable
     G = RDSnetgraph(
         data=rds_data,
@@ -74,7 +88,7 @@ You can save the network graph to a file:
 Mapping
 -------
 
-When longitude and latitude are available, users can plot distribution of recruitment overall or for each wave. The RDSmap function allows explicit control of the number of waves and seeds in the plot.
+When longitude and latitude are available, users can plot distribution of recruitment overall or for each wave. The RDSmap function allows explicit control of the number of waves and seeds in the plot. If waves are not specified, all available waves are automatically included.
 
 .. code-block:: python
 
@@ -90,7 +104,16 @@ When longitude and latitude are available, users can plot distribution of recrui
     print(f"Available seeds: {seeds}")
     print(f"Available waves: {waves}")
 
-    # Create map
+    # Simplest map - uses all available waves automatically
+    m = RDSmap(
+        data=rds_data,
+        seed_ids=['1', '2'],
+        lat='Latitude',
+        long='Longitude',
+        output_file='recruitment_map.html'
+    )
+
+    # Create map with specific waves
     m = RDSmap(
         data=rds_data,
         seed_ids=['1', '2'],
@@ -151,3 +174,26 @@ Helper Functions
 
 **print_map_info(data, lat='Latitude', long='Longitude')**
     Print summary information about the RDS data for mapping, including available seeds, waves, and coordinate coverage.
+Color Customization
+~~~~~~~~~~~~~~~~~~~
+
+When using the ``variable`` parameter to color nodes by categories:
+
+**Default Color Palette:**
+    - A 20-color palette is automatically applied
+    - Colors 1-8: Strong, distinct colors (Set1 palette)
+    - Colors 9-16: Muted, professional colors (Dark2 palette)
+    - Colors 17-20: Soft, light colors (Pastel1 palette)
+    - For 20+ categories, colors recycle (with a warning)
+
+**Custom Colors:**
+    - Use ``category_colors`` parameter with a list of color codes
+    - Must provide exactly one color per category
+    - Colors apply in sorted alphabetical/numerical order of categories
+    - Accepts hex codes (e.g., '#FF0000') or named colors (e.g., 'red')
+
+**Important Notes:**
+    - Variables with 10+ categories trigger a warning (may be hard to interpret)
+    - Variables with 20+ categories recycle colors and strongly suggest custom colors
+    - Categories are always sorted before color assignment for consistency
+    - To check category order: ``sorted(data[variable].dropna().unique())``

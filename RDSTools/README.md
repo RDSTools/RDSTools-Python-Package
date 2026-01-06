@@ -388,6 +388,7 @@ G = RDSnetgraph(
 - `seed_ids` - List of seed IDs to include in network
 - `waves` - List of wave numbers to include
 - `variable` - Optional demographic variable for node coloring (overrides seed_color/nonseed_color)
+- `category_colors` - Optional list of custom colors for each category (must match number of categories in sorted order)
 - `title` - Optional plot title
 - `vertex_size_seed` - Size of seed vertices (default: 45)
 - `vertex_size` - Size of non-seed vertices (default: 30)
@@ -395,6 +396,26 @@ G = RDSnetgraph(
 - `nonseed_color` - Color for non-seed nodes when not grouping (default: "#377EB8" blue)
 - `edge_width` - Thickness of edges (default: 1.5)
 - `layout` - Graph layout algorithm (default: "Spring")
+
+**Color Customization:**
+When using `variable` to color nodes by demographic categories:
+- **Default palette**: A 20-color palette is used automatically (colors 1-8 from Set1, 9-16 from Dark2, 17-20 from Pastel1)
+- **Custom colors**: Provide `category_colors` parameter with colors matching the number of categories (in sorted alphabetical/numerical order)
+- **Many categories**: Variables with 10+ categories show a warning; 20+ categories will recycle colors
+
+Example with custom colors:
+```python
+# Assuming 'Race' has 3 categories: ['1', '2', '3'] (sorted)
+custom_colors = ['#FF6B6B', '#4ECDC4', '#45B7D1']
+G = RDSnetgraph(
+    data=rds_data,
+    seed_ids=['1', '2'],
+    waves=[0, 1, 2],
+    variable='Race',
+    category_colors=custom_colors
+)
+```
+
 
 ### Geographic Mapping
 
@@ -412,7 +433,16 @@ waves = get_available_waves(rds_data)
 print(f"Available seeds: {seeds}")
 print(f"Available waves: {waves}")
 
-# Basic map
+# Simplest map - uses all available waves by default
+m = RDSmap(
+    data=rds_data,
+    lat='Latitude',
+    long='Longitude',
+    seed_ids=['1', '2'],
+    output_file='my_rds_map.html'
+)
+
+# Basic map with specific waves
 m = RDSmap(
     data=rds_data,
     lat='Latitude',
@@ -456,7 +486,7 @@ m = RDSmap(
 - `lat` - Column name for latitude coordinates
 - `long` - Column name for longitude coordinates
 - `seed_ids` - List of seed IDs to display
-- `waves` - List of wave numbers to display
+- `waves` - List of wave numbers to display (optional, defaults to all available waves)
 - `seed_color` - Color of seed markers (default: "red")
 - `seed_radius` - Size of seed markers (default: 7)
 - `recruit_color` - Color of recruit markers (default: "blue")
@@ -569,15 +599,14 @@ G = RDSnetgraph(
     save_path='network.png'
 )
 
-# 6. Create geographic map
+# 6. Create geographic map (uses all waves by default)
 print_map_info(rds_data, lat_column='Latitude', lon_column='Longitude')
 
 m = RDSmap(
     data=rds_data,
     lat='Latitude',
     long='Longitude',
-    seed_ids=seeds[:2],
-    waves=waves[:4],
+    seed_ids=seeds[:2],  # Uses all available waves automatically
     output_file='recruitment_map.html',
     open_browser=True
 )

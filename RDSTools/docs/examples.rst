@@ -260,6 +260,36 @@ Color nodes by demographic variables::
         node_size=40
     )
 
+Use custom colors for categories::
+
+    # First, check what categories exist (they'll be sorted)
+    print(sorted(rds_data['Race'].dropna().unique()))
+    # Output: ['Asian', 'Black', 'Hispanic', 'White']
+
+    # Provide colors in the same sorted order
+    custom_colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#95E1D3']
+
+    G = RDSnetgraph(
+        data=rds_data,
+        seed_ids=['1', '2'],
+        waves=[0, 1, 2],
+        variable='Race',
+        category_colors=custom_colors,
+        title='Recruitment by Race (Custom Colors)'
+    )
+
+    # Using named colors instead of hex codes
+    G = RDSnetgraph(
+        data=rds_data,
+        seed_ids=['1', '2', '3'],
+        waves=[0, 1, 2, 3],
+        variable='Sex',
+        category_colors=['purple', 'orange'],  # For 2 categories
+        layout='Tree',
+        save_path='network_custom.png'
+    )
+
+
 Geographic Mapping Examples
 ---------------------------
 

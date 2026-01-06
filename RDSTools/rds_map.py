@@ -101,7 +101,7 @@ def RDSmap(
     lat: str,
     long: str,
     seed_ids: Union[List[str], List[int]],
-    waves: List[int],
+    waves: Optional[List[int]] = None,
     seed_color: str = "red",
     seed_radius: int = 7,
     recruit_color: str = "blue",
@@ -126,8 +126,10 @@ def RDSmap(
         Column name for longitude coordinates
     seed_ids : list of str or list of int
         List of seed IDs to display. Use get_available_seeds() to see available seeds.
-    waves : list of int
-        List of wave numbers to display. Use list(range(0, 4)) or [0, 1, 2, 3] for waves 0-3.
+    waves : list of int, optional
+        List of wave numbers to display. If not specified, all available waves are included.
+        Use get_available_waves() to see available waves, or specify explicitly like
+        list(range(0, 4)) or [0, 1, 2, 3] for waves 0-3.
     seed_color : str, default "red"
         Color of seed circles
     seed_radius : int, default 7
@@ -153,7 +155,7 @@ def RDSmap(
     -------
     folium.Map
 
-        A map with seeds (in red circle markers) and participants (in blue circle markers) up to maximum number of specified waves.
+        A map with seeds (in red circle markers) and participants (in blue circle markers) up to maximum availalble number of specified waves.
         Recruits from each seed are connected by edges.
 
     Raises
@@ -175,7 +177,14 @@ def RDSmap(
     ...                     issued_coupon = ["Coupon1", "Coupon2", "Coupon3"],
     ...                     degree = "Degree")
     >>>
-    >>> # Method 1: Simple example with explicit seed IDs and waves
+    >>> # Method 1: Simple example with all available waves (default)
+    >>> out = RDSmap(rds_data,
+    ...              lat="Latitude",
+    ...              long="Longitude",
+    ...              seed_ids=['1', '2'])
+    >>> # Automatically uses all available waves
+    >>>
+    >>> # Method 2: Explicit seed IDs and waves
     >>> out = RDSmap(rds_data,
     ...              lat="Latitude",
     ...              long="Longitude",
@@ -183,7 +192,7 @@ def RDSmap(
     ...              waves=list(range(0, 3)))
     >>> # Map saved to participant_map.html
     >>>
-    >>> # Method 2: Using get_available_seeds to select specific seeds
+    >>> # Method 3: Using get_available_seeds to select specific seeds
     >>> available_seeds = get_available_seeds(rds_data)
     >>> print(f"Available seeds: {available_seeds}")
     >>> # Available seeds: ['1', '2', '3', '4', '5']
@@ -194,7 +203,7 @@ def RDSmap(
     ...              seed_ids=available_seeds[:4],  # First 4 seeds
     ...              waves=list(range(0, 4)))       # Waves 0, 1, 2, 3
     >>>
-    >>> # Method 3: Using get_available_waves to check and select waves
+    >>> # Method 4: Using get_available_waves to check and select waves
     >>> available_waves = get_available_waves(rds_data)
     >>> print(f"Available waves: {available_waves}")
     >>> # Available waves: [0, 1, 2, 3, 4, 5]
@@ -205,7 +214,7 @@ def RDSmap(
     ...              seed_ids=['1', '2', '3'],
     ...              waves=available_waves[:4])  # Use first 4 available waves
     >>>
-    >>> # Method 4: Combine both helper functions for maximum flexibility
+    >>> # Method 5: Combine both helper functions for maximum flexibility
     >>> available_seeds = get_available_seeds(rds_data)
     >>> available_waves = get_available_waves(rds_data)
     >>>
@@ -215,7 +224,7 @@ def RDSmap(
     ...              seed_ids=available_seeds[:2],    # First 2 seeds
     ...              waves=available_waves[1:4])      # Waves 1, 2, 3 (skip wave 0)
     >>>
-    >>> # Method 5: Full customization with R-style colors and aesthetics
+    >>> # Method 6: Full customization with R-style colors and aesthetics
     >>> out = RDSmap(rds_data,
     ...              lat="Latitude",
     ...              long="Longitude",
@@ -230,6 +239,11 @@ def RDSmap(
     ...              line_dashArray='5,6',
     ...              open_browser=True)  # Opens map in browser automatically
     """
+    # Auto-populate waves if not specified
+    if waves is None:
+        waves = get_available_waves(data)
+        print(f"Waves not specified, using all available waves: {waves}")
+
     # Input validation
     if not seed_ids or not waves:
         raise ValueError("seed_ids and waves must be non-empty lists")

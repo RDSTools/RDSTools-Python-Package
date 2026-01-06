@@ -356,6 +356,35 @@
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>Use custom colors for categories:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># First, check what categories exist (they&#39;ll be sorted)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">rds_data</span><span class="p">[</span><span class="s1">&#39;Race&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">unique</span><span class="p">()))</span>
+<span class="c1"># Output: [&#39;Asian&#39;, &#39;Black&#39;, &#39;Hispanic&#39;, &#39;White&#39;]</span>
+
+<span class="c1"># Provide colors in the same sorted order</span>
+<span class="n">custom_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#FF6B6B&#39;</span><span class="p">,</span> <span class="s1">&#39;#4ECDC4&#39;</span><span class="p">,</span> <span class="s1">&#39;#45B7D1&#39;</span><span class="p">,</span> <span class="s1">&#39;#95E1D3&#39;</span><span class="p">]</span>
+
+<span class="n">G</span> <span class="o">=</span> <span class="n">RDSnetgraph</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
+    <span class="n">seed_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">],</span>
+    <span class="n">waves</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;Race&#39;</span><span class="p">,</span>
+    <span class="n">category_colors</span><span class="o">=</span><span class="n">custom_colors</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Recruitment by Race (Custom Colors)&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># Using named colors instead of hex codes</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">RDSnetgraph</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
+    <span class="n">seed_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">],</span>
+    <span class="n">waves</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;Sex&#39;</span><span class="p">,</span>
+    <span class="n">category_colors</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;purple&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">],</span>  <span class="c1"># For 2 categories</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;Tree&#39;</span><span class="p">,</span>
+    <span class="n">save_path</span><span class="o">=</span><span class="s1">&#39;network_custom.png&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="geographic-mapping-examples">
 <h2>Geographic Mapping Examples<a class="headerlink" href="#geographic-mapping-examples" title="Link to this heading"></a></h2>
