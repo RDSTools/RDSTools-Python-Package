@@ -19,14 +19,14 @@ A Python package for Respondent-Driven Sampling (RDS) analysis and bootstrap res
 8. [Requirements](#requirements)
 
 ## Installation
-
 ```bash
-cd RDSTools
-pip install .
+pip install RDSTools
 ```
 
-For development:
+For development (from source):
 ```bash
+git clone https://github.com/RDSTools/RDSTools-Python-Package.git
+cd RDSTools-Python-Package/RDSTools
 pip install -e .
 ```
 
