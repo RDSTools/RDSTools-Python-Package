@@ -64,6 +64,8 @@
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#working-with-results">Working with Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#performance-considerations">Performance Considerations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html#rdsnetgraph-recruitment-network-visualization">RDSnetgraph - Recruitment Network Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html#rdsmap-geographic-distribution-mapping">RDSmap - Geographic Distribution Mapping</a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html">Performance Enhancement</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 </ul>
@@ -114,9 +116,21 @@
 </dd>
 <dt><strong>degree</strong></dt><dd><p>The column name of the column in the data that represents the degree (network size) of respondents.</p>
 </dd>
-<dt><strong>zero_degree</strong></dt><dd><p>This parameter is used to set the method for imputing zero values in the ‘degree’ variable. Four methods are available for selection: mean, median, hotdeck, and drop. If this parameter is not set, the default imputation method is hotdeck.</p>
+<dt><strong>zero_degree</strong></dt><dd><p>str, optional. This parameter is used to set the method for imputing zero values in the ‘degree’ variable. Four methods are available for selection: mean, median, hotdeck, and drop. If this parameter is not set, the default imputation method is hotdeck.</p>
+<ul class="simple">
+<li><p><strong>mean</strong>: Impute all positions that require imputation with the average value of all non-zero and non-missing values from the input degree.</p></li>
+<li><p><strong>median</strong>: Impute all positions that require imputation with the median value of all non-zero and non-missing values from the input degree.</p></li>
+<li><p><strong>hotdeck</strong>: For each position needing imputation, perform random sampling with replacement from all non-zero and non-missing values in the input degree, where each value has equal probability of being selected. The sampled value is then used as the imputed value.</p></li>
+<li><p><strong>drop</strong>: Remove rows with zero degree values from the dataset.</p></li>
+</ul>
 </dd>
-<dt><strong>NA_degree</strong></dt><dd><p>This parameter is used to set the method for imputing missing values in the ‘degree’ variable. There are four methods to choose from: mean, median, hotdeck, and drop. If this parameter is not set, the default method is hotdeck.</p>
+<dt><strong>NA_degree</strong></dt><dd><p>str, optional. This parameter is used to set the method for imputing missing values in the ‘degree’ variable. There are four methods to choose from: mean, median, hotdeck, and drop. If this parameter is not set, the default method is hotdeck.</p>
+<ul class="simple">
+<li><p><strong>mean</strong>: Impute all positions that require imputation with the average value of all non-zero and non-missing values from the input degree.</p></li>
+<li><p><strong>median</strong>: Impute all positions that require imputation with the median value of all non-zero and non-missing values from the input degree.</p></li>
+<li><p><strong>hotdeck</strong>: For each position needing imputation, perform random sampling with replacement from all non-zero and non-missing values in the input degree, where each value has equal probability of being selected. The sampled value is then used as the imputed value.</p></li>
+<li><p><strong>drop</strong>: Remove rows with missing degree values from the dataset.</p></li>
+</ul>
 </dd>
 </dl>
 </section>
@@ -158,17 +172,6 @@
     <span class="n">degree</span><span class="o">=</span><span class="s2">&quot;Degree&quot;</span><span class="p">,</span>
     <span class="n">zero_degree</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span>
     <span class="n">NA_degree</span><span class="o">=</span><span class="s1">&#39;hotdeck&#39;</span>
-<span class="p">)</span>
-
-<span class="c1"># For preprocessing use RDSToolsToyData</span>
-<span class="n">RDSToolsToyData</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;RDSToolsToyData.csv&quot;</span><span class="p">)</span>
-
-<span class="n">rds_data</span> <span class="o">=</span> <span class="n">RDSdata</span><span class="p">(</span>
-    <span class="n">data</span><span class="o">=</span><span class="n">RDSToolsToyData</span><span class="p">,</span>
-    <span class="n">unique_id</span><span class="o">=</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span>
-    <span class="n">redeemed_coupon</span><span class="o">=</span><span class="s2">&quot;CouponR&quot;</span><span class="p">,</span>
-    <span class="n">issued_coupons</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Coupon1&quot;</span><span class="p">,</span> <span class="s2">&quot;Coupon2&quot;</span><span class="p">,</span> <span class="s2">&quot;Coupon3&quot;</span><span class="p">],</span>
-    <span class="n">degree</span><span class="o">=</span><span class="s2">&quot;Degree&quot;</span>
 <span class="p">)</span>
 </pre></div>
 </div>

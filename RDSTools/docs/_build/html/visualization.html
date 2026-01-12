@@ -57,13 +57,24 @@
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#bootstrap-methods">Bootstrap Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#working-with-results">Working with Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sampling_variance.html#performance-considerations">Performance Considerations</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Visualization</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#recruitment-networks">Recruitment Networks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#mapping">Mapping</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#helper-functions">Helper Functions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#color-customization">Color Customization</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#rdsnetgraph-recruitment-network-visualization">RDSnetgraph - Recruitment Network Visualization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arguments">Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#returns">Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#color-customization-for-network-graphs">Color Customization for Network Graphs</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#rdsmap-geographic-distribution-mapping">RDSmap - Geographic Distribution Mapping</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#raises">Raises</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#helper-functions">Helper Functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html">Performance Enhancement</a></li>
@@ -97,32 +108,90 @@
   <section id="visualization">
 <h1>Visualization<a class="headerlink" href="#visualization" title="Link to this heading"></a></h1>
 <p>The RDS Tools package supports visualization of respondents’ networks and the geographic distribution of recruitment waves starting from seeds. Users can generate network plots to examine recruitment chains overall and by some characteristic, as well as geographic maps that display participant locations and the spread of recruitment over time or across regions. These visualizations aid in understanding the structure of chains and the geographic reach of RDS studies.</p>
-<section id="recruitment-networks">
-<h2>Recruitment Networks<a class="headerlink" href="#recruitment-networks" title="Link to this heading"></a></h2>
-<p>The RDSnetgraph function creates network visualizations showing recruitment relationships between participants.</p>
+</section>
+<section id="rdsnetgraph-recruitment-network-visualization">
+<h1>RDSnetgraph - Recruitment Network Visualization<a class="headerlink" href="#rdsnetgraph-recruitment-network-visualization" title="Link to this heading"></a></h1>
+<p>The RDSnetgraph function creates network visualizations showing recruitment relationships between participants. This function supports multiple layout algorithms and customization options for coloring nodes by demographic variables.</p>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDSnetgraph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">seed_ids</span><span class="p">,</span> <span class="n">waves</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;Spring&#39;</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category_colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">vertex_size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">vertex_size_seed</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">seed_color</span><span class="o">=</span><span class="s1">&#39;#E41A1C&#39;</span><span class="p">,</span> <span class="n">nonseed_color</span><span class="o">=</span><span class="s1">&#39;#377EB8&#39;</span><span class="p">,</span>
+            <span class="n">edge_width</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="arguments">
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><strong>data</strong></dt><dd><p>pandas.DataFrame. The output from RDSdata function containing preprocessed RDS data with recruitment relationships.</p>
+</dd>
+<dt><strong>seed_ids</strong></dt><dd><p>list of str or list of int. List of seed IDs to include in the network visualization. These should match the IDs in the ‘S_ID’ column of the data.</p>
+</dd>
+<dt><strong>waves</strong></dt><dd><p>list of int. List of wave numbers to display in the network. Wave 0 represents seeds. Use list(range(0, n)) to include waves 0 through n-1.</p>
+</dd>
+<dt><strong>layout</strong></dt><dd><p>str, optional. Specifies the network layout algorithm to use. Default is ‘Spring’. Available options:</p>
+<ul class="simple">
+<li><p><strong>Spring</strong>: Force-directed layout (default, uses igraph Fruchterman-Reingold algorithm). Good for general network visualization.</p></li>
+<li><p><strong>Tree</strong>: Hierarchical tree layout (requires pygraphviz, uses NetworkX). Best for visualizing recruitment chains as a tree structure.</p></li>
+<li><p><strong>Circular</strong>: Circular arrangement of nodes. Good for networks with cyclical patterns.</p></li>
+<li><p><strong>Kamada-Kawai</strong>: Force-directed layout with uniform edge lengths. Provides more uniform spacing than Spring.</p></li>
+<li><p><strong>Grid</strong>: Grid-based layout. Useful for ordered data.</p></li>
+<li><p><strong>Star</strong>: Star-shaped layout. Centers one node with others radiating outward.</p></li>
+<li><p><strong>Random</strong>: Random positioning of nodes. Useful for comparison or testing.</p></li>
+</ul>
+</dd>
+<dt><strong>variable</strong></dt><dd><p>str, optional. Name of a categorical variable in the data to color nodes by. When specified, nodes will be colored according to their category values. Variables with 10+ categories trigger a warning as they may be hard to interpret. Default is None (uses seed/nonseed coloring).</p>
+</dd>
+<dt><strong>category_colors</strong></dt><dd><p>list of str, optional. Custom colors for categories when using the variable parameter. Must provide exactly one color per category in the variable. Colors are assigned to categories in sorted alphabetical/numerical order. Accepts hex codes (e.g., ‘#FF0000’) or named colors (e.g., ‘red’). If not provided, uses the default 20-color palette. Default is None.</p>
+</dd>
+<dt><strong>vertex_size</strong></dt><dd><p>int or float, optional. Size of non-seed vertices (nodes) in the network graph. Default is 6.</p>
+</dd>
+<dt><strong>vertex_size_seed</strong></dt><dd><p>int or float, optional. Size of seed vertices (nodes) in the network graph. Seeds are typically displayed larger to distinguish them. Default is 10.</p>
+</dd>
+<dt><strong>seed_color</strong></dt><dd><p>str, optional. Color for seed nodes when not using the variable parameter for grouping. Accepts hex codes or named colors. Default is ‘#E41A1C’ (red).</p>
+</dd>
+<dt><strong>nonseed_color</strong></dt><dd><p>str, optional. Color for non-seed nodes when not using the variable parameter for grouping. Accepts hex codes or named colors. Default is ‘#377EB8’ (blue).</p>
+</dd>
+<dt><strong>edge_width</strong></dt><dd><p>float, optional. Width of edges (lines) connecting nodes in the recruitment network. Default is 1.0.</p>
+</dd>
+<dt><strong>title</strong></dt><dd><p>str, optional. Title for the network graph. If not provided, a default title is automatically generated showing the seeds and waves included.</p>
+</dd>
+<dt><strong>figsize</strong></dt><dd><p>tuple of (int, int), optional. Figure size in inches as (width, height). Default is (12, 10).</p>
+</dd>
+<dt><strong>show_plot</strong></dt><dd><p>bool, optional. If True, displays the plot in the current environment. If False, the plot is not shown but can still be saved using save_path. Default is True.</p>
+</dd>
+<dt><strong>save_path</strong></dt><dd><p>str, optional. File path to save the network graph image. Supports common image formats (.png, .pdf, .svg, .jpg). If None, the graph is not saved to file. Default is None.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><strong>Graph object</strong></dt><dd><p>Returns either an igraph.Graph object (for Spring, Circular, Kamada-Kawai, Grid, Star, Random layouts) or a networkx.DiGraph object (for Tree layout). The returned graph object contains all nodes, edges, and attributes and can be further manipulated or analyzed.</p>
+</dd>
+</dl>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSnetgraph</span>
 
-<span class="c1"># Basic network graph</span>
+<span class="c1"># Basic network graph with Spring layout</span>
 <span class="n">G</span> <span class="o">=</span> <span class="n">RDSnetgraph</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">seed_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">],</span>
     <span class="n">waves</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
     <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;Spring&#39;</span>
 <span class="p">)</span>
-</pre></div>
-</div>
-<p>The function supports different layout algorithms:</p>
-<ul class="simple">
-<li><p><strong>Spring</strong>: Force-directed layout (default, uses igraph)</p></li>
-<li><p><strong>Tree</strong>: Hierarchical tree layout (requires pygraphviz, uses NetworkX)</p></li>
-<li><p><strong>Circular</strong>: Circular arrangement</p></li>
-<li><p><strong>Kamada-Kawai</strong>: Force-directed with uniform edge lengths</p></li>
-<li><p><strong>Grid</strong>: Grid-based layout</p></li>
-<li><p><strong>Star</strong>: Star-shaped layout</p></li>
-<li><p><strong>Random</strong>: Random positioning</p></li>
-</ul>
-<p>You can color nodes by demographic variables:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Color nodes by demographic variable</span>
+
+<span class="c1"># Tree layout showing hierarchical recruitment structure</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">RDSnetgraph</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
+    <span class="n">seed_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">],</span>
+    <span class="n">waves</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;Tree&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># Color nodes by demographic variable</span>
 <span class="n">G</span> <span class="o">=</span> <span class="n">RDSnetgraph</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">seed_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">],</span>
@@ -134,7 +203,6 @@
     <span class="n">vertex_size</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
     <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
 <span class="p">)</span>
-
 
 <span class="c1"># Use custom colors for categories</span>
 <span class="c1"># Colors must match the number of categories in sorted alphabetical/numerical order</span>
@@ -158,10 +226,8 @@
     <span class="n">nonseed_color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span>
     <span class="n">edge_width</span><span class="o">=</span><span class="mf">2.0</span>
 <span class="p">)</span>
-</pre></div>
-</div>
-<p>You can save the network graph to a file:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Save network graph</span>
+
+<span class="c1"># Save network graph without displaying</span>
 <span class="n">G</span> <span class="o">=</span> <span class="n">RDSnetgraph</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">seed_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">],</span>
@@ -172,10 +238,106 @@
 <span class="p">)</span>
 </pre></div>
 </div>
+<section id="color-customization-for-network-graphs">
+<h3>Color Customization for Network Graphs<a class="headerlink" href="#color-customization-for-network-graphs" title="Link to this heading"></a></h3>
+<p>When using the <code class="docutils literal notranslate"><span class="pre">variable</span></code> parameter to color nodes by categories:</p>
+<dl class="simple">
+<dt><strong>Default Color Palette:</strong></dt><dd><ul class="simple">
+<li><p>A 20-color palette is automatically applied</p></li>
+<li><p>Colors 1-8: Strong, distinct colors (Set1 palette)</p></li>
+<li><p>Colors 9-16: Muted, professional colors (Dark2 palette)</p></li>
+<li><p>Colors 17-20: Soft, light colors (Pastel1 palette)</p></li>
+<li><p>For 20+ categories, colors recycle (with a warning)</p></li>
+</ul>
+</dd>
+<dt><strong>Custom Colors:</strong></dt><dd><ul class="simple">
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">category_colors</span></code> parameter with a list of color codes</p></li>
+<li><p>Must provide exactly one color per category</p></li>
+<li><p>Colors apply in sorted alphabetical/numerical order of categories</p></li>
+<li><p>Accepts hex codes (e.g., ‘#FF0000’) or named colors (e.g., ‘red’)</p></li>
+</ul>
+</dd>
+<dt><strong>Important Notes:</strong></dt><dd><ul class="simple">
+<li><p>Variables with 10+ categories trigger a warning (may be hard to interpret)</p></li>
+<li><p>Variables with 20+ categories recycle colors and strongly suggest custom colors</p></li>
+<li><p>Categories are always sorted before color assignment for consistency</p></li>
+<li><p>To check category order: <code class="docutils literal notranslate"><span class="pre">sorted(data[variable].dropna().unique())</span></code></p></li>
+</ul>
+</dd>
+</dl>
 </section>
-<section id="mapping">
-<h2>Mapping<a class="headerlink" href="#mapping" title="Link to this heading"></a></h2>
+</section>
+</section>
+<section id="rdsmap-geographic-distribution-mapping">
+<h1>RDSmap - Geographic Distribution Mapping<a class="headerlink" href="#rdsmap-geographic-distribution-mapping" title="Link to this heading"></a></h1>
 <p>When longitude and latitude are available, users can plot distribution of recruitment overall or for each wave. The RDSmap function allows explicit control of the number of waves and seeds in the plot. If waves are not specified, all available waves are automatically included.</p>
+<section id="id1">
+<h2>Usage<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">RDSmap</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">long</span><span class="p">,</span> <span class="n">seed_ids</span><span class="p">,</span> <span class="n">waves</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed_color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">seed_radius</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+       <span class="n">recruit_color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">recruit_radius</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">line_color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">line_weight</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+       <span class="n">line_dashArray</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="s1">&#39;participant_map.html&#39;</span><span class="p">,</span> <span class="n">zoom_start</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+       <span class="n">open_browser</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>Arguments<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><strong>data</strong></dt><dd><p>pandas.DataFrame. The output from RDSdata function containing preprocessed RDS data with latitude and longitude coordinates per respondent.</p>
+</dd>
+<dt><strong>lat</strong></dt><dd><p>str. Column name for latitude coordinates in the data. Values should be numeric, in the range [-90, 90].</p>
+</dd>
+<dt><strong>long</strong></dt><dd><p>str. Column name for longitude coordinates in the data. Values should be numeric, in the range [-180, 180].</p>
+</dd>
+<dt><strong>seed_ids</strong></dt><dd><p>list of str or list of int. List of seed IDs to display on the map. Use get_available_seeds() to see available seeds in the dataset.</p>
+</dd>
+<dt><strong>waves</strong></dt><dd><p>list of int, optional. List of wave numbers to display on the map. If not specified, all available waves are automatically included. Wave 0 represents seeds. Use get_available_waves() to see available waves, or specify explicitly like list(range(0, 4)) or [0, 1, 2, 3] for waves 0-3. Default is None (all waves).</p>
+</dd>
+<dt><strong>seed_color</strong></dt><dd><p>str, optional. Color of seed circle markers on the map. Accepts standard CSS color names (e.g., ‘red’, ‘blue’, ‘green’) or hex codes (e.g., ‘#FF0000’). Default is ‘red’.</p>
+</dd>
+<dt><strong>seed_radius</strong></dt><dd><p>int, optional. Radius (size) of seed circle markers in pixels. Larger values create bigger circles. Default is 7.</p>
+</dd>
+<dt><strong>recruit_color</strong></dt><dd><p>str, optional. Color of recruit circle markers on the map. Accepts standard CSS color names or hex codes. Default is ‘blue’.</p>
+</dd>
+<dt><strong>recruit_radius</strong></dt><dd><p>int, optional. Radius (size) of recruit circle markers in pixels. Default is 7.</p>
+</dd>
+<dt><strong>line_color</strong></dt><dd><p>str, optional. Color of lines connecting recruiters to recruits, showing recruitment relationships. Accepts standard CSS color names or hex codes. Default is ‘black’.</p>
+</dd>
+<dt><strong>line_weight</strong></dt><dd><p>int, optional. Thickness (width) of lines connecting recruiters to recruits in pixels. Default is 2.</p>
+</dd>
+<dt><strong>line_dashArray</strong></dt><dd><p>str, optional. Dash pattern for lines connecting recruiters to recruits. Format is a string of comma-separated numbers representing dash and gap lengths (e.g., ‘5,6’ creates dashed lines with 5-pixel dashes and 6-pixel gaps). If None, solid lines are used. Default is None.</p>
+</dd>
+<dt><strong>output_file</strong></dt><dd><p>str, optional. Name of the HTML file to save the interactive map. The file is saved in the current working directory. Default is ‘participant_map.html’.</p>
+</dd>
+<dt><strong>zoom_start</strong></dt><dd><p>int, optional. Initial zoom level for the map. Lower values show more area (zoomed out), higher values show less area (zoomed in). Typical range is 1-18. Default is 5.</p>
+</dd>
+<dt><strong>open_browser</strong></dt><dd><p>bool, optional. If True, automatically opens the generated map in the default web browser after creation. If False, the map is saved but not opened. Default is False.</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h2>Returns<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><strong>folium.Map</strong></dt><dd><p>A Folium map object containing the interactive visualization. The map shows:</p>
+<ul class="simple">
+<li><p>Seed locations as circle markers (red by default)</p></li>
+<li><p>Non-seed locations as circle markers (blue by default)</p></li>
+<li><p>Lines connecting recruiters to recruits for consecutive waves</p></li>
+<li><p>Interactive popups with participant details (ID, seed ID)</p></li>
+<li><p>A legend showing seed and recruit marker types</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="raises">
+<h2>Raises<a class="headerlink" href="#raises" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt><strong>ValueError</strong></dt><dd><p>If seed_ids or waves lists are empty, if coordinate columns are not found in the data, or if no valid coordinates are found.</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h2>Examples<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">RDSTools</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDSmap</span><span class="p">,</span> <span class="n">get_available_seeds</span><span class="p">,</span> <span class="n">get_available_waves</span><span class="p">,</span> <span class="n">print_map_info</span>
 
 <span class="c1"># Check available data</span>
@@ -206,17 +368,8 @@
     <span class="n">long</span><span class="o">=</span><span class="s1">&#39;Longitude&#39;</span><span class="p">,</span>
     <span class="n">output_file</span><span class="o">=</span><span class="s1">&#39;recruitment_map.html&#39;</span>
 <span class="p">)</span>
-</pre></div>
-</div>
-<p>The mapping function creates interactive HTML maps showing:</p>
-<ul class="simple">
-<li><p>Seed locations (red markers)</p></li>
-<li><p>Non-seed locations (blue markers)</p></li>
-<li><p>Recruitment relationships (connecting lines for consecutive waves)</p></li>
-<li><p>Interactive popups with participant details</p></li>
-</ul>
-<p>You can customize the map display:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Custom map with specific zoom and auto-open</span>
+
+<span class="c1"># Custom map with specific zoom and auto-open</span>
 <span class="n">m</span> <span class="o">=</span> <span class="n">RDSmap</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
     <span class="n">seed_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">],</span>
@@ -244,47 +397,59 @@
     <span class="n">line_dashArray</span><span class="o">=</span><span class="s1">&#39;5,6&#39;</span><span class="p">,</span>  <span class="c1"># Dashed lines</span>
     <span class="n">output_file</span><span class="o">=</span><span class="s1">&#39;styled_map.html&#39;</span>
 <span class="p">)</span>
+
+<span class="c1"># Use helper functions to explore data</span>
+<span class="n">available_seeds</span> <span class="o">=</span> <span class="n">get_available_seeds</span><span class="p">(</span><span class="n">rds_data</span><span class="p">)</span>
+<span class="n">available_waves</span> <span class="o">=</span> <span class="n">get_available_waves</span><span class="p">(</span><span class="n">rds_data</span><span class="p">)</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">RDSmap</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">rds_data</span><span class="p">,</span>
+    <span class="n">seed_ids</span><span class="o">=</span><span class="n">available_seeds</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span>    <span class="c1"># First 2 seeds</span>
+    <span class="n">waves</span><span class="o">=</span><span class="n">available_waves</span><span class="p">[:</span><span class="mi">4</span><span class="p">],</span>       <span class="c1"># First 4 waves</span>
+    <span class="n">lat</span><span class="o">=</span><span class="s1">&#39;Latitude&#39;</span><span class="p">,</span>
+    <span class="n">long</span><span class="o">=</span><span class="s1">&#39;Longitude&#39;</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="helper-functions">
 <h2>Helper Functions<a class="headerlink" href="#helper-functions" title="Link to this heading"></a></h2>
-<dl class="simple">
+<dl>
 <dt><strong>get_available_seeds(data)</strong></dt><dd><p>Get list of available seed IDs from RDS data.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><ul class="simple">
+<li><p>data (pandas.DataFrame): RDS data processed by RDSdata function</p></li>
+</ul>
+</dd>
+<dt>Returns:</dt><dd><ul class="simple">
+<li><p>list of str: Sorted list of unique seed IDs</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt><strong>get_available_waves(data)</strong></dt><dd><p>Get list of available wave numbers from RDS data.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><ul class="simple">
+<li><p>data (pandas.DataFrame): RDS data processed by RDSdata function</p></li>
+</ul>
+</dd>
+<dt>Returns:</dt><dd><ul class="simple">
+<li><p>list of int: Sorted list of unique wave numbers</p></li>
+</ul>
+</dd>
+</dl>
 </dd>
 <dt><strong>print_map_info(data, lat=’Latitude’, long=’Longitude’)</strong></dt><dd><p>Print summary information about the RDS data for mapping, including available seeds, waves, and coordinate coverage.</p>
-</dd>
-</dl>
-<section id="color-customization">
-<h3>Color Customization<a class="headerlink" href="#color-customization" title="Link to this heading"></a></h3>
-<p>When using the <code class="docutils literal notranslate"><span class="pre">variable</span></code> parameter to color nodes by categories:</p>
 <dl class="simple">
-<dt><strong>Default Color Palette:</strong></dt><dd><ul class="simple">
-<li><p>A 20-color palette is automatically applied</p></li>
-<li><p>Colors 1-8: Strong, distinct colors (Set1 palette)</p></li>
-<li><p>Colors 9-16: Muted, professional colors (Dark2 palette)</p></li>
-<li><p>Colors 17-20: Soft, light colors (Pastel1 palette)</p></li>
-<li><p>For 20+ categories, colors recycle (with a warning)</p></li>
-</ul>
-</dd>
-<dt><strong>Custom Colors:</strong></dt><dd><ul class="simple">
-<li><p>Use <code class="docutils literal notranslate"><span class="pre">category_colors</span></code> parameter with a list of color codes</p></li>
-<li><p>Must provide exactly one color per category</p></li>
-<li><p>Colors apply in sorted alphabetical/numerical order of categories</p></li>
-<li><p>Accepts hex codes (e.g., ‘#FF0000’) or named colors (e.g., ‘red’)</p></li>
-</ul>
-</dd>
-<dt><strong>Important Notes:</strong></dt><dd><ul class="simple">
-<li><p>Variables with 10+ categories trigger a warning (may be hard to interpret)</p></li>
-<li><p>Variables with 20+ categories recycle colors and strongly suggest custom colors</p></li>
-<li><p>Categories are always sorted before color assignment for consistency</p></li>
-<li><p>To check category order: <code class="docutils literal notranslate"><span class="pre">sorted(data[variable].dropna().unique())</span></code></p></li>
+<dt>Parameters:</dt><dd><ul class="simple">
+<li><p>data (pandas.DataFrame): RDS data processed by RDSdata function</p></li>
+<li><p>lat (str): Name of latitude column to check</p></li>
+<li><p>long (str): Name of longitude column to check</p></li>
 </ul>
 </dd>
 </dl>
-</section>
+</dd>
+</dl>
 </section>
 </section>
 

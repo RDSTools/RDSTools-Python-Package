@@ -29,10 +29,20 @@ Arguments
     The column name of the column in the data that represents the degree (network size) of respondents.
 
 **zero_degree**
-    This parameter is used to set the method for imputing zero values in the 'degree' variable. Four methods are available for selection: mean, median, hotdeck, and drop. If this parameter is not set, the default imputation method is hotdeck.
+    str, optional. This parameter is used to set the method for imputing zero values in the 'degree' variable. Four methods are available for selection: mean, median, hotdeck, and drop. If this parameter is not set, the default imputation method is hotdeck.
+
+    * **mean**: Impute all positions that require imputation with the average value of all non-zero and non-missing values from the input degree.
+    * **median**: Impute all positions that require imputation with the median value of all non-zero and non-missing values from the input degree.
+    * **hotdeck**: For each position needing imputation, perform random sampling with replacement from all non-zero and non-missing values in the input degree, where each value has equal probability of being selected. The sampled value is then used as the imputed value.
+    * **drop**: Remove rows with zero degree values from the dataset.
 
 **NA_degree**
-    This parameter is used to set the method for imputing missing values in the 'degree' variable. There are four methods to choose from: mean, median, hotdeck, and drop. If this parameter is not set, the default method is hotdeck.
+    str, optional. This parameter is used to set the method for imputing missing values in the 'degree' variable. There are four methods to choose from: mean, median, hotdeck, and drop. If this parameter is not set, the default method is hotdeck.
+
+    * **mean**: Impute all positions that require imputation with the average value of all non-zero and non-missing values from the input degree.
+    * **median**: Impute all positions that require imputation with the median value of all non-zero and non-missing values from the input degree.
+    * **hotdeck**: For each position needing imputation, perform random sampling with replacement from all non-zero and non-missing values in the input degree, where each value has equal probability of being selected. The sampled value is then used as the imputed value.
+    * **drop**: Remove rows with missing degree values from the dataset.
 
 Returns
 -------
@@ -75,13 +85,3 @@ Example
         NA_degree='hotdeck'
     )
 
-    # For preprocessing use RDSToolsToyData
-    RDSToolsToyData = pd.read_csv("RDSToolsToyData.csv")
-
-    rds_data = RDSdata(
-        data=RDSToolsToyData,
-        unique_id="ID",
-        redeemed_coupon="CouponR",
-        issued_coupons=["Coupon1", "Coupon2", "Coupon3"],
-        degree="Degree"
-    )
