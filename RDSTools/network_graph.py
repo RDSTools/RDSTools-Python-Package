@@ -316,7 +316,11 @@ def RDSnetgraph(
         save_path: Optional[str] = None
 ) -> Union[ig.Graph, nx.Graph]:
     """
-    Visualization of recruitment chains/networks in respondent driven sampling sample data
+    Visualization of recruitment chains/networks in respondent driven sampling sample data.
+
+    This function creates a network graph visualization of RDS recruitment chains, displaying
+    seeds and recruits as nodes connected by edges. Nodes are colored by a categorical variable
+    to visualize group patterns within the recruitment network.
 
     Parameters
     ----------
@@ -369,7 +373,10 @@ def RDSnetgraph(
     Returns
     -------
     Union[ig.Graph, nx.Graph]
-        The graph object (igraph for non-Tree layouts, NetworkX for Tree)
+        The graph object (igraph for non-Tree layouts, NetworkX for Tree) object visualizing
+        the recruitment network where nodes represent participants (colored by the specified variable),
+        with larger nodes indicating seeds, smaller nodes indicating recruits, and edges showing
+        recruitment connections.
 
     Raises
     ------

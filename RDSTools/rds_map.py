@@ -116,6 +116,9 @@ def RDSmap(
     """
     Mapping respondents in respondent driven sampling sample data overlaying with recruitment chains
 
+    This function creates an interactive Folium map that displays RDS recruitment chains by plotting
+    seed participants and their recruits with connecting lines.
+
     Parameters
     ----------
     data : pd.DataFrame
