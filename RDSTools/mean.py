@@ -114,6 +114,9 @@ def RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, r
     """
     Estimating mean with respondent driven sampling sample data
 
+    This function calculates weighted or unweighted means for a continuous variable.
+    Standard errors are calculated using naive or resampling approaches from 'RDSboot'.
+
     Parameters:
     -----------
     x : str
@@ -140,28 +143,41 @@ def RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, r
     return_bootstrap_means : bool, optional
         If True, return bootstrap mean estimates along with main results (only for bootstrap methods)
     return_node_counts : bool, optional
-        If True, return node counts per iteration along with main results (only for bootstrap methods)
+        If True, return sample size per iteration along with main results (only for bootstrap methods)
 
     Returns:
     --------
-    RDSResult : RDSResult object (DataFrame subclass)
-        When return_bootstrap_means and return_node_counts are both False (default).
-        DataFrame with the following elements; weighted or unweighted mean with standard errors,
-        additional information about the analysis: (1) var_est method, (2) weighted or not, (3) n_Data, (4) n_Analysis, (5) n_Iteration if var_est is not naive.
-        descriptive summary of resamples if var_est is not naive, resample estimates
-        Contains columns 'Type' and 'Value' with summary statistics.
+    RDSResult or tuple
+        An RDSResult object containing the following elements:
 
-    tuple : (RDSResult, list)
-        When return_bootstrap_means is True and return_node_counts is False.
-        Returns (formatted_result, bootstrap_means_list).
+        mean
+            Numeric; Weighted or unweighted mean estimate
 
-    tuple : (RDSResult, list)
-        When return_bootstrap_means is False and return_node_counts is True.
-        Returns (formatted_result, node_counts_list).
+        se
+            Numeric; Standard error of the mean
 
-    tuple : (RDSResult, list, list)
-        When both return_bootstrap_means and return_node_counts are True.
-        Returns (formatted_result, bootstrap_means_list, node_counts_list).
+        additional_info
+            Information about the estimation: (1) var_est method, (2) use of
+            weighted analysis, (3) n_Data, (4) n_Iteration (if var_est is not 'naive')
+
+        resample_summary
+            Descriptive summary of resamples if var_est is not 'naive': mean, SD,
+            min, quartiles, and max of resample sizes
+
+        resample_estimates
+            Mean estimates for each resampling iteration if var_est is not 'naive'
+
+        When return_bootstrap_means=False and return_node_counts=False (default):
+            Returns RDSResult object only
+
+        When return_bootstrap_means=True and return_node_counts=False:
+            Returns (RDSResult, bootstrap_means_list)
+
+        When return_bootstrap_means=False and return_node_counts=True:
+            Returns (RDSResult, node_counts_list)
+
+        When return_bootstrap_means=True and return_node_counts=True:
+            Returns (RDSResult, bootstrap_means_list, node_counts_list)
 
     Notes
     -----
@@ -170,14 +186,6 @@ def RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, r
     - Can be used with other pandas operations and statistical functions
     - Contains the same data structure as the original DataFrame implementation
 
-    For bootstrap methods, the DataFrame includes additional rows with bootstrap statistics:
-    - n_iterations: number of bootstrap resamples performed
-    - mean_nodes: average number of nodes (observations) across all bootstrap samples
-    - min_nodes: minimum number of nodes in any bootstrap sample
-    - q1_nodes: 25th percentile of nodes across bootstrap samples
-    - median_nodes: median number of nodes across bootstrap samples
-    - q3_nodes: 75th percentile of nodes across bootstrap samples
-    - max_nodes: maximum number of nodes in any bootstrap sample
     """
 
     # CPU core count check

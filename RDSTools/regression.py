@@ -150,8 +150,10 @@ class RDSRegressionResult:
 def RDSlm(data, formula, weight=None, var_est=None, resample_n=None, n_cores=None,
                   return_bootstrap_estimates=False, return_node_counts=False):
     """
-    Estimating linear and logistic regression models with respondent driven sampling sample data.
-    Equivalent to lm in R stats package with capabilities to handle RDS data in model estimation.
+    Linear and Logistic Regression Modeling with Respondent Driven Sampling (RDS) Sample Data
+
+    This function mimics the lm function in R stats package with capabilities to handle RDS data in model estimation.
+    Standard errors of regression coefficients are calculated using naive or resampling approaches from 'RDSboot'
 
     Parameters:
     -----------
@@ -181,34 +183,48 @@ def RDSlm(data, formula, weight=None, var_est=None, resample_n=None, n_cores=Non
     return_bootstrap_estimates : bool, optional
         If True, return bootstrap coefficient estimates along with main results (only for bootstrap methods)
     return_node_counts : bool, optional
-        If True, return node counts per iteration along with main results (only for bootstrap methods)
+        If True, return sample size per iteration along with main results (only for bootstrap methods)
 
     Returns:
     --------
-    dict or tuple
-        - If both return_bootstrap_estimates and return_node_counts are False (default):
-          Dictionary containing regression results
-        - If return_bootstrap_estimates is True and return_node_counts is False:
-          Tuple of (results dict, list of bootstrap estimates)
-        - If return_bootstrap_estimates is False and return_node_counts is True:
-          Tuple of (results dict, list of node counts)
-        - If both return_bootstrap_estimates and return_node_counts are True:
-          Tuple of (results dict, list of bootstrap estimates, list of node counts)
+    RDSRegressionResult or tuple
+        An RDSRegressionResult object containing the following elements:
 
-        Results dictionary contains:
-        - coefficients: DataFrame with point estimates, se, t-values and p-values
-        - r_squared: List containing [R-squared, Adjusted R-squared]
-        - f_statistic: List containing [F-statistic, df_model, df_resid] (NaN for logistic regression)
-        - metadata: DataFrame with additional information about the analysis
+        formula
+            Formula; Variable(s) used for the estimation
 
-        For bootstrap methods, metadata includes additional fields:
-        - n_iterations: number of bootstrap iterations
-        - mean_nodes: mean nodes per bootstrap iteration
-        - min_nodes: minimum nodes per bootstrap iteration
-        - q1_nodes: 25th percentile nodes per bootstrap iteration
-        - median_nodes: median nodes per bootstrap iteration
-        - q3_nodes: 75th percentile nodes per bootstrap iteration
-        - max_nodes: maximum nodes per bootstrap iteration
+        coefficients
+            DataFrame; Point estimates, standard errors, t-values (or z-values for logistic),
+            and p-values for each coefficient
+
+        model_fit
+            Model fit statistics; For linear regression: R-squared, Adjusted R-squared,
+            F-statistic, and residual standard error. For logistic regression: null deviance,
+            residual deviance, and AIC
+
+        additional_info
+            Information about the model estimation: (1) var_est method, (2) use of
+            weighted analysis, (3) n_Data, (4) n_Iteration (if var_est is not 'naive')
+
+        resample_summary
+            Descriptive summary of resamples if var_est is not 'naive': mean, SD,
+            min, quartiles, and max of resample sizes
+
+        resample_estimates
+            Coefficient estimates for each resampling iteration if var_est is not 'naive'
+
+        When return_bootstrap_estimates=False and return_node_counts=False (default):
+            Returns RDSRegressionResult object only
+
+        When return_bootstrap_estimates=True and return_node_counts=False:
+            Returns (RDSRegressionResult, bootstrap_estimates_list)
+
+        When return_bootstrap_estimates=False and return_node_counts=True:
+            Returns (RDSRegressionResult, node_counts_list)
+
+        When return_bootstrap_estimates=True and return_node_counts=True:
+            Returns (RDSRegressionResult, bootstrap_estimates_list, node_counts_list)
+
 
     Examples:
     --------

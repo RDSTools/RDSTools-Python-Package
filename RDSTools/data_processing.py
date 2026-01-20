@@ -5,7 +5,11 @@ import warnings
 
 def RDSdata(data, unique_id, redeemed_coupon, issued_coupons, degree, zero_degree="hotdeck", NA_degree="hotdeck"):
     """
-    Processing respondent driven sampling data.
+    Processing respondent-driven sampling data (RDS)
+
+    This function processes RDS survey data by reconstructing recruitment chains, calculating wave numbers, identifying
+    seeds, and imputing missing degree values. It tracks how participants recruited one another through coupon redemption.
+    Use 'RDSdata' before applying any estimation or plotting functions from the RDSTools package
 
     Parameters
     ----------
@@ -28,7 +32,7 @@ def RDSdata(data, unique_id, redeemed_coupon, issued_coupons, degree, zero_degre
     Returns
     -------
     pandas.DataFrame
-        A data frame with all original variables except ID and new RDS related information:
+        A data frame with all original variables, some renamed, and new RDS-related information:
 
         ID : str
             Renamed unique_id
@@ -45,7 +49,7 @@ def RDSdata(data, unique_id, redeemed_coupon, issued_coupons, degree, zero_degre
         WAVE : int
             Indicates the wave a node was introduced into the data. The value of Seed is 0
         S_ID : str
-            Indicates the ID of the seed corresponding to the node. For seeds, the value is same as the value of ID.
+            Indicates the ID of the seed corresponding to the node. For seeds, the value is the same as the value of ID.
         R_ID : str
             Indicates the ID of the recruiter node. For seeds, the value is NA because there is no recruiter for seeds among respondents.
         SEED : int
@@ -64,9 +68,7 @@ def RDSdata(data, unique_id, redeemed_coupon, issued_coupons, degree, zero_degre
     rds_data = RDSdata(data = data,
                        unique_id = "ID",
                        redeemed_coupon = "CouponR",
-                       issued_coupons = ["Coupon1",
-                                         "Coupon2",
-                                         "Coupon3"],
+                       issued_coupons = ["Coupon1","Coupon2","Coupon3"],
                        degree = "Degree")
     """
     # ---- 1. Data Preprocessing ----

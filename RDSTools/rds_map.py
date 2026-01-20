@@ -158,8 +158,7 @@ def RDSmap(
     -------
     folium.Map
 
-        A map with seeds (in red circle markers) and participants (in blue circle markers) up to maximum availalble number of specified waves.
-        Recruits from each seed are connected by edges.
+        A Folium map with seeds and recruits. Recruits from each seed are connected by black lines.
 
     Raises
     ------

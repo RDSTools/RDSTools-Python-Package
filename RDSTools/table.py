@@ -300,8 +300,8 @@ def RDStable(x, y=None, data=None, weight=None, var_est=None, resample_n=None, m
     Estimating one and two-way tables with respondent driven sampling sample data
 
     One-way tables are constructed by specifying a categorical variable for x argument only.
-
     Two-way tables are constructed by specifying two categorical variables for x and y arguments.
+    Standard errors of proportions are calculated using naive or resampling approaches from 'RDSboot'
 
     Parameters:
     -----------
@@ -335,45 +335,50 @@ def RDStable(x, y=None, data=None, weight=None, var_est=None, resample_n=None, m
     return_bootstrap_tables : bool, optional
         If True, return bootstrap table estimates along with main results (only for bootstrap methods)
     return_node_counts : bool, optional
-        If True, return node counts per iteration along with main results (only for bootstrap methods)
+        If True, return sample size per iteration along with main results (only for bootstrap methods)
 
     Returns:
     --------
-    RDSTableResult : RDSTableResult object (custom class)
-        When return_bootstrap_tables and return_node_counts are both False (default).
-        Object with the following elements; weighted or unweighted proportions and their standard errors,
-        additional information about the analysis: (1) var_est method, (2) weighted or not, (3) n_Data, (4) n_Analysis, (5) n_Iteration if var_est is not naive.
-        descriptive summary of resamples if var_est is not naive, resample estimates
-        Contains formatted table output with proportions, standard errors, and cell counts.
+    RDSTableResult or tuple
+        An RDSTableResult object containing the following elements:
 
-    tuple : (RDSTableResult, list)
-        When return_bootstrap_tables is True and return_node_counts is False.
-        Returns (formatted_result, bootstrap_tables_list).
+        formula
+            Formula; Variable(s) used for the estimation
 
-    tuple : (RDSTableResult, list)
-        When return_bootstrap_tables is False and return_node_counts is True.
-        Returns (formatted_result, node_counts_list).
+        results
+            DataFrame or tables; Weighted or unweighted proportions (prop_table) and
+            their standard errors (se_table)
 
-    tuple : (RDSTableResult, list, list)
-        When both return_bootstrap_tables and return_node_counts are True.
-        Returns (formatted_result, bootstrap_tables_list, node_counts_list).
+        additional_info
+            Information about the model estimation: (1) var_est method, (2) use of
+            weighted analysis, (3) n_Data, (4) n_Iteration (if var_est is not 'naive')
+
+        resample_summary
+            Descriptive summary of resamples if var_est is not 'naive': mean, SD,
+            min, quartiles, and max of resample sizes
+
+        resample_estimates
+            Proportions calculated for each resampling iteration if var_est is not 'naive'
+
+        When return_bootstrap_tables=False and return_node_counts=False (default):
+            Returns RDSTableResult object only
+
+        When return_bootstrap_tables=True and return_node_counts=False:
+            Returns (RDSTableResult, bootstrap_tables_list)
+
+        When return_bootstrap_tables=False and return_node_counts=True:
+            Returns (RDSTableResult, node_counts_list)
+
+        When return_bootstrap_tables=True and return_node_counts=True:
+            Returns (RDSTableResult, bootstrap_tables_list, node_counts_list)
 
     Notes
     -----
     The RDSTableResult object is a custom class that:
-    - Displays nicely formatted output when printed
+    - Displays formatted output when printed
     - Contains proportions and standard errors from contingency table analysis
     - Uses actual unweighted counts for cell counts regardless of weighting
     - Weights only affect standard error calculations
-
-    For bootstrap methods, the object includes additional bootstrap statistics:
-    - n_iterations: number of bootstrap resamples performed
-    - mean_nodes: average number of nodes (observations) across all bootstrap samples
-    - min_nodes: minimum number of nodes in any bootstrap sample
-    - q1_nodes: 25th percentile of nodes across bootstrap samples
-    - median_nodes: median number of nodes across bootstrap samples
-    - q3_nodes: 75th percentile of nodes across bootstrap samples
-    - max_nodes: maximum number of nodes in any bootstrap sample
 
     Examples
     --------

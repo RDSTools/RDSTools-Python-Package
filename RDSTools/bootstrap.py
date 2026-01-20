@@ -4,14 +4,10 @@ import warnings
 
 def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, type, resample_n):
     """
-    Resampling respondent driven sampling sample data by bootstrapping edges in recruitment trees
-    or bootstrapping recruitment chains as a whole.
+    Bootstrap Resampling for Respondent Driven Sampling (RDS)
 
-    Corrected bootstrap resampling for Respondent-Driven Sampling (RDS) data.
-    Key fixes:
-    1. Proper duplicate preservation in index matching (like R's match function)
-    2. Consistent data type handling without unnecessary string conversions
-    3. Simplified error handling that doesn't mask sampling issues
+    This function performs resampling RDS sample data by bootstrapping edges in recruitment trees or bootstrapping
+    recruitment chains as a whole.
 
     Parameters:
     -----------
@@ -45,7 +41,7 @@ def RDSboot(data, respondent_id_col, seed_id_col, seed_col, recruiter_id_col, ty
 
     In the tree_uni1 method, ( s ) seeds are selected using Simple Random Sampling with Replacement (SRSWR) from all seeds. For each selected seed, this method (A) checks its recruit counts, (B) selects SRSWR of the recruits counts from all recruits identified in (A), and (C) for each sampled recruit, this method repeats Steps A and B. (D) Steps A, B, and C continue until reaching the last wave of each chain. In tree_uni2, instead of selecting ( s ) seeds, it selects one seed, performs Steps B and C for the selected seed. It compares the size of the resample ( n_r ) and the original sample ( n_s ), and, if ( n_r < n_s ), it continues the resampling process by drawing 1 seed, performs Steps B and C and checks ( n_r ) against ( n_s ). If ( n_r < n_s ), the process continues until the sample size of a given resample ( n_r ) is at least equal to the original sample size ( n_s ), i.e., ( n_r ≥ n_s ).
 
-    resample_tree_bi1 selects ( s ) nodes from the recruitment chains using SRSWR. For each selected node, it (A) checks its connected nodes, (B) performs SRSWR on all connected nodes identified in (A), and (C) for each selected node, performs steps A and B, but does not resample already resampled nodes. (D) Steps A, B, and C are repeated until the end of the chain. In resample_tree_bi2, 1 node is selected using SRSWR from the recruitment chain. It compares ( n_r ) against ( n_s ), and, if ( n_r < n_s ), continues the resampling process by drawing 1 node and performing steps A, B, C, and D as in resample_tree_bi1 until ( n_r ≥ n_s ).
+    tree_bi1 selects ( s ) nodes from the recruitment chains using SRSWR. For each selected node, it (A) checks its connected nodes, (B) performs SRSWR on all connected nodes identified in (A), and (C) for each selected node, performs steps A and B, but does not resample already resampled nodes. (D) Steps A, B, and C are repeated until the end of the chain. In resample_tree_bi2, 1 node is selected using SRSWR from the recruitment chain. It compares ( n_r ) against ( n_s ), and, if ( n_r < n_s ), continues the resampling process by drawing 1 node and performing steps A, B, C, and D as in resample_tree_bi1 until ( n_r ≥ n_s ).
 
     Examples
     --------
