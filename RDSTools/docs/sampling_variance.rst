@@ -6,7 +6,7 @@ Variance estimation with bootstrap chain and tree methods. Although resampling i
 RDSboot - Standard Bootstrap
 =============================
 
-Standard bootstrap resampling for Respondent-Driven Sampling (RDS) data.
+Bootstrap Resampling for Respondent Driven Sampling (RDS). This function performs resampling RDS sample data by bootstrapping edges in recruitment trees or bootstrapping recruitment chains as a whole.
 
 Usage
 -----
@@ -19,34 +19,44 @@ Arguments
 ---------
 
 **data**
-    pandas.DataFrame. The input DataFrame containing RDS data
+    pd.DataFrame. The input DataFrame containing RDS data.
 
 **respondent_id_col**
-    str. Name of the column containing respondent IDs - A variable indicating respondent ID
+    str. Name of the column containing respondent IDs - A variable indicating respondent ID.
 
 **seed_id_col**
-    str. Name of the column containing seed IDs - A variable indicating seed ID
+    str. Name of the column containing seed IDs - A variable indicating seed ID.
 
 **seed_col**
-    str. Name of the column containing seed indicators - A variable indicating whether a particular respondent is seed or not
+    str. Name of the column containing seed indicators - A variable indicating whether a particular respondent is seed or not.
 
 **recruiter_id_col**
-    str. Name of the column containing recruiter IDs - A variable indicating recruiter ID
+    str. Name of the column containing recruiter IDs - A variable indicating recruiter ID.
 
 **type**
-    str. One of the six types of bootstrap methods: (1) chain1, (2) chain2, (3) tree_uni1, (4) tree_uni2, (5) tree_bi1, (6) tree_bi2.
+    str. One of the six types of bootstrap methods: (1) 'chain1', (2) 'chain2', (3) 'tree_uni1', (4) 'tree_uni2', (5) 'tree_bi1', (6) 'tree_bi2'.
 
 **resample_n**
-    int. A specified number of resamples
+    int. Specifies the number of resamples.
 
 Returns
 -------
 
-**pandas.DataFrame**
+**pd.DataFrame**
     Returns a data frame consisting of the following elements:
 
     * **RESPONDENT_ID**: A variable indicating respondent ID
     * **RESAMPLE.N**: An indicator variable for each resample iteration
+
+Notes
+-----
+In all bootstrap methods, versions 1 and 2 differ as version 1 sets the number of seeds in a given resample to be consistent with the number of seeds in the original sample ( s ), while version 2 sets the sample size of a given resample ( n_r ) to be at least equal to or greater than the original sample ( n_s ).
+
+'chain1' selects ( s ) seeds using SRSWR from all seeds in the original sample and then all nodes in the chains created by each of the resampled seeds are retained. With 'chain2', 1 seed is sampled using SRSWR from all seeds in the original sample, and all nodes from the chain created by this seed are retained. It then compares ( n_r ) against ( n_s ), and, if ( n_r < n_s ), continues the resampling process by drawing 1 seed and its chains one by one until ( n_r ≥ n_s ).
+
+In the 'tree_uni1' method, ( s ) seeds are selected using Simple Random Sampling with Replacement (SRSWR) from all seeds. For each selected seed, this method (A) checks its recruit counts, (B) selects SRSWR of the recruits counts from all recruits identified in (A), and (C) for each sampled recruit, this method repeats Steps A and B. (D) Steps A, B, and C continue until reaching the last wave of each chain. In 'tree_uni2', instead of selecting ( s ) seeds, it selects one seed, performs Steps B and C for the selected seed. It compares the size of the resample ( n_r ) and the original sample ( n_s ), and, if ( n_r < n_s ), it continues the resampling process by drawing 1 seed, performs Steps B and C and checks ( n_r ) against ( n_s ). If ( n_r < n_s ), the process continues until the sample size of a given resample ( n_r ) is at least equal to the original sample size ( n_s ), i.e., ( n_r ≥ n_s ).
+
+'tree_bi1' selects ( s ) nodes from the recruitment chains using SRSWR. For each selected node, it (A) checks its connected nodes (i.e., both recruiters and recruits) and their count, (B) from all connected nodes identified in (A), performs SRSWR of the same node count, and (C) for each selected node, performs steps A and B, but does not resample already resampled nodes. (D) Steps A, B, and C are repeated until the end of the chain. In 'tree_bi2', instead of ( s ) nodes, it selects 1 node using SRSWR from anywhere in all recruitment chains and repeats steps (B),(C), and (D) until ( n_r ≥ n_s ).
 
 Example
 -------
@@ -69,7 +79,11 @@ Example
 RDSBootOptimizedParallel - Parallel Bootstrap
 ==============================================
 
-Combined optimized + parallel bootstrap resampling for RDS data. Provides significant performance improvements through dictionary-based lookups (1.2-1.6x speedup) and multi-core parallelization (8.0x speedup) for total potential speedup of 9.6x faster.
+Parallelized Bootstrap Resampling for Respondent Driven Sampling (RDS). This function performs resampling RDS sample data by bootstrapping edges in recruitment trees or bootstrapping recruitment chains as a whole with parallel processing.
+
+Combines:
+1. Dictionary-based lookups for 1.2-1.6x speedup
+2. Multi-core parallelization
 
 Usage
 -----
@@ -82,25 +96,25 @@ Arguments
 ---------
 
 **data**
-    pandas.DataFrame. The input DataFrame containing RDS data
+    pd.DataFrame. The input DataFrame containing RDS data.
 
 **respondent_id_col**
-    str. Name of the column containing respondent IDs - A variable indicating respondent ID
+    str. Name of the column containing respondent IDs - A variable indicating respondent ID.
 
 **seed_id_col**
-    str. Name of the column containing seed IDs - A variable indicating seed ID
+    str. Name of the column containing seed IDs - A variable indicating seed ID.
 
 **seed_col**
-    str. Name of the column containing seed indicators - A variable indicating whether a particular respondent is seed or not
+    str. Name of the column containing seed indicators - A variable indicating whether a particular respondent is seed or not.
 
 **recruiter_id_col**
-    str. Name of the column containing recruiter IDs - A variable indicating recruiter ID
+    str. Name of the column containing recruiter IDs - A variable indicating recruiter ID.
 
 **type**
-    str. One of the six types of bootstrap methods: (1) chain1, (2) chain2, (3) tree_uni1, (4) tree_uni2, (5) tree_bi1, (6) tree_bi2.
+    str. One of the six types of bootstrap methods: (1) 'chain1', (2) 'chain2', (3) 'tree_uni1', (4) 'tree_uni2', (5) 'tree_bi1', (6) 'tree_bi2'.
 
 **resample_n**
-    int. A specified number of resamples
+    int. Specifies the number of resamples.
 
 **n_cores**
     int, optional. Number of cores to use for parallel processing. If None, uses all available cores. Default is 2.
@@ -108,11 +122,21 @@ Arguments
 Returns
 -------
 
-**pandas.DataFrame**
+**pd.DataFrame**
     Returns a data frame consisting of the following elements:
 
     * **RESPONDENT_ID**: A variable indicating respondent ID
     * **RESAMPLE.N**: An indicator variable for each resample iteration
+
+Notes
+-----
+In all bootstrap methods, versions 1 and 2 differ as version 1 sets the number of seeds in a given resample to be consistent with the number of seeds in the original sample ( s ), while version 2 sets the sample size of a given resample ( n_r ) to be at least equal to or greater than the original sample ( n_s ).
+
+'chain1' selects ( s ) seeds using SRSWR from all seeds in the original sample and then all nodes in the chains created by each of the resampled seeds are retained. With 'chain2', 1 seed is sampled using SRSWR from all seeds in the original sample, and all nodes from the chain created by this seed are retained. It then compares ( n_r ) against ( n_s ), and, if ( n_r < n_s ), continues the resampling process by drawing 1 seed and its chains one by one until ( n_r ≥ n_s ).
+
+In the 'tree_uni1' method, ( s ) seeds are selected using Simple Random Sampling with Replacement (SRSWR) from all seeds. For each selected seed, this method (A) checks its recruit counts, (B) selects SRSWR of the recruits counts from all recruits identified in (A), and (C) for each sampled recruit, this method repeats Steps A and B. (D) Steps A, B, and C continue until reaching the last wave of each chain. In 'tree_uni2', instead of selecting ( s ) seeds, it selects one seed, performs Steps B and C for the selected seed. It compares the size of the resample ( n_r ) and the original sample ( n_s ), and, if ( n_r < n_s ), it continues the resampling process by drawing 1 seed, performs Steps B and C and checks ( n_r ) against ( n_s ). If ( n_r < n_s ), the process continues until the sample size of a given resample ( n_r ) is at least equal to the original sample size ( n_s ), i.e., ( n_r ≥ n_s ).
+
+'tree_bi1' selects ( s ) nodes from the recruitment chains using SRSWR. For each selected node, it (A) checks its connected nodes (i.e., both recruiters and recruits) and their count, (B) from all connected nodes identified in (A), performs SRSWR of the same node count, and (C) for each selected node, performs steps A and B, but does not resample already resampled nodes. (D) Steps A, B, and C are repeated until the end of the chain. In 'tree_bi2', instead of ( s ) nodes, it selects 1 node using SRSWR from anywhere in all recruitment chains and repeats steps (B),(C), and (D) until ( n_r ≥ n_s ).
 
 Example
 -------
@@ -283,3 +307,4 @@ For large datasets or high numbers of resamples, consider using the parallel ver
         resample_n=10000,  # Large number of resamples
         n_cores=8  # Use 8 cores for parallel processing
     )
+

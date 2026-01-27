@@ -1,7 +1,7 @@
 Data Processing
 ===============
 
-The RDSdata function is used to process data collected through Respondent Driven Sampling (RDS). This function can extract the unique ID, redeemed coupon numbers, and issued coupon numbers from the original dataset. By processing this information, users can obtain the key data typically required for RDS related research.
+The RDSdata function is the foundational function for processing respondent-driven sampling (RDS) survey data. It reconstructs recruitment chains, calculates wave numbers, identifies seeds, and imputes missing degree values by tracking how participants recruited one another through coupon redemption. **Use RDSdata before applying any estimation or plotting functions from the RDSTools package.**
 
 Usage
 -----
@@ -14,74 +14,79 @@ Arguments
 ---------
 
 **data**
-    A pandas.DataFrame, this data frame should contain ID numbers for the nodes in the social network and the corresponding redeemed coupon number and issued coupon number.
+    pandas.DataFrame. Should contain an ID variable for sample case, corresponding redeemed coupon code, and issued coupon code.
 
 **unique_id**
-    The column name of the column in the data that represents the ID numbers for the nodes in the social network.
+    str. The column name of the column with respondent IDs.
 
 **redeemed_coupon**
-    The column name of the column in the data that represents coupon numbers of coupons redeemed by respondents when participating in the survey.
+    str. The column name of the column with coupon codes redeemed by respondents when participating in the study.
 
 **issued_coupons**
-    List of column names of the columns in the data that represent coupon numbers of coupons issued to respondents.
+    list of str. The column name of the column with coupon codes issued to respondents (i.e., coupons given to respondents to recruit their peers). If multiple coupons are issued, list all coupon code variables.
 
 **degree**
-    The column name of the column in the data that represents the degree (network size) of respondents.
+    str. The column name of the column with degree (i.e., network size) reported by respondents.
 
 **zero_degree**
-    str, optional. This parameter is used to set the method for imputing zero values in the 'degree' variable. Four methods are available for selection: mean, median, hotdeck, and drop. If this parameter is not set, the default imputation method is hotdeck.
+    str, optional. Used to set the method for handling zero values in the 'degree' variable. Three available methods are: mean imputation, median imputation, and hotdeck imputation. The default is hotdeck.
 
     * **mean**: Impute all positions that require imputation with the average value of all non-zero and non-missing values from the input degree.
     * **median**: Impute all positions that require imputation with the median value of all non-zero and non-missing values from the input degree.
     * **hotdeck**: For each position needing imputation, perform random sampling with replacement from all non-zero and non-missing values in the input degree, where each value has equal probability of being selected. The sampled value is then used as the imputed value.
-    * **drop**: Remove rows with zero degree values from the dataset.
 
 **NA_degree**
-    str, optional. This parameter is used to set the method for imputing missing values in the 'degree' variable. There are four methods to choose from: mean, median, hotdeck, and drop. If this parameter is not set, the default method is hotdeck.
+    str, optional. Used to set the method for handling missing values in the 'degree' variable. Three available methods are: mean imputation, median imputation, and hotdeck imputation. The default is hotdeck.
 
     * **mean**: Impute all positions that require imputation with the average value of all non-zero and non-missing values from the input degree.
     * **median**: Impute all positions that require imputation with the median value of all non-zero and non-missing values from the input degree.
     * **hotdeck**: For each position needing imputation, perform random sampling with replacement from all non-zero and non-missing values in the input degree, where each value has equal probability of being selected. The sampled value is then used as the imputed value.
-    * **drop**: Remove rows with missing degree values from the dataset.
 
 Returns
 -------
 
 **pandas.DataFrame**
-    A data frame with all original variables except ID and new RDS related information:
+    A data frame with all original variables, some renamed, and new RDS-related information:
 
-    * **ID** (str): Renamed unique_id variable
-    * **R_CP** (str): Renamed redeemed coupon variable
-    * **T_CP1 - T_CPn** (str): Renamed issued coupon variable
+    * **ID** (str): Renamed unique_id
+    * **R_CP** (str): Renamed redeemed coupon ID
+    * **T_CP1 - T_CPn** (str): Renamed issued_coupon
     * **DEGREE** (original type): Original degree variable
-    * **DEGREE_IMP** (float): Imputed degree variable
+    * **DEGREE_IMP** (float): Degree variable with missing 0 and/or missing values treated
     * **WEIGHT** (float): Weight variable calculated as 1/DEGREE_IMP
-    * **WAVE** (int): Indicates which round the node was introduced into the survey, and the value of Seed is 0
-    * **S_ID** (str): Indicates the ID of the seed corresponding to the node. The value of the seed is itself
-    * **R_ID** (str): Indicates the ID of the node who recruits the node joining the survey. The value of seed is NA
-    * **SEED** (int): Values are only 0 and 1, they are used to indicate whether the node is seed or not. If it is seed, the value is 1, if not, it is 0.
-    * **CP_ISSUED** (int): Indicates how many coupons have been issued to this node to invite others to join the survey
-    * **CP_USED** (int): Indicates how many coupons issued to this node have been used to invite others to join the survey.
+    * **WAVE** (int): Indicates the wave a node was introduced into the data. The value of Seed is 0
+    * **S_ID** (str): Indicates the ID of the seed corresponding to the node. For seeds, the value is the same as the value of ID
+    * **R_ID** (str): Indicates the ID of the recruiter node. For seeds, the value is NA because there is no recruiter for seeds among respondents
+    * **SEED** (int): Values are only 0 and 1, they are used to indicate whether the node is seed or not. If it is seed, the value is 1, if not, it is 0
+    * **CP_ISSUED** (int): The count of issued coupons to the respondent
+    * **CP_USED** (int): The count of used coupons (i.e., coupons redeemed by recruits) among the issued coupons
 
 Example
 -------
 
 .. code-block:: python
 
-    import pandas as pd
-    from RDSTools import RDSdata
+    from RDSTools import load_toy_data, RDSdata
 
-    # Load your data
-    data = pd.read_csv("survey_data.csv")
+    # Using the built-in toy dataset
+    data = load_toy_data()
 
-    # Process RDS data
+    rds_data = RDSdata(
+        data=data,
+        unique_id="ID",
+        redeemed_coupon="CouponR",
+        issued_coupons=["Coupon1", "Coupon2", "Coupon3"],
+        degree="Degree"
+    )
+
+    # With custom imputation methods
     rds_data = RDSdata(
         data=data,
         unique_id="ID",
         redeemed_coupon="CouponR",
         issued_coupons=["Coupon1", "Coupon2", "Coupon3"],
         degree="Degree",
-        zero_degree='median',
-        NA_degree='hotdeck'
+        zero_degree="median",
+        NA_degree="mean"
     )
 

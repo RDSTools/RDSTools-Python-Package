@@ -81,40 +81,47 @@ toy_data = pd.read_csv(path)
 
 ## Data Processing
 
-The `RDSdata()` function processes data collected through Respondent-Driven Sampling (RDS). This function extracts the unique ID, redeemed coupon numbers, and issued coupon numbers from the original dataset. By processing this information, users can obtain the key data typically required for RDS-related research.
+The `RDSdata()` function processes respondent-driven sampling data by reconstructing recruitment chains, calculating wave numbers, identifying seeds, and imputing missing degree values. It tracks how participants recruited one another through coupon redemption. **Use RDSdata before applying any estimation or plotting functions from the RDSTools package.**
 
 ### Usage
 
 ```python
-RDSdata(data, unique_id, redeemed_coupon, issued_coupons, degree)
+RDSdata(data, unique_id, redeemed_coupon, issued_coupons, degree, zero_degree="hotdeck", NA_degree="hotdeck")
 ```
 
 ### Arguments
 
-- **data**: A pandas DataFrame containing ID numbers for nodes in the social network and corresponding redeemed/issued coupon numbers.
+- **data**: pandas.DataFrame. Should contain an ID variable for sample case, corresponding redeemed coupon code, and issued coupon code.
 
-- **unique_id**: The column name representing ID numbers for nodes in the social network.
+- **unique_id**: str. The column name of the column with respondent IDs.
 
-- **redeemed_coupon**: The column name representing coupon numbers redeemed by respondents when participating in the survey.
+- **redeemed_coupon**: str. The column name of the column with coupon codes redeemed by respondents when participating in the study.
 
-- **issued_coupons**: List of column names representing coupon numbers issued to respondents.
+- **issued_coupons**: list of str. The column name of the column with coupon codes issued to respondents (i.e., coupons given to respondents to recruit their peers). If multiple coupons are issued, list all coupon code variables.
 
-- **degree**: The column name representing the degree (network size) of respondents.
+- **degree**: str. The column name of the column with degree (i.e., network size) reported by respondents.
 
-- **zero_degree**: Method for imputing zero values in degree variable ('mean', 'median', 'hotdeck', 'drop'). Default: 'hotdeck'.
+- **zero_degree**: str, optional. Used to set the method for handling zero values in the 'degree' variable. Three available methods are: mean imputation, median imputation, and hotdeck imputation. Default: 'hotdeck'.
 
-- **NA_degree**: Method for imputing missing values in degree variable ('mean', 'median', 'hotdeck', 'drop'). Default: 'hotdeck'.
+- **NA_degree**: str, optional. Used to set the method for handling missing values in the 'degree' variable. Three available methods are: mean imputation, median imputation, and hotdeck imputation. Default: 'hotdeck'.
 
 ### Example
 
 ```python
-import pandas as pd
-from RDSTools import RDSdata
+from RDSTools import load_toy_data, RDSdata
 
-# Load your data
-data = pd.read_csv("survey_data.csv")
+# Using the built-in toy dataset
+data = load_toy_data()
 
-# Process RDS structure
+rds_data = RDSdata(
+    data=data,
+    unique_id="ID",
+    redeemed_coupon="CouponR",
+    issued_coupons=["Coupon1", "Coupon2", "Coupon3"],
+    degree="Degree"
+)
+
+# With custom imputation methods
 rds_data = RDSdata(
     data=data,
     unique_id="ID",
@@ -122,7 +129,7 @@ rds_data = RDSdata(
     issued_coupons=["Coupon1", "Coupon2", "Coupon3"],
     degree="Degree",
     zero_degree="median",
-    NA_degree="hotdeck"
+    NA_degree="mean"
 )
 
 print(f"Seeds: {rds_data['SEED'].sum()}")
@@ -133,7 +140,7 @@ print(f"Max wave: {rds_data['WAVE'].max()}")
 
 ### Means
 
-Calculate means and standard errors for RDS data with optional weighting and different variance estimation methods.
+Estimating mean with respondent driven sampling sample data. This function calculates weighted or unweighted means for a continuous variable. Standard errors are calculated using naive or resampling approaches from 'RDSboot'.
 
 ```python
 from RDSTools import RDSmean
@@ -169,7 +176,7 @@ result, bootstrap_means, node_counts = RDSmean(
 
 ### Tables
 
-Generate frequency tables and proportions for categorical variables with RDS-adjusted standard errors.
+Estimating one and two-way tables with respondent driven sampling sample data. One-way tables are constructed by specifying a categorical variable for x argument only. Two-way tables are constructed by specifying two categorical variables for x and y arguments. Standard errors of proportions are calculated using naive or resampling approaches from 'RDSboot'.
 
 ```python
 from RDSTools import RDStable
@@ -205,7 +212,7 @@ result, bootstrap_tables = RDStable(
 
 ### Regression
 
-Fit linear and logistic regression models with RDS-adjusted standard errors. The formula syntax follows R-style/patsy conventions.
+Linear and Logistic Regression Modeling with Respondent Driven Sampling (RDS) Sample Data. This function mimics the lm function in R stats package with capabilities to handle RDS data in model estimation. Standard errors of regression coefficients are calculated using naive or resampling approaches from 'RDSboot'. The formula syntax follows R-style/patsy conventions.
 
 ```python
 from RDSTools import RDSlm
@@ -253,7 +260,7 @@ result, bootstrap_estimates = RDSlm(
 
 ## Sampling Variance
 
-Although resampling is incorporated within the estimation functions, users who wish to perform resampling separately can use `RDSboot()`. After preprocessing, ensure the presence of at least four variables: `ID`, `S_ID`, `SEED`, and `R_ID`. Note that the sampling of respondents (seeds and recruits) is conducted with replacement, and the resulting data frame will contain duplicates.
+Bootstrap Resampling for Respondent Driven Sampling (RDS). Although resampling is incorporated within the estimation functions, users who wish to perform resampling separately can use `RDSboot()` or `RDSBootOptimizedParallel()`. After preprocessing with RDSdata, ensure the presence of at least four variables: `ID`, `S_ID`, `SEED`, and `R_ID`. Note that the sampling of respondents (seeds and recruits) is conducted with replacement, and the resulting data frame will contain duplicates.
 
 ```python
 from RDSTools import RDSboot
@@ -268,151 +275,83 @@ boot_results = RDSboot(
     type='tree_uni1',
     resample_n=1000
 )
+
+# Parallel bootstrap for better performance
+from RDSTools import RDSBootOptimizedParallel
+
+boot_results = RDSBootOptimizedParallel(
+    data=rds_data,
+    respondent_id_col='ID',
+    seed_id_col='S_ID',
+    seed_col='SEED',
+    recruiter_id_col='R_ID',
+    type='tree_uni1',
+    resample_n=1000,
+    n_cores=4
+)
 ```
 
 ### Bootstrap Methods
 
-All bootstrap methods select seeds with replacement and then sample from recruitment chains. The six available methods are:
+In all bootstrap methods, versions 1 and 2 differ as version 1 sets the number of seeds in a given resample to be consistent with the number of seeds in the original sample (s), while version 2 sets the sample size of a given resample (n_r) to be at least equal to or greater than the original sample (n_s).
 
 #### Bootstrap Chain
 
-In bootstrap chain functions, the first step is to select seeds with replacement with the subsequent selection of seeds' full recruitment chains.
+- **chain1**: Selects (s) seeds using SRSWR from all seeds in the original sample and then all nodes in the chains created by each of the resampled seeds are retained.
 
-- **chain1**: The number of selected seeds equals the number of seeds in the data frame. Since the seeds are selected with replacement, the resulting data frame will contain exactly the same number of seeds, but a different number of recruits.
-
-- **chain2**: Selects only 1 seed at each iteration. The resulting number of seeds will vary, but the number of recruits will be equal or larger to the original number of recruits.
+- **chain2**: 1 seed is sampled using SRSWR from all seeds in the original sample, and all nodes from the chain created by this seed are retained. It then compares (n_r) against (n_s), and, if (n_r < n_s), continues the resampling process by drawing 1 seed and its chains one by one until (n_r ≥ n_s).
 
 #### Resample Tree Unidirectional
 
-In the resample tree, the function performs SRSWR from the seeds and their recruitment chains. As before, seeds are selected with replacement. For each selected seed, the function identifies its recruits and then samples with replacement from these recruits. For each sampled recruit, this process repeats until the end of each individual recruitment chain.
+- **tree_uni1**: (s) seeds are selected using Simple Random Sampling with Replacement (SRSWR) from all seeds. For each selected seed, this method (A) checks its recruit counts, (B) selects SRSWR of the recruits counts from all recruits identified in (A), and (C) for each sampled recruit, this method repeats Steps A and B. (D) Steps A, B, and C continue until reaching the last wave of each chain.
 
-- **tree_uni1**: Since all seeds are selected with replacement, the resulting number of seeds will equal the number of seeds from the original data, but the number of recruits will vary.
-
-- **tree_uni2**: Samples only 1 seed at a time and then performs sampling with replacement from each wave of seed's recruits. The resulting data frame will have at least the original number of observations, but a varying number of seeds.
+- **tree_uni2**: Instead of selecting (s) seeds, it selects one seed, performs Steps B and C for the selected seed. It compares the size of the resample (n_r) and the original sample (n_s), and, if (n_r < n_s), it continues the resampling process by drawing 1 seed, performs Steps B and C and checks (n_r) against (n_s). If (n_r < n_s), the process continues until the sample size of a given resample (n_r) is at least equal to the original sample size (n_s), i.e., (n_r ≥ n_s).
 
 #### Bootstrap Tree Bidirectional
 
-Unlike the unidirectional case, bidirectional resampling starts from a random position in a chain, checks its connected nodes, and then samples with replacement from these nodes. For each sampled node, the process repeats, but does not go backwards; that is, already visited nodes are excluded from subsequent sampling.
+- **tree_bi1**: Selects (s) nodes from the recruitment chains using SRSWR. For each selected node, it (A) checks its connected nodes (i.e., both recruiters and recruits) and their count, (B) from all connected nodes identified in (A), performs SRSWR of the same node count, and (C) for each selected node, performs steps A and B, but does not resample already resampled nodes. (D) Steps A, B, and C are repeated until the end of the chain.
 
-- **tree_bi1**: The function starts from n nodes, depending on the number of seeds.
-
-- **tree_bi2**: The function samples one node at a time and then evaluates whether the resulting sample is at least equal to the size of the original data. If not, the function continues resampling until the desired number of respondents is achieved.
-
-### Example: Bootstrap Chain
-
-```python
-# Chain bootstrap 1 - maintains number of seeds
-res_chain1 = RDSboot(
-    data=rds_data,
-    respondent_id_col='ID',
-    seed_id_col='S_ID',
-    seed_col='SEED', 
-    recruiter_id_col='R_ID',
-    type='chain1',
-    resample_n=1
-)
-
-# Check results - merge with original data
-sample_1 = res_chain1[res_chain1['RESAMPLE.N'] == 1]
-merged = pd.merge(sample_1, rds_data, left_on='RESPONDENT_ID', right_on='ID')
-print(f"Original seeds: {rds_data['SEED'].sum()}")
-print(f"Bootstrap seeds: {merged['SEED'].sum()}")
-```
+- **tree_bi2**: Instead of (s) nodes, it selects 1 node using SRSWR from anywhere in all recruitment chains and repeats steps (B),(C), and (D) until (n_r ≥ n_s).
 
 ## Visualization
 
-The package supports visualization of respondents' networks and the geographic distribution of recruitment waves starting from seeds. Users can generate network plots to examine recruitment chains overall and by demographic characteristics, as well as geographic maps that display participant locations and the spread of recruitment over time or across regions.
-
 ### Recruitment Networks
 
-The `RDSnetgraph()` function creates network visualizations showing recruitment relationships with support for different layouts and node coloring by demographic variables.
+Visualize recruitment relationships through network graphs with various layout options and customizable styling.
 
 ```python
 from RDSTools import RDSnetgraph, get_available_seeds, get_available_waves
 
 # Get available seeds and waves
-available_seeds = get_available_seeds(rds_data)
-available_waves = get_available_waves(rds_data)
+seeds = get_available_seeds(rds_data)
+waves = get_available_waves(rds_data)
 
 # Basic network graph
 G = RDSnetgraph(
     data=rds_data,
-    seed_ids=['1', '2'],
-    waves=[0, 1, 2, 3],
+    seed_ids=seeds[:2],
+    waves=waves[:4],
     layout='Spring'
-)
-
-# Tree layout showing hierarchical structure
-G = RDSnetgraph(
-    data=rds_data,
-    seed_ids=['1'],
-    waves=[0, 1, 2, 3, 4],
-    layout='Tree',
-    save_path='recruitment_tree.png'
 )
 
 # Color nodes by demographic variable
 G = RDSnetgraph(
     data=rds_data,
-    seed_ids=['1', '2', '3'],
-    waves=[0, 1, 2],
-    layout='Kamada-Kawai',
+    seed_ids=seeds[:2],
+    waves=waves[:3],
+    layout='Spring',
     variable='Sex',
-    title='Recruitment by Sex',
-    vertex_size_seed=10,
-    vertex_size=6,
-    figsize=(16, 14)
+    title='Recruitment Network by Sex',
+    save_path='network.png'
 )
 
-# Customize seed and non-seed colors (when not grouping by variable)
+# Different layout options
 G = RDSnetgraph(
     data=rds_data,
-    seed_ids=available_seeds[:2],
-    waves=list(range(0, 4)),
-    seed_color='purple',
-    nonseed_color='orange',
-    edge_width=2.0
-)
-```
-
-**Available Layouts:**
-- `Spring` - Force-directed layout (default, uses igraph Fruchterman-Reingold)
-- `Circular` - Nodes arranged in a circle
-- `Kamada-Kawai` - Force-directed with optimal distances
-- `Grid` - Regular grid arrangement
-- `Star` - Star-shaped layout
-- `Random` - Random positioning
-- `Tree` - Hierarchical tree layout (uses NetworkX with pygraphviz)
-
-**Key Parameters:**
-- `seed_ids` - List of seed IDs to include in network
-- `waves` - List of wave numbers to include
-- `variable` - Optional demographic variable for node coloring (overrides seed_color/nonseed_color)
-- `category_colors` - Optional list of custom colors for each category (must match number of categories in sorted order)
-- `title` - Optional plot title
-- `vertex_size_seed` - Size of seed vertices (default: 45)
-- `vertex_size` - Size of non-seed vertices (default: 30)
-- `seed_color` - Color for seed nodes when not grouping (default: "#E41A1C" red)
-- `nonseed_color` - Color for non-seed nodes when not grouping (default: "#377EB8" blue)
-- `edge_width` - Thickness of edges (default: 1.5)
-- `layout` - Graph layout algorithm (default: "Spring")
-
-**Color Customization:**
-When using `variable` to color nodes by demographic categories:
-- **Default palette**: A 20-color palette is used automatically (colors 1-8 from Set1, 9-16 from Dark2, 17-20 from Pastel1)
-- **Custom colors**: Provide `category_colors` parameter with colors matching the number of categories (in sorted alphabetical/numerical order)
-- **Many categories**: Variables with 10+ categories show a warning; 20+ categories will recycle colors
-
-Example with custom colors:
-```python
-# Assuming 'Race' has 3 categories: ['1', '2', '3'] (sorted)
-custom_colors = ['#FF6B6B', '#4ECDC4', '#45B7D1']
-G = RDSnetgraph(
-    data=rds_data,
-    seed_ids=['1', '2'],
-    waves=[0, 1, 2],
-    variable='Race',
-    category_colors=custom_colors
+    seed_ids=['1'],
+    waves=[0, 1, 2, 3, 4],
+    layout='Tree',  # Options: 'Spring', 'Tree', 'Circular', 'Kamada-Kawai'
+    figsize=(12, 10)
 )
 ```
 
