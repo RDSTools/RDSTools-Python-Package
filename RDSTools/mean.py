@@ -157,8 +157,11 @@ def RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, r
             Numeric; Standard error of the mean
 
         additional_info
-            Information about the estimation: (1) var_est method, (2) use of
-            weighted analysis, (3) n_Data, (4) n_Iteration (if var_est is not 'naive')
+            Information about the estimation:
+            (1) SE method: variance estimation method
+            (2) Weight: indicator of whether weighted analysis was used
+            (3) n_Data: total number of observations in the input data
+            (4) n_Iteration: number of resampling iterations (if SE method is not 'naive')
 
         resample_summary
             Descriptive summary of resamples if var_est is not 'naive': mean, SD,
@@ -185,6 +188,19 @@ def RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, r
     - Retains all DataFrame functionality for analysis
     - Can be used with other pandas operations and statistical functions
     - Contains the same data structure as the original DataFrame implementation
+
+    In all bootstrap methods, versions 1 and 2 differ as version 1 sets the number of seeds in a given resample to be consistent with the number of seeds in the original sample ( s ), while version 2 sets the sample size of a given resample ( n_r ) to be at least equal to or greater than the original sample ( n_s ).
+
+    ‘chain1’ selects ( s ) seeds using SRSWR from all seeds in the original sample and then all nodes in the chains created by each of the resampled seeds are retained. With ‘chain2’, 1 seed is sampled using SRSWR from all seeds in the original sample, and all nodes from the chain created by this seed are retained. It then compares ( n_r ) against ( n_s ), and, if ( n_r < n_s ), continues the resampling process by drawing 1 seed and its chains one by one until ( n_r ≥ n_s ).
+
+    In the ‘tree_uni1’ method, ( s ) seeds are selected using Simple Random Sampling with Replacement (SRSWR) from all seeds. For each selected seed, this method (A) checks its recruit counts, (B) selects SRSWR of the recruits counts from all recruits identified in (A), and (C) for each sampled recruit, this method repeats Steps A and B. (D) Steps A, B, and C continue until reaching the last wave of each chain. In ‘tree_uni2’, instead of selecting ( s ) seeds, it selects one seed, performs Steps B and C for the selected seed. It compares the size of the resample ( n_r ) and the original sample ( n_s ), and, if ( n_r < n_s ), it continues the resampling process by drawing 1 seed, performs Steps B and C and checks ( n_r ) against ( n_s ). If ( n_r < n_s ), the process continues until the sample size of a given resample ( n_r ) is at least equal to the original sample size ( n_s ), i.e., ( n_r ≥ n_s ).
+
+    ‘tree_bi1’ selects ( s ) nodes from the recruitment chains using SRSWR. For each selected node, it (A) checks its connected nodes (i.e., both recruiters and recruits) and their count, (B) from all connected nodes identified in (A), performs SRSWR of the same node count, and (C) for each selected node, performs steps A and B, but does not resample already resampled nodes. (D) Steps A, B, and C are repeated until the end of the chain. In ‘tree_bi2’, instead of ( s ) nodes, it selects 1 node using SRSWR from anywhere in all recruitment chains and repeats steps (B),(C), and (D) until ( n_r ≥ n_s ).
+
+    References
+    ----------
+    .. [1] Salganik, M. J. (2006). Variance estimation, design effects, and sample size calculations for respondent-driven sampling. Journal of Urban Health, 83(1), 98-112. https://doi.org/10.1007/s11524-006-9106-x
+    .. [2] Volz, E., & Heckathorn, D. D. (2008). Probability based estimation theory for respondent driven sampling. Journal of Official Statistics, 24(1), 79-97.
 
     """
 
