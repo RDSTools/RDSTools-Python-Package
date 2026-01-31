@@ -3,10 +3,22 @@ Sampling Variance
 
 Variance estimation with bootstrap chain and tree methods. Although resampling is incorporated within the estimation functions, users who wish to perform resampling separately can use RDSboot or RDSBootOptimizedParallel. After preprocessing with RDSdata, ensure the presence of at least four variables: respondent ID, seed ID, seed indicator, and recruiter ID. Note that the sampling of respondents (seeds and recruits) is conducted with replacement, and the resulting data frame will contain duplicates.
 
+There are six bootstrap methods available: 'chain1', 'chain2', 'tree_uni1', 'tree_uni2', 'tree_bi1', 'tree_bi2'
+
+In all bootstrap methods, versions 1 and 2 differ as version 1 sets the number of seeds in a given resample to be consistent with the number of seeds in the original sample (:math:`s`), while version 2 sets the sample size of a given resample (:math:`n_r`) to be at least equal to or greater than the original sample (:math:`n_s`).
+
+'chain1' selects :math:`s` seeds using SRSWR from all seeds in the original sample and then all nodes in the chains created by each of the resampled seeds are retained. With 'chain2', 1 seed is sampled using SRSWR from all seeds in the original sample, and all nodes from the chain created by this seed are retained. It then compares :math:`n_r` against :math:`n_s`, and, if :math:`n_r < n_s`, continues the resampling process by drawing 1 seed and its chains one by one until :math:`n_r \geq n_s`.
+
+In the 'tree_uni1' method, :math:`s` seeds are selected using Simple Random Sampling with Replacement (SRSWR) from all seeds. For each selected seed, this method (A) checks its recruit counts, (B) selects SRSWR of the recruits counts from all recruits identified in (A), and (C) for each sampled recruit, this method repeats Steps A and B. (D) Steps A, B, and C continue until reaching the last wave of each chain. In 'tree_uni2', instead of selecting :math:`s` seeds, it selects one seed, performs Steps B and C for the selected seed. It compares the size of the resample (:math:`n_r`) and the original sample (:math:`n_s`), and, if :math:`n_r < n_s`, it continues the resampling process by drawing 1 seed, performs Steps B and C and checks :math:`n_r` against :math:`n_s`. If :math:`n_r < n_s`, the process continues until the sample size of a given resample (:math:`n_r`) is at least equal to the original sample size (:math:`n_s`), i.e., :math:`n_r \geq n_s`.
+
+'tree_bi1' selects :math:`s` nodes from the recruitment chains using SRSWR. For each selected node, it (A) checks its connected nodes (i.e., both recruiters and recruits) and their count, (B) from all connected nodes identified in (A), performs SRSWR of the same node count, and (C) for each selected node, performs steps A and B, but does not resample already resampled nodes. (D) Steps A, B, and C are repeated until the end of the chain. In 'tree_bi2', instead of :math:`s` nodes, it selects 1 node using SRSWR from anywhere in all recruitment chains and repeats steps (B),(C), and (D) until :math:`n_r \geq n_s`.
+
+
 RDSboot - Standard Bootstrap
 =============================
 
 Bootstrap Resampling for Respondent Driven Sampling (RDS). This function performs resampling RDS sample data by bootstrapping edges in recruitment trees or bootstrapping recruitment chains as a whole.
+
 
 Usage
 -----
@@ -47,16 +59,6 @@ Returns
 
     * **RESPONDENT_ID**: A variable indicating respondent ID
     * **RESAMPLE.N**: An indicator variable for each resample iteration
-
-Notes
------
-In all bootstrap methods, versions 1 and 2 differ as version 1 sets the number of seeds in a given resample to be consistent with the number of seeds in the original sample ( s ), while version 2 sets the sample size of a given resample ( n_r ) to be at least equal to or greater than the original sample ( n_s ).
-
-'chain1' selects ( s ) seeds using SRSWR from all seeds in the original sample and then all nodes in the chains created by each of the resampled seeds are retained. With 'chain2', 1 seed is sampled using SRSWR from all seeds in the original sample, and all nodes from the chain created by this seed are retained. It then compares ( n_r ) against ( n_s ), and, if ( n_r < n_s ), continues the resampling process by drawing 1 seed and its chains one by one until ( n_r ≥ n_s ).
-
-In the 'tree_uni1' method, ( s ) seeds are selected using Simple Random Sampling with Replacement (SRSWR) from all seeds. For each selected seed, this method (A) checks its recruit counts, (B) selects SRSWR of the recruits counts from all recruits identified in (A), and (C) for each sampled recruit, this method repeats Steps A and B. (D) Steps A, B, and C continue until reaching the last wave of each chain. In 'tree_uni2', instead of selecting ( s ) seeds, it selects one seed, performs Steps B and C for the selected seed. It compares the size of the resample ( n_r ) and the original sample ( n_s ), and, if ( n_r < n_s ), it continues the resampling process by drawing 1 seed, performs Steps B and C and checks ( n_r ) against ( n_s ). If ( n_r < n_s ), the process continues until the sample size of a given resample ( n_r ) is at least equal to the original sample size ( n_s ), i.e., ( n_r ≥ n_s ).
-
-'tree_bi1' selects ( s ) nodes from the recruitment chains using SRSWR. For each selected node, it (A) checks its connected nodes (i.e., both recruiters and recruits) and their count, (B) from all connected nodes identified in (A), performs SRSWR of the same node count, and (C) for each selected node, performs steps A and B, but does not resample already resampled nodes. (D) Steps A, B, and C are repeated until the end of the chain. In 'tree_bi2', instead of ( s ) nodes, it selects 1 node using SRSWR from anywhere in all recruitment chains and repeats steps (B),(C), and (D) until ( n_r ≥ n_s ).
 
 Example
 -------
@@ -128,16 +130,6 @@ Returns
     * **RESPONDENT_ID**: A variable indicating respondent ID
     * **RESAMPLE.N**: An indicator variable for each resample iteration
 
-Notes
------
-In all bootstrap methods, versions 1 and 2 differ as version 1 sets the number of seeds in a given resample to be consistent with the number of seeds in the original sample ( s ), while version 2 sets the sample size of a given resample ( n_r ) to be at least equal to or greater than the original sample ( n_s ).
-
-'chain1' selects ( s ) seeds using SRSWR from all seeds in the original sample and then all nodes in the chains created by each of the resampled seeds are retained. With 'chain2', 1 seed is sampled using SRSWR from all seeds in the original sample, and all nodes from the chain created by this seed are retained. It then compares ( n_r ) against ( n_s ), and, if ( n_r < n_s ), continues the resampling process by drawing 1 seed and its chains one by one until ( n_r ≥ n_s ).
-
-In the 'tree_uni1' method, ( s ) seeds are selected using Simple Random Sampling with Replacement (SRSWR) from all seeds. For each selected seed, this method (A) checks its recruit counts, (B) selects SRSWR of the recruits counts from all recruits identified in (A), and (C) for each sampled recruit, this method repeats Steps A and B. (D) Steps A, B, and C continue until reaching the last wave of each chain. In 'tree_uni2', instead of selecting ( s ) seeds, it selects one seed, performs Steps B and C for the selected seed. It compares the size of the resample ( n_r ) and the original sample ( n_s ), and, if ( n_r < n_s ), it continues the resampling process by drawing 1 seed, performs Steps B and C and checks ( n_r ) against ( n_s ). If ( n_r < n_s ), the process continues until the sample size of a given resample ( n_r ) is at least equal to the original sample size ( n_s ), i.e., ( n_r ≥ n_s ).
-
-'tree_bi1' selects ( s ) nodes from the recruitment chains using SRSWR. For each selected node, it (A) checks its connected nodes (i.e., both recruiters and recruits) and their count, (B) from all connected nodes identified in (A), performs SRSWR of the same node count, and (C) for each selected node, performs steps A and B, but does not resample already resampled nodes. (D) Steps A, B, and C are repeated until the end of the chain. In 'tree_bi2', instead of ( s ) nodes, it selects 1 node using SRSWR from anywhere in all recruitment chains and repeats steps (B),(C), and (D) until ( n_r ≥ n_s ).
-
 Example
 -------
 
@@ -157,117 +149,6 @@ Example
         n_cores=4
     )
 
-Bootstrap Methods
-=================
-
-Six bootstrap methods are available: chain1, chain2, tree_uni1, tree_uni2, tree_bi1, and tree_bi2.
-
-In all resampling functions, versions 1 and 2 differ as 1 focuses on the number of seeds in a given resample to be consistent with the original sample, while 2 keeps the overall sample size of a given resample to be at least equal to the original sample.
-
-Bootstrap Chain Methods
------------------------
-
-**chain1**
-    (n) seeds are selected using Simple Random Sampling with Replacement (SRSWR), with all nodes in the chains created by resampled seeds retained. The number of selected seeds equals the number of seeds in the original data frame. Since the seeds are selected with replacement, the resulting data frame will contain exactly the same number of seeds as the original, but a different number of recruits.
-
-.. code-block:: python
-
-    # Chain bootstrap 1
-    res_chain1 = RDSboot(
-        data=rds_data,
-        respondent_id_col='ID',
-        seed_id_col='S_ID',
-        seed_col='SEED',
-        recruiter_id_col='R_ID',
-        type='chain1',
-        resample_n=1000
-    )
-
-**chain2**
-    1 seed is sampled using SRSWR, with all nodes retained in the chain. The process continues until the sample size of a given resample (n_r) is at least equal to the original sample size (n_s). Selects only 1 seed at each iteration. The resulting number of seeds will vary, but the number of recruits will be equal or larger to the original number of recruits.
-
-.. code-block:: python
-
-    # Chain bootstrap 2
-    res_chain2 = RDSboot(
-        data=rds_data,
-        respondent_id_col='ID',
-        seed_id_col='S_ID',
-        seed_col='SEED',
-        recruiter_id_col='R_ID',
-        type='chain2',
-        resample_n=1000
-    )
-
-Resample Tree Unidirectional Methods
-------------------------------------
-
-**tree_uni1**
-    (n) seeds are selected using SRSWR. For each selected seed, the function (A) checks its recruit counts, (B) performs SRSWR on the recruits counts from all recruits identified in (A), and (C) for each sampled recruit, repeats steps A and B. Steps A, B, and C are performed until the last wave of the chain. Since all seeds are selected with replacement, the resulting number of seeds will equal the number of seeds from the original data, but the number of recruits will vary.
-
-.. code-block:: python
-
-    # Tree unidirectional 1
-    res_uni1 = RDSboot(
-        data=rds_data,
-        respondent_id_col='ID',
-        seed_id_col='S_ID',
-        seed_col='SEED',
-        recruiter_id_col='R_ID',
-        type='tree_uni1',
-        resample_n=1000
-    )
-
-**tree_uni2**
-    Instead of selecting (n) seeds, the function selects one seed at a time and then performs steps A, B, and C for each wave of respondents. Samples only 1 seed at a time and then performs sampling with replacement from each wave of the seed's recruits. The resulting data frame will have at least the original sample size, but a varying number of seeds.
-
-.. code-block:: python
-
-    # Tree unidirectional 2
-    res_uni2 = RDSboot(
-        data=rds_data,
-        respondent_id_col='ID',
-        seed_id_col='S_ID',
-        seed_col='SEED',
-        recruiter_id_col='R_ID',
-        type='tree_uni2',
-        resample_n=1000
-    )
-
-Bootstrap Tree Bidirectional Methods
-------------------------------------
-
-**tree_bi1**
-    Selects (n) nodes from the recruitment chains using SRSWR. For each selected node, it (A) checks its connected nodes, (B) performs SRSWR on all connected nodes identified in (A), and (C) for each selected node, performs steps A and B, but does not resample already resampled nodes. (D) Steps A, B, and C are repeated until the end of the chain. The function starts from multiple nodes, depending on the number of seeds.
-
-.. code-block:: python
-
-    # Tree bidirectional 1
-    results_bi1 = RDSboot(
-        data=rds_data,
-        respondent_id_col='ID',
-        seed_id_col='S_ID',
-        seed_col='SEED',
-        recruiter_id_col='R_ID',
-        type='tree_bi1',
-        resample_n=1000
-    )
-
-**tree_bi2**
-    1 node is selected using SRSWR from the recruitment chain and steps A, B, C, and D are performed as in tree_bi1. The function samples one node at a time and then evaluates whether the resulting sample is at least equal to the size of the original data. If not, the function continues resampling until the desired number of respondents is achieved.
-
-.. code-block:: python
-
-    # Tree bidirectional 2
-    results_bi2 = RDSboot(
-        data=rds_data,
-        respondent_id_col='ID',
-        seed_id_col='S_ID',
-        seed_col='SEED',
-        recruiter_id_col='R_ID',
-        type='tree_bi2',
-        resample_n=1000
-    )
 
 Working with Results
 ====================
