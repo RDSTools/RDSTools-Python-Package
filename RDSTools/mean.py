@@ -332,8 +332,7 @@ def RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None,
         If ``True``, observations with missing values in ``x`` (or
         ``weight``, when supplied) are removed before estimation. If
         ``False``, NAs are retained and the estimator will return
-        ``NaN`` whenever NAs are present, matching R's
-        ``svymean(..., na.rm = FALSE)`` behaviour.
+        ``NaN`` whenever NAs are present.
     return_bootstrap_means : bool, default False
         If ``True``, also return the per-iteration estimates. For
         categorical variables this is a list of proportion arrays
@@ -345,20 +344,43 @@ def RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None,
     Returns
     -------
     RDSResult or tuple
-        An ``RDSResult`` object whose ``results`` attribute holds a
-        tidy table with columns ``Mean`` and ``SE`` (continuous) or
-        ``Category``, ``Mean``, and ``SE`` (categorical). The object
-        also exposes:
+        An RDSResult object containing the following elements:
 
-        - ``_se_method``: variance estimation method
-        - ``_n_original``: total rows in the input data
-        - ``_n_analysis``: rows actually used in the analysis
-        - ``_is_weighted``: whether weights were applied
-        - ``_n_iterations``: bootstrap iterations (bootstrap methods only)
+        mean
+            Numeric; Weighted or unweighted mean estimate. For categorical
+            variables, one estimated proportion per level.
 
-        When ``return_bootstrap_means`` and/or ``return_node_counts`` are
-        ``True``, the function returns a tuple
-        ``(result, bootstrap_estimates[, node_counts])``.
+        se
+            Numeric; Standard error of the mean. For categorical
+            variables, one standard error per level.
+
+        additional_info
+            Information about the estimation:
+            (1) SE method: variance estimation method
+            (2) Weight: indicator of whether weighted analysis was used
+            (3) n_Data: total number of observations in the input data
+            (4) n_Analysis: number of observations used in the analysis
+                (after NA removal when ``na_rm=True``)
+            (5) n_Iteration: number of resampling iterations (if SE method is not 'naive')
+
+        resample_summary
+            Descriptive summary of resamples if var_est is not 'naive': mean, SD,
+            min, quartiles, and max of resample sizes
+
+        resample_estimates
+            Mean estimates for each resampling iteration if var_est is not 'naive'
+
+        When return_bootstrap_means=False and return_node_counts=False (default):
+            Returns RDSResult object only
+
+        When return_bootstrap_means=True and return_node_counts=False:
+            Returns (RDSResult, bootstrap_means_list)
+
+        When return_bootstrap_means=False and return_node_counts=True:
+            Returns (RDSResult, node_counts_list)
+
+        When return_bootstrap_means=True and return_node_counts=True:
+            Returns (RDSResult, bootstrap_means_list, node_counts_list)
 
     Notes
     -----
@@ -368,8 +390,7 @@ def RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None,
     - Renders a formatted multi-line summary when printed.
 
     For categorical variables the reported "Mean" for each level is the
-    estimated proportion of observations in that level, consistent with
-    ``survey::svymean`` applied to a factor in R.
+    estimated proportion of observations in that level.
 
     In all bootstrap methods, versions 1 and 2 differ as version 1 sets
     the number of seeds in a given resample to be consistent with the
