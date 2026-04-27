@@ -6,7 +6,7 @@ RDS Tools package has 3 estimation functions: (1) RDSmean, (2) RDStable, (3) RDS
 RDSmean - Descriptive Statistics
 =================================
 
-Estimating mean with respondent driven sampling sample data. This function calculates weighted or unweighted means for either a continuous or a categorical variable. For continuous variables, it returns a single mean and standard error. For categorical variables, it returns one proportion and standard error per level (consistent with applying ``svymean`` to a factor in R). Standard errors are calculated using naive (delta-method) or resampling approaches from 'RDSboot'.
+Estimating mean with respondent driven sampling sample data. This function calculates weighted or unweighted means for either a continuous or a categorical variable. For continuous variables, it returns a single mean and standard error. For categorical variables, it returns one proportion and standard error per level. Standard errors are calculated using naive (delta-method) or resampling approaches from 'RDSboot'.
 
 Usage
 -----
