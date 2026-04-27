@@ -6,26 +6,26 @@ RDS Tools package has 3 estimation functions: (1) RDSmean, (2) RDStable, (3) RDS
 RDSmean - Descriptive Statistics
 =================================
 
-Estimating mean with respondent driven sampling sample data. This function calculates weighted or unweighted means for a continuous variable. Standard errors are calculated using naive or resampling approaches from 'RDSboot'.
+Estimating mean with respondent driven sampling sample data. This function calculates weighted or unweighted means for either a continuous or a categorical variable. For continuous variables, it returns a single mean and standard error. For categorical variables, it returns one proportion and standard error per level (consistent with applying ``svymean`` to a factor in R). Standard errors are calculated using naive (delta-method) or resampling approaches from 'RDSboot'.
 
 Usage
 -----
 
 .. code-block:: python
 
-    RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, return_bootstrap_means=False, return_node_counts=False)
+    RDSmean(x, data, weight=None, var_est=None, resample_n=None, n_cores=None, na_rm=True, return_bootstrap_means=False, return_node_counts=False)
 
 Arguments
 ---------
 
 **x**
-    str. A variable of interest.
+    str. A variable of interest. Continuous variables (numeric dtypes) return a single mean and SE. Categorical variables (object, string, bool, or pandas Categorical dtypes) return one proportion and SE per level. Note that integer-coded categoricals such as ``Race=1,2,3`` are treated as numeric by default; convert them with ``data[col] = data[col].astype('category')`` before calling ``RDSmean`` to get per-category output.
 
 **data**
     pandas.DataFrame. The output DataFrame from RDSdata.
 
 **weight**
-    str, optional. Name of the weight variable. User specified weight variable for a weighted analysis. When set to NULL, the function performs an unweighted analysis. Default is None.
+    str, optional. Name of the weight variable. User specified weight variable for a weighted analysis. When set to None, the function performs an unweighted analysis. Default is None.
 
 **var_est**
     str, optional. One of the six bootstrap types or the delta (naive) method. By default the function calculates naive standard errors. Variance estimation options include 'naive' or bootstrap methods like 'chain1', 'chain2', 'tree_uni1', 'tree_uni2', 'tree_bi1', 'tree_bi2'. Default is None (naive).
@@ -36,8 +36,11 @@ Arguments
 **n_cores**
     int, optional. Number of CPU cores to use for parallel bootstrap processing. If specified, uses optimized parallel bootstrap. If None, uses standard sequential bootstrap. Default is None.
 
+**na_rm**
+    bool, optional. If True (default), observations with missing values in ``x`` (or in the weight column, when supplied) are removed before estimation. If False, missing values are retained and the estimator returns ``NaN`` whenever NAs are present, mirroring R's ``svymean(..., na.rm = FALSE)`` behaviour. Default is True.
+
 **return_bootstrap_means**
-    bool, optional. If True, return bootstrap mean estimates along with main results (only for bootstrap methods). Default is False.
+    bool, optional. If True, return the per-iteration estimates along with the main results (only for bootstrap methods). For continuous variables this is a list of scalar means; for categorical variables it is a list of proportion arrays aligned with the level order. Default is False.
 
 **return_node_counts**
     bool, optional. If True, return sample size per iteration along with main results (only for bootstrap methods). Default is False.
@@ -48,43 +51,45 @@ Returns
 **RDSResult or tuple**
     An RDSResult object containing the following elements:
 
-    mean
-        Numeric; Weighted or unweighted mean estimate
-
-    se
-        Numeric; Standard error of the mean
+    results
+        DataFrame; A tidy results table. For continuous variables, columns are ``Mean`` and ``SE`` with a single row. For categorical variables, columns are ``Category``, ``Mean``, and ``SE`` with one row per level. For categorical variables, the reported "Mean" for each level is the estimated proportion of observations in that level.
 
     additional_info
         Information about the estimation:
         (1) SE method: variance estimation method
         (2) Weight: indicator of whether weighted analysis was used
         (3) n_Data: total number of observations in the input data
-        (4) n_Iteration: number of resampling iterations (if SE method is not 'naive')
+        (4) n_Analysis: number of observations used in the analysis (after NA removal when ``na_rm=True``)
+        (5) n_Iteration: number of resampling iterations (if SE method is not 'naive')
 
     resample_summary
         Descriptive summary of resamples if var_est is not 'naive': mean, SD, min, quartiles, and max of resample sizes
 
     resample_estimates
-        Mean estimates for each resampling iteration if var_est is not 'naive'
+        Per-iteration estimates if var_est is not 'naive'. For continuous variables, a list of scalar means (one per iteration). For categorical variables, a list of proportion arrays (one per iteration, aligned with the level order).
 
     When return_bootstrap_means=False and return_node_counts=False (default):
         Returns RDSResult object only
 
     When return_bootstrap_means=True and return_node_counts=False:
-        Returns (RDSResult, bootstrap_means_list)
+        Returns (RDSResult, bootstrap_estimates_list)
 
     When return_bootstrap_means=False and return_node_counts=True:
         Returns (RDSResult, node_counts_list)
 
     When return_bootstrap_means=True and return_node_counts=True:
-        Returns (RDSResult, bootstrap_means_list, node_counts_list)
+        Returns (RDSResult, bootstrap_estimates_list, node_counts_list)
 
 Notes
 -----
 The RDSResult object is a pandas DataFrame subclass that:
     - Retains all DataFrame functionality for analysis
     - Has custom print formatting for clean display
-    - Provides direct access to bootstrap means and node counts via attributes
+    - Exposes the tidy results table via ``result.results`` and the underlying bootstrap estimates and node counts as attributes
+
+For categorical variables, the reported "Mean" for each level is the estimated proportion of observations in that level. Each level has its own standard error
+
+Integer-coded categorical variables (such as ``Race=1,2,3``) are treated as numeric by default and will produce a single mean rather than per-category proportions. To obtain per-category output, convert the column with ``data[col] = data[col].astype('category')`` before calling ``RDSmean``.
 
 Examples
 --------
@@ -93,11 +98,19 @@ Examples
 
     from RDSTools import RDSmean
 
-    # Basic mean with naive variance estimation
+    # Basic mean with naive variance estimation (continuous variable)
     result = RDSmean(x='Age', data=rds_data, var_est='naive')
 
     # Weighted analysis with inverse weights
     result = RDSmean(x='Age', data=rds_data, weight='WEIGHT')
+
+    # Categorical variable: convert to category dtype first
+    rds_data['Race'] = rds_data['Race'].astype('category')
+    result = RDSmean(x='Race', data=rds_data, weight='WEIGHT')
+    # Output is a tidy table with one row per Race level
+
+    # Retain NAs and propagate to NaN (instead of dropping)
+    result = RDSmean(x='Age', data=rds_data, na_rm=False)
 
     # Bootstrap method with resampling
     result = RDSmean(
@@ -106,6 +119,16 @@ Examples
         weight='WEIGHT',
         var_est='chain1',
         resample_n=1000
+    )
+
+    # Categorical bootstrap: per-category proportions and bootstrap SEs
+    rds_data['Race'] = rds_data['Race'].astype('category')
+    result = RDSmean(
+        x='Race',
+        data=rds_data,
+        weight='WEIGHT',
+        var_est='chain1',
+        resample_n=300
     )
 
     # Parallel processing with 4 cores
@@ -117,8 +140,8 @@ Examples
         n_cores=4
     )
 
-    # Return bootstrap means and node counts
-    result, bootstrap_means, node_counts = RDSmean(
+    # Return bootstrap estimates and node counts
+    result, bootstrap_estimates, node_counts = RDSmean(
         x='Age',
         data=rds_data,
         var_est='tree_uni1',

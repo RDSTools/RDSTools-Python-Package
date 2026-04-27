@@ -140,7 +140,7 @@ print(f"Max wave: {rds_data['WAVE'].max()}")
 
 ### Means
 
-Estimating mean with respondent driven sampling sample data. This function calculates weighted or unweighted means for a continuous variable. Standard errors are calculated using naive or resampling approaches from 'RDSboot'.
+Estimating mean with respondent driven sampling sample data. This function calculates weighted or unweighted means for either a continuous or a categorical variable. Standard errors are calculated using naive or resampling approaches from 'RDSboot'.
 
 ```python
 from RDSTools import RDSmean
